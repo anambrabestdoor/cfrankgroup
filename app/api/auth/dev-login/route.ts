@@ -43,17 +43,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Seed sample orders for user@example.com if none exist yet
-    if (devAcc.sampleOrders && devAcc.sampleOrders.length > 0) {
-      const existingOrders = await db.getOrders();
-      const userOrders = existingOrders.filter((o) => o.email.toLowerCase() === devAcc.email.toLowerCase());
-      if (userOrders.length === 0) {
-        for (const orderData of devAcc.sampleOrders) {
-          await db.createOrder(orderData);
-        }
-      }
-    }
-
     // Generate JWT session token
     const token = db.generateToken({
       email: user.email,

@@ -1,4 +1,5 @@
-import { db } from "./db";
+import fs from "fs";
+import path from "path";
 
 export interface AuditLogPayload {
   action: string;
@@ -8,7 +9,7 @@ export interface AuditLogPayload {
 }
 
 /**
- * Redacts sensitive keys before logging to Telegram
+ * Redacts sensitive keys before logging locally
  */
 function sanitizeDetails(details: Record<string, any>): Record<string, any> {
   const sensitiveKeys = ["password", "token", "secret", "jwt", "authorization", "passwordHash"];
@@ -28,48 +29,30 @@ function sanitizeDetails(details: Record<string, any>): Record<string, any> {
 }
 
 /**
- * Sends structured admin activity logs to Telegram
+ * Logs structured admin activity locally to disk without sending to external services
  */
 export async function logAdminAction(payload: AuditLogPayload): Promise<boolean> {
   try {
-    const settings = await db.getSettings();
-    const botToken = process.env.TELEGRAM_BOT_TOKEN || settings.telegramBotToken;
-    const chatId = process.env.TELEGRAM_CHAT_ID || settings.telegramChatId;
-
-    if (!botToken || !chatId) {
-      return false;
+    const logsDir = path.join(process.cwd(), "logs");
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
     }
 
+    const logFile = path.join(logsDir, "admin-audit.jsonl");
     const cleanDetails = sanitizeDetails(payload.details);
-    const detailLines = Object.entries(cleanDetails)
-      .map(([k, v]) => `• *${k}:* \`${typeof v === "object" ? JSON.stringify(v) : v}\``)
-      .join("\n");
 
-    const messageText = [
-      `🛡️ *ANUA Admin Audit Log*`,
-      ``,
-      `📌 *Action:* ${payload.action}`,
-      `📁 *Category:* ${payload.category}`,
-      `👤 *Admin:* \`${payload.adminEmail || "Administrator"}\``,
-      `⏰ *Time:* \`${new Date().toISOString()}\``,
-      ``,
-      `📋 *Inputs & Parameters:*`,
-      detailLines || "• _No additional inputs_",
-    ].join("\n");
+    const entry = {
+      timestamp: new Date().toISOString(),
+      action: payload.action,
+      category: payload.category,
+      adminEmail: payload.adminEmail || "Administrator",
+      details: cleanDetails,
+    };
 
-    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: messageText,
-        parse_mode: "Markdown",
-      }),
-    });
-
+    fs.appendFileSync(logFile, JSON.stringify(entry) + "\n", "utf-8");
     return true;
   } catch (err) {
-    console.error("[AuditLogger] Failed to send Telegram log:", err);
+    console.error("[AuditLogger] Failed to write local log:", err);
     return false;
   }
 }

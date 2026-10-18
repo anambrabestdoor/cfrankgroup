@@ -115,35 +115,6 @@ export async function logAdminActionWithGitHub(
 
     // Append to local log file
     await appendAuditLog(entry);
-
-    // Optional: Send to Telegram for real-time alerts
-    try {
-        const botToken = process.env.TELEGRAM_BOT_TOKEN;
-        const chatId = process.env.TELEGRAM_CHAT_ID;
-
-        if (botToken && chatId) {
-            const message = [
-                `🛡️ *ANUA Admin Action Log*`,
-                `👤 *Admin:* \`${entry.adminEmail}\``,
-                `📌 *Action:* ${entry.action}`,
-                `📁 *Category:* ${entry.category}`,
-                `⏰ *Time:* ${entry.timestamp}`,
-                `📊 *Status:* ${entry.status === "success" ? "✅ Success" : "❌ Failed"}`,
-            ].join("\n");
-
-            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: "Markdown",
-                }),
-            });
-        }
-    } catch (error) {
-        console.error("[AuditLogger] Telegram notification failed:", error);
-    }
 }
 
 /**
