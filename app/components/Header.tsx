@@ -52,18 +52,21 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center space-x-8 text-sm font-semibold text-slate-800">
-          <Link href="/" className="hover:text-[#003296] transition-colors">
+        {/* Desktop Navigation - Centered Sleek Pill Capsule (Matching Reference Video) */}
+        <nav className="hidden lg:flex items-center space-x-1 bg-slate-100/90 p-1.5 rounded-full border border-slate-200/60 shadow-xs">
+          <Link
+            href="/"
+            className="px-4 py-1.5 text-xs font-bold text-slate-700 hover:text-[#003296] hover:bg-white rounded-full transition-all"
+          >
             Home
           </Link>
 
-          {/* Products Dropdown (Replacing Explore Categories on Body) */}
+          {/* Products Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setProductsDropdownOpen(!productsDropdownOpen)}
               onMouseEnter={() => setProductsDropdownOpen(true)}
-              className="inline-flex items-center space-x-1 hover:text-[#003296] transition-colors py-2 focus:outline-none"
+              className="inline-flex items-center space-x-1 px-4 py-1.5 text-xs font-bold text-slate-700 hover:text-[#003296] hover:bg-white rounded-full transition-all focus:outline-none cursor-pointer"
               aria-expanded={productsDropdownOpen}
             >
               <span>Products</span>
@@ -73,7 +76,7 @@ export default function Header() {
             {productsDropdownOpen && (
               <div
                 onMouseLeave={() => setProductsDropdownOpen(false)}
-                className="absolute top-full left-0 mt-1 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
               >
                 <Link
                   href="/shop"
@@ -120,11 +123,17 @@ export default function Header() {
             )}
           </div>
 
-          <Link href="/about" className="hover:text-[#003296] transition-colors">
+          <Link
+            href="/about"
+            className="px-4 py-1.5 text-xs font-bold text-slate-700 hover:text-[#003296] hover:bg-white rounded-full transition-all"
+          >
             About
           </Link>
 
-          <Link href="/contact" className="hover:text-[#003296] transition-colors">
+          <Link
+            href="/contact"
+            className="px-4 py-1.5 text-xs font-bold text-slate-700 hover:text-[#003296] hover:bg-white rounded-full transition-all"
+          >
             Contact
           </Link>
         </nav>
