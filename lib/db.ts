@@ -33,6 +33,8 @@ export interface Product {
   description: string;
   price: number;
   originalPrice: number;
+  priceOnRequest?: boolean;
+  group?: "doors" | "sanitary";
   rating: number;
   reviewsCount: number;
   image: string;

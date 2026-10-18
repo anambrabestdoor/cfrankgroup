@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useApp } from "@/app/context/AppContext";
-import { ShoppingCart, MessageSquare, ChevronDown, Search } from "lucide-react";
+import { ShoppingCart, MessageSquare, ChevronDown, Search, ArrowRight, ShieldCheck } from "lucide-react";
 
 export default function Header() {
   const { cartCount, setCartOpen, setMobileMenuOpen, setSearchOpen, settings } = useApp();
@@ -62,7 +62,7 @@ export default function Header() {
               Home
             </Link>
 
-            {/* Products Dropdown */}
+            {/* Products Mega-Pill Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setProductsDropdownOpen(!productsDropdownOpen)}
@@ -77,49 +77,173 @@ export default function Header() {
               {productsDropdownOpen && (
                 <div
                   onMouseLeave={() => setProductsDropdownOpen(false)}
-                  className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                  className="absolute top-full -left-20 mt-2 w-[580px] bg-white rounded-3xl shadow-2xl border border-slate-200/90 p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
                 >
-                  <Link
-                    href="/shop"
-                    onClick={() => setProductsDropdownOpen(false)}
-                    className="flex flex-col px-4 py-2 hover:bg-slate-50 transition-colors"
-                  >
-                    <span className="text-xs font-bold text-slate-900">All Products</span>
-                    <span className="text-[11px] text-slate-500">Complete doors & sanitary inventory</span>
-                  </Link>
-                  <div className="my-1 border-t border-slate-100"></div>
-                  <Link
-                    href="/shop?category=interior-doors"
-                    onClick={() => setProductsDropdownOpen(false)}
-                    className="flex flex-col px-4 py-2 hover:bg-slate-50 transition-colors"
-                  >
-                    <span className="text-xs font-bold text-[#003296]">Foreign HDF Room Doors</span>
-                    <span className="text-[11px] text-slate-500">Acoustic, pre-hung luxury timber sets</span>
-                  </Link>
-                  <Link
-                    href="/shop?category=security-doors"
-                    onClick={() => setProductsDropdownOpen(false)}
-                    className="flex flex-col px-4 py-2 hover:bg-slate-50 transition-colors"
-                  >
-                    <span className="text-xs font-bold text-slate-900">Security Steel Doors</span>
-                    <span className="text-[11px] text-slate-500">Bullet proof, copper, Turkish armored</span>
-                  </Link>
-                  <Link
-                    href="/shop?category=bathroom-doors"
-                    onClick={() => setProductsDropdownOpen(false)}
-                    className="flex flex-col px-4 py-2 hover:bg-slate-50 transition-colors"
-                  >
-                    <span className="text-xs font-bold text-slate-900">Waterproof Bathroom Doors</span>
-                    <span className="text-[11px] text-slate-500">WPC & aluminium composite flush doors</span>
-                  </Link>
-                  <Link
-                    href="/shop?category=sanitary-fittings"
-                    onClick={() => setProductsDropdownOpen(false)}
-                    className="flex flex-col px-4 py-2 hover:bg-slate-50 transition-colors"
-                  >
-                    <span className="text-xs font-bold text-slate-900">Sanitary Wares & Fittings</span>
-                    <span className="text-[11px] text-slate-500">Rimless WCs, luxury vanity basins, sinks</span>
-                  </Link>
+                  <div className="grid grid-cols-2 gap-5 divide-x divide-slate-100">
+                    {/* Category A: Doors & Entrances */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#003296]">
+                          Category A: Doors
+                        </span>
+                        <Link
+                          href="/shop?category=doors"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="text-[10px] font-bold text-slate-400 hover:text-[#003296]"
+                        >
+                          View All
+                        </Link>
+                      </div>
+
+                      <div className="space-y-1 text-xs">
+                        <Link
+                          href="/shop?category=hdf-doors"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="block p-2 rounded-xl hover:bg-blue-50/70 transition-colors group"
+                        >
+                          <span className="font-bold text-slate-900 group-hover:text-[#003296] block">
+                            Foreign HDF Luxury Doors
+                          </span>
+                          <span className="text-[11px] text-slate-500">
+                            Acoustic room doors & pre-hung complete sets
+                          </span>
+                        </Link>
+
+                        <Link
+                          href="/shop?category=security-doors"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="block p-2 rounded-xl hover:bg-blue-50/70 transition-colors group"
+                        >
+                          <span className="font-bold text-slate-900 group-hover:text-[#003296] block">
+                            Security & Armoured Doors
+                          </span>
+                          <span className="text-[11px] text-slate-500">
+                            Bulletproof, Israeli multi-bolt & Juihua
+                          </span>
+                        </Link>
+
+                        <Link
+                          href="/shop?category=luxury-doors"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="block p-2 rounded-xl hover:bg-blue-50/70 transition-colors group"
+                        >
+                          <span className="font-bold text-slate-900 group-hover:text-[#003296] block">
+                            Luxury Cast & Italian Copper
+                          </span>
+                          <span className="text-[11px] text-slate-500">
+                            Bible design cast & Italian architectural copper
+                          </span>
+                        </Link>
+
+                        <Link
+                          href="/shop?category=interior-doors"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="block p-2 rounded-xl hover:bg-blue-50/70 transition-colors group"
+                        >
+                          <span className="font-bold text-slate-900 group-hover:text-[#003296] block">
+                            Watson & American Panel Doors
+                          </span>
+                          <span className="text-[11px] text-slate-500">
+                            Standard 3ft & grand 4ft room entrances
+                          </span>
+                        </Link>
+
+                        <Link
+                          href="/shop?category=bathroom-doors"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="block p-2 rounded-xl hover:bg-blue-50/70 transition-colors group"
+                        >
+                          <span className="font-bold text-slate-900 group-hover:text-[#003296] block">
+                            Waterproof Bathroom Doors
+                          </span>
+                          <span className="text-[11px] text-slate-500">
+                            Moisture-proof composite flush doors
+                          </span>
+                        </Link>
+                      </div>
+                    </div>
+
+                    {/* Category B: Sanitary Ware & Fittings */}
+                    <div className="space-y-3 pl-5">
+                      <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#003296]">
+                          Category B: Sanitary
+                        </span>
+                        <Link
+                          href="/shop?category=sanitary-fittings"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="text-[10px] font-bold text-slate-400 hover:text-[#003296]"
+                        >
+                          View All
+                        </Link>
+                      </div>
+
+                      <div className="space-y-1 text-xs">
+                        <Link
+                          href="/shop?category=sanitary-fittings&sub=wc"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="block p-2 rounded-xl hover:bg-blue-50/70 transition-colors group"
+                        >
+                          <span className="font-bold text-slate-900 group-hover:text-[#003296] block">
+                            Water Closets & Toilets
+                          </span>
+                          <span className="text-[11px] text-slate-500">
+                            Executive Gold, England suites, Pro WC series
+                          </span>
+                        </Link>
+
+                        <Link
+                          href="/shop?category=sanitary-fittings&sub=basins"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="block p-2 rounded-xl hover:bg-blue-50/70 transition-colors group"
+                        >
+                          <span className="font-bold text-slate-900 group-hover:text-[#003296] block">
+                            Wash Hand Basins
+                          </span>
+                          <span className="text-[11px] text-slate-500">
+                            Dining basin suites, Plain India & vanity basins
+                          </span>
+                        </Link>
+
+                        <Link
+                          href="/shop?category=sanitary-fittings&sub=showers"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="block p-2 rounded-xl hover:bg-blue-50/70 transition-colors group"
+                        >
+                          <span className="font-bold text-slate-900 group-hover:text-[#003296] block">
+                            Showers & Enclosures
+                          </span>
+                          <span className="text-[11px] text-slate-500">
+                            Cubicle shower rooms & power shower towers
+                          </span>
+                        </Link>
+
+                        <Link
+                          href="/shop?category=sanitary-fittings&sub=sinks"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="block p-2 rounded-xl hover:bg-blue-50/70 transition-colors group"
+                        >
+                          <span className="font-bold text-slate-900 group-hover:text-[#003296] block">
+                            Kitchen Sinks & Brassware
+                          </span>
+                          <span className="text-[11px] text-slate-500">
+                            Italian Gold, Pioneer special, Big Brother taps
+                          </span>
+                        </Link>
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-100">
+                        <Link
+                          href="/shop"
+                          onClick={() => setProductsDropdownOpen(false)}
+                          className="w-full py-2 px-3 bg-slate-50 hover:bg-blue-50 text-[#003296] font-bold text-xs rounded-xl flex items-center justify-between transition-colors"
+                        >
+                          <span>Explore All 26+ Inventory Items</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -163,14 +287,6 @@ export default function Header() {
                 </span>
               )}
             </button>
-
-            {/* Admin text link (Desktop) */}
-            <Link
-              href="/admin"
-              className="hidden md:inline-block text-xs font-bold text-slate-600 hover:text-[#003296] px-2 py-1 transition-colors"
-            >
-              Admin
-            </Link>
 
             {/* WhatsApp Direct Order Pill (Desktop & Tablet — Duevy Style) */}
             <a

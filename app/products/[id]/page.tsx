@@ -200,7 +200,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <div>
                 <span className="text-xs text-slate-500 font-medium block">Price:</span>
                 <div className="flex items-baseline space-x-2">
-                  {product.price && product.price > 0 ? (
+                  {product.priceOnRequest ? (
+                    <span className="text-2xl sm:text-3xl font-extrabold text-[#003296]">
+                      Price on Request
+                    </span>
+                  ) : product.price && product.price > 0 ? (
                     <>
                       <span className="text-2xl sm:text-3xl font-extrabold text-[#003296]">
                         ₦{product.price.toLocaleString()}
@@ -212,8 +216,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                       )}
                     </>
                   ) : (
-                    <span className="text-2xl sm:text-3xl font-extrabold text-[#003296]">
-                      Price on Request
+                    <span className="text-xl sm:text-2xl font-extrabold text-slate-700">
+                      Contact Depot for Price
                     </span>
                   )}
                 </div>
@@ -327,27 +331,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 )}
               </div>
             </div>
-
-            {/* CAC Trust Trigger */}
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span className="flex items-center space-x-1.5">
-                <ShieldCheck className="w-4 h-4 text-[#003296]" />
-                <span>Verified Legal Entity: <strong>{settings.parentCompany}</strong></span>
-              </span>
-              <button
-                onClick={() => setCacModalOpen(true)}
-                className="text-[#003296] font-semibold underline hover:text-[#092b7c]"
-              >
-                CAC Certificate
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* Technical Specifications Table */}
+        {/* Detailed Specifications Table */}
         <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 space-y-6">
           <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-lg font-bold text-slate-900">Technical Specifications & Engineering</h2>
+            <h2 className="text-lg font-bold text-slate-900">Detailed Specs</h2>
             <p className="text-xs text-slate-500">
               Factory specifications for this model supplied by CFrank Enterprise.
             </p>
@@ -364,7 +354,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
           {/* Full Long Description */}
           <div className="pt-4 border-t border-slate-100 space-y-2">
-            <h3 className="text-sm font-bold text-slate-900">Architectural Description & Application</h3>
+            <h3 className="text-sm font-bold text-slate-900">Product Description</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               {product.description}
             </p>

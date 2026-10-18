@@ -78,7 +78,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Price & Action Row */}
         <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
           <div>
-            {product.price && product.price > 0 ? (
+            {product.priceOnRequest ? (
+              <span className="text-xs font-bold text-[#003296] block">
+                Price on Request
+              </span>
+            ) : product.price && product.price > 0 ? (
               <div className="flex items-baseline space-x-1.5">
                 <span className="text-xs sm:text-sm font-extrabold text-slate-950">
                   ₦{product.price.toLocaleString()}
@@ -90,8 +94,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                 )}
               </div>
             ) : (
-              <span className="text-xs font-bold text-[#003296] block">
-                Price on Request
+              <span className="text-xs font-bold text-slate-700 block">
+                Contact Depot
               </span>
             )}
             <span className="text-[10px] text-slate-400 block mt-0.5">

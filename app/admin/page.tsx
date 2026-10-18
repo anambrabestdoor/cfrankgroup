@@ -62,8 +62,10 @@ export default function AdminPage() {
   const [formName, setFormName] = useState("");
   const [formSlug, setFormSlug] = useState("");
   const [formCategory, setFormCategory] = useState<DoorProduct["category"]>("security-doors");
-  const [formPrice, setFormPrice] = useState<number>(450000);
-  const [formOriginalPrice, setFormOriginalPrice] = useState<number>(500000);
+  const [formGroup, setFormGroup] = useState<"doors" | "sanitary">("doors");
+  const [formSubcategory, setFormSubcategory] = useState<string>("Foreign HDF Luxury Doors");
+  const [formPrice, setFormPrice] = useState<number>(185000);
+  const [formOriginalPrice, setFormOriginalPrice] = useState<number>(210000);
   const [formPriceOnRequest, setFormPriceOnRequest] = useState(false);
   const [formImage, setFormImage] = useState("/products/bullet-proof-door.jpeg");
   const [formBadge, setFormBadge] = useState("In Stock");
@@ -166,11 +168,13 @@ export default function AdminPage() {
     setEditingId(null);
     setFormName("");
     setFormSlug("");
-    setFormCategory("security-doors");
-    setFormPrice(350000);
-    setFormOriginalPrice(380000);
+    setFormCategory("hdf-doors");
+    setFormGroup("doors");
+    setFormSubcategory("Foreign HDF Luxury Doors");
+    setFormPrice(185000);
+    setFormOriginalPrice(210000);
     setFormPriceOnRequest(false);
-    setFormImage("/products/bullet-proof-door.jpeg");
+    setFormImage("/products/interior-luxury-foreign-hdf-door.jpeg");
     setFormBadge("In Stock");
     setFormStock(15);
     setFormStockStatus("in_stock");
@@ -179,9 +183,9 @@ export default function AdminPage() {
     setFormJijiUrl("https://jiji.ng/shop/anambrabestdoor");
     setFormActive(true);
     setFormSpecs({
-      Material: "Steel / Engineered Wood",
-      "Steel Gauge": "1.5mm - 2.0mm",
+      Material: "Foreign High-Density Board",
       Dimensions: "3ft x 7ft",
+      Application: "Interior Room / Suite"
     });
     setFocusKeyphrase("");
     setSeoTitle("");
@@ -195,8 +199,10 @@ export default function AdminPage() {
     setFormName(prod.name);
     setFormSlug(prod.slug);
     setFormCategory(prod.category);
-    setFormPrice(prod.price);
-    setFormOriginalPrice(prod.originalPrice);
+    setFormGroup(prod.group || (prod.category === "sanitary-fittings" ? "sanitary" : "doors"));
+    setFormSubcategory(prod.subcategory || "");
+    setFormPrice(prod.price || 0);
+    setFormOriginalPrice(prod.originalPrice || 0);
     setFormPriceOnRequest(prod.priceOnRequest || false);
     setFormImage(prod.image);
     setFormBadge(prod.badge || "");
@@ -245,10 +251,12 @@ export default function AdminPage() {
       id: editingId || `door-${Date.now()}`,
       slug: formSlug || formName.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       name: formName,
+      group: formGroup,
+      subcategory: formSubcategory,
       category: formCategory,
       categoryLabel,
-      price: Number(formPrice),
-      originalPrice: Number(formOriginalPrice) || Number(formPrice),
+      price: formPriceOnRequest ? 0 : Number(formPrice),
+      originalPrice: formPriceOnRequest ? 0 : (Number(formOriginalPrice) || Number(formPrice)),
       priceOnRequest: formPriceOnRequest,
       image: formImage || "/products/bullet-proof-door.jpeg",
       gallery: [formImage || "/products/bullet-proof-door.jpeg"],
@@ -930,39 +938,107 @@ export default function AdminPage() {
                     Pricing & Inventory
                   </h3>
 
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Selling Price (₦) - Leave blank/0 for "Price on Request"
-                    </label>
-                    <input
-                      type="number"
-                      value={formPrice || ""}
-                      onChange={(e) => setFormPrice(Number(e.target.value) || 0)}
-                      placeholder="0 (Price on Request)"
-                      className="w-full px-3 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Original / Regular Price (₦)
-                    </label>
-                    <input
-                      type="number"
-                      value={formOriginalPrice}
-                      onChange={(e) => setFormOriginalPrice(Number(e.target.value))}
-                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
-                    />
-                    {discountPercent > 0 && (
-                      <span className="text-[10px] text-emerald-600 font-bold mt-1 block">
-                        Displays as {discountPercent}% discount
+                  {/* Price on Request Explicit Option */}
+                  <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-200/80 space-y-1">
+                    <label className="flex items-center space-x-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formPriceOnRequest}
+                        onChange={(e) => setFormPriceOnRequest(e.target.checked)}
+                        className="w-4 h-4 text-[#003296] rounded border-slate-300 focus:ring-[#003296]"
+                      />
+                      <span className="text-xs font-bold text-slate-900">
+                        Price on Request (Quote Option)
                       </span>
-                    )}
+                    </label>
+                    <p className="text-[11px] text-slate-500 pl-6.5 leading-snug">
+                      When checked, numeric price is hidden on store and customers click "Inquire on WhatsApp" for live depot quotation.
+                    </p>
                   </div>
+
+                  {!formPriceOnRequest && (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          Selling Price (₦)
+                        </label>
+                        <input
+                          type="number"
+                          value={formPrice || ""}
+                          onChange={(e) => setFormPrice(Number(e.target.value) || 0)}
+                          placeholder="e.g. 185000"
+                          className="w-full px-3 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          Original / Regular Price (₦)
+                        </label>
+                        <input
+                          type="number"
+                          value={formOriginalPrice || ""}
+                          onChange={(e) => setFormOriginalPrice(Number(e.target.value) || 0)}
+                          placeholder="e.g. 210000"
+                          className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                        />
+                        {discountPercent > 0 && (
+                          <span className="text-[10px] text-emerald-600 font-bold mt-1 block">
+                            Displays as {discountPercent}% discount
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   <div>
                     <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Category *
+                      Product Group *
+                    </label>
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormGroup("doors");
+                          if (formCategory === "sanitary-fittings") setFormCategory("hdf-doors");
+                        }}
+                        className={`py-1.5 px-3 rounded-lg text-xs font-bold text-center border transition-colors cursor-pointer ${
+                          formGroup === "doors"
+                            ? "bg-[#003296] text-white border-[#003296]"
+                            : "bg-slate-50 text-slate-700 border-slate-200"
+                        }`}
+                      >
+                        Category A: Doors
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormGroup("sanitary");
+                          setFormCategory("sanitary-fittings");
+                        }}
+                        className={`py-1.5 px-3 rounded-lg text-xs font-bold text-center border transition-colors cursor-pointer ${
+                          formGroup === "sanitary"
+                            ? "bg-[#003296] text-white border-[#003296]"
+                            : "bg-slate-50 text-slate-700 border-slate-200"
+                        }`}
+                      >
+                        Category B: Sanitary
+                      </button>
+                    </div>
+
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Subcategory / Classification
+                    </label>
+                    <input
+                      type="text"
+                      value={formSubcategory}
+                      onChange={(e) => setFormSubcategory(e.target.value)}
+                      placeholder="e.g. Foreign HDF Luxury Doors"
+                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl mb-3"
+                    />
+
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Category Route Filter *
                     </label>
                     <select
                       value={formCategory}

@@ -17,6 +17,7 @@ export interface SiteSettings {
   cacCertificateUrl: string;
   cacPage2Url: string;
   instagramUrl: string;
+  facebookUrl: string;
   jijiShopUrl: string;
   githubUrl: string;
   whatsappInquiryTemplate: string;
@@ -43,6 +44,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   cacCertificateUrl: "/cac-status-report-page1.jpeg",
   cacPage2Url: "/cac-proprietor-page2.jpeg",
   instagramUrl: "https://www.instagram.com/anambrabestdoor/",
+  facebookUrl: "https://www.facebook.com/Anambrabestdoor",
   jijiShopUrl: "https://jiji.ng/shop/anambrabestdoor",
   githubUrl: "https://github.com/anambrabestdoor/anambrabestdoor",
   whatsappInquiryTemplate: "Hello CFrank Enterprise, I would like to inquire about the current price and stock availability for [Door Name] (Size: [Size], Quantity: [Qty]).",
