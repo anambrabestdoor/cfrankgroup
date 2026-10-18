@@ -221,8 +221,26 @@ export default function Footer() {
 
         {/* Bottom Attribution Line (Duevy Style) */}
         <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
-          <div>
-            © {new Date().getFullYear()} Anambra Best Door. Powered by {settings.parentCompany} (CAC BN: {settings.cacNumber}).
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span>© 2026 Anambra Best Door. Powered by CFrank Enterprise</span>
+            <span className="text-slate-300">|</span>
+            <a
+              href="https://kator.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#003296] transition-colors hover:underline"
+            >
+              designed and developed
+            </a>
+            <span>by</span>
+            <a
+              href="https://usemadar.top"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-700 hover:text-[#003296] font-semibold transition-colors hover:underline"
+            >
+              Madar
+            </a>
           </div>
           <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <span>Building Material International Market Ogidi</span>
