@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       title: title || "Customer Review",
       comment,
       verified: verified !== false,
-      productName: productName || "ANUA Product",
+      productName: productName || "Anambra Best Door Product",
     });
 
     return NextResponse.json(review, { status: 201 });

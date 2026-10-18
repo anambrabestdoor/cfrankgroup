@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
       const derivedName = email.split("@")[0];
       const name = derivedName.charAt(0).toUpperCase() + derivedName.slice(1);
       
-      // Determine role: Elijah's email is always admin, as configured in DB triggers
+      // Determine role: verified admin emails
       const isSystemAdmin = 
-        email.toLowerCase() === "help.anuaglobal@gmail.com" || 
-        email.toLowerCase() === "admin@anua.com";
+        email.toLowerCase() === "elijahkator180@gmail.com" || 
+        email.toLowerCase() === "admin@anambrabestdoor.com";
 
       user = await db.createUser({
         email: email.toLowerCase(),

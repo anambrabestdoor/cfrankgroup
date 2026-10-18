@@ -11,7 +11,7 @@ interface CloudinaryUploaderProps {
 
 export default function CloudinaryUploader({
   onUploadSuccess,
-  folder = 'anua_products',
+  folder = 'cfrank_products',
   currentImageUrl = '',
 }: CloudinaryUploaderProps) {
   const [uploading, setUploading] = useState(false);

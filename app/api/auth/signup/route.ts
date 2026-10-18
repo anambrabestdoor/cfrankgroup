@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Determine role based on email matches
-    const role = (cleanEmail === "help.anuaglobal@gmail.com" || cleanEmail === "admin@anua.com") 
+    const role = (cleanEmail === "elijahkator180@gmail.com" || cleanEmail === "admin@anambrabestdoor.com") 
       ? "admin" 
       : "user";
 

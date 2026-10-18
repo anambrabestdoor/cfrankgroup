@@ -38,7 +38,7 @@ export default function FAQPage() {
     {
       id: "faq-6",
       question: "Is CFrank Enterprise legally registered in Nigeria?",
-      answer: "Yes. CFrank Enterprise is registered with the Corporate Affairs Commission (CAC BN: 3489210) under the Companies and Allied Matters Act. You can inspect our certificate directly on this website or verify on search.cac.gov.ng.",
+      answer: `Yes. CFrank Enterprise is registered with the Corporate Affairs Commission (CAC BN: ${settings.cacNumber}) under the Companies and Allied Matters Act. You can inspect our certificate directly on this website or verify on search.cac.gov.ng.`,
     },
   ];
 

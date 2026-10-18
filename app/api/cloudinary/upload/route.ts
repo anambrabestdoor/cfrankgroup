@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Upload to Cloudinary or fallback to base64 data URL
-    const uploadResult = await uploadImageToCloudinary(fileBase64, "anua_payment_proofs");
+    const uploadResult = await uploadImageToCloudinary(fileBase64, "cfrank_payment_proofs");
 
     return NextResponse.json({
       success: true,

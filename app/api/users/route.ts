@@ -43,8 +43,8 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Email is required." }, { status: 400 });
     }
 
-    // Check that we aren't deleting Elijah or admin@anua.com
-    if (email.toLowerCase() === "help.anuaglobal@gmail.com" || email.toLowerCase() === "admin@anua.com") {
+    // Check that we aren't deleting the protected super administrator
+    if (email.toLowerCase() === "elijahkator180@gmail.com" || email.toLowerCase() === "admin@anambrabestdoor.com") {
       return NextResponse.json({ error: "Cannot delete the super administrator." }, { status: 403 });
     }
 
@@ -81,7 +81,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     // Protect the primary superuser from demotion
-    const PROTECTED = ["help.anuaglobal@gmail.com", "admin@anua.com"];
+    const PROTECTED = ["elijahkator180@gmail.com", "admin@anambrabestdoor.com"];
     if (role === "user" && PROTECTED.includes(email.toLowerCase())) {
       return NextResponse.json({ error: "Cannot demote the protected super administrator." }, { status: 403 });
     }
