@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useApp } from "@/app/context/AppContext";
-import { X, CheckCircle, ExternalLink, ShieldCheck, Building2, Copy, Check } from "lucide-react";
+import { X, CheckCircle, ExternalLink, BadgeCheck, Building2, Copy, Check } from "lucide-react";
 
 export default function CacVerificationModal() {
   const { cacModalOpen, setCacModalOpen, settings } = useApp();
@@ -38,7 +38,7 @@ export default function CacVerificationModal() {
         <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-3.5 border-b border-slate-100 bg-slate-50/90 gap-2">
           <div className="flex items-center space-x-2.5 min-w-0">
             <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-[#003296] shrink-0">
-              <ShieldCheck className="w-4 h-4" />
+              <BadgeCheck className="w-4 h-4" />
             </div>
             <div className="min-w-0">
               <h2 id="cac-modal-title" className="text-xs sm:text-base font-bold text-slate-900 leading-tight truncate">

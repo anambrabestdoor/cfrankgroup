@@ -15,7 +15,7 @@ import {
   AlertCircle,
   Globe,
   Settings,
-  ShieldCheck,
+  BadgeCheck,
   Search,
   ArrowLeft,
   Save,
@@ -30,7 +30,6 @@ import {
   MapPin,
   Phone,
   MessageSquare,
-  Sparkles,
   TrendingUp,
   X,
   Copy,
@@ -648,7 +647,7 @@ export default function AdminPage() {
                 : "border-transparent text-slate-500 hover:text-slate-800"
             }`}
           >
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <BadgeCheck className="w-4 h-4 text-emerald-600" />
             <span>CAC Compliance ({settings.cacNumber})</span>
           </button>
         </div>
@@ -833,7 +832,7 @@ export default function AdminPage() {
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div className="flex items-center space-x-2">
-                      <Sparkles className="w-4 h-4 text-emerald-600" />
+                      <Globe className="w-4 h-4 text-[#003296]" />
                       <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                         Search Engine Optimization (Yoast / Rank Math Standard)
                       </h3>
@@ -1008,7 +1007,7 @@ export default function AdminPage() {
                             : "bg-slate-50 text-slate-700 border-slate-200"
                         }`}
                       >
-                        Category A: Doors
+                        Doors & Entrances
                       </button>
                       <button
                         type="button"
@@ -1022,7 +1021,7 @@ export default function AdminPage() {
                             : "bg-slate-50 text-slate-700 border-slate-200"
                         }`}
                       >
-                        Category B: Sanitary
+                        Sanitary Wares & Fittings
                       </button>
                     </div>
 

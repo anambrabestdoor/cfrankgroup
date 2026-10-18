@@ -6,7 +6,7 @@ import Image from "next/image";
 import { DOOR_PRODUCTS } from "@/app/data/doorsData";
 import { useApp } from "@/app/context/AppContext";
 import {
-  ShieldCheck,
+  Lock,
   Truck,
   MessageSquare,
   ShoppingCart,
@@ -171,7 +171,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             {/* Reassurance Badge Bar below image */}
             <div className="grid grid-cols-2 gap-2 pt-2 text-[11px] text-slate-600">
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center space-x-2">
-                <ShieldCheck className="w-4 h-4 text-[#003296] shrink-0" />
+                <Lock className="w-4 h-4 text-[#003296] shrink-0" />
                 <span>Heavy-Gauge Tested Steel</span>
               </div>
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center space-x-2">

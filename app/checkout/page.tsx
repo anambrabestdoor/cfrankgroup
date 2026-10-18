@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/app/context/AppContext";
-import { ArrowLeft, MessageSquare, ShoppingCart, ShieldCheck, MapPin } from "lucide-react";
+import { ArrowLeft, MessageSquare, ShoppingCart, MapPin } from "lucide-react";
 import { buildWhatsAppOrderUrl } from "@/lib/settings";
 
 export default function CheckoutPage() {

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useApp } from "@/app/context/AppContext";
-import { X, ChevronDown, ShoppingCart, MessageSquare, Instagram, Store, ShieldCheck } from "lucide-react";
+import { X, ChevronDown, ShoppingCart, MessageSquare, Instagram, Store, BadgeCheck } from "lucide-react";
 
 export default function MobileMenuDrawer() {
   const { mobileMenuOpen, setMobileMenuOpen, setCacModalOpen, settings, cartCount, setCartOpen } = useApp();
@@ -74,7 +74,7 @@ export default function MobileMenuDrawer() {
               <div className="mt-3 pl-3 border-l-2 border-[#003296]/30 space-y-3 pt-1 text-xs sm:text-sm">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#003296] block mb-1">
-                    Category A: Doors
+                    Doors & Entrances
                   </span>
                   <div className="space-y-1.5 pl-2 text-slate-600">
                     <Link
@@ -117,7 +117,7 @@ export default function MobileMenuDrawer() {
 
                 <div className="pt-2">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#003296] block mb-1">
-                    Category B: Sanitary Wares
+                    Sanitary Wares & Fittings
                   </span>
                   <div className="space-y-1.5 pl-2 text-slate-600">
                     <Link
@@ -157,7 +157,7 @@ export default function MobileMenuDrawer() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="inline-block py-1.5 px-3 bg-blue-50 text-[#003296] font-bold rounded-lg text-xs"
                   >
-                    View All 28 Catalogue Items →
+                    View All Products →
                   </Link>
                 </div>
               </div>
@@ -229,7 +229,7 @@ export default function MobileMenuDrawer() {
             }}
             className="inline-flex items-center space-x-1.5 text-[11px] text-slate-500 hover:text-[#003296]"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-[#003296]" />
+            <BadgeCheck className="w-3.5 h-3.5 text-[#003296]" />
             <span>CAC BN: {settings.cacNumber}</span>
             <span className="underline font-semibold text-[#003296]">View Extract</span>
           </button>

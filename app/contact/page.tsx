@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useApp } from "@/app/context/AppContext";
-import { Mail, Phone, MapPin, Clock, MessageSquare, CheckCircle, ShieldCheck, Store, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, MessageSquare, CheckCircle, BadgeCheck, Store, Send } from "lucide-react";
 
 export default function ContactPage() {
   const { settings, setCacModalOpen } = useApp();
@@ -112,7 +112,7 @@ export default function ContactPage() {
                   onClick={() => setCacModalOpen(true)}
                   className="py-2 px-3 bg-white border border-slate-200 hover:border-[#003296] rounded-xl text-[11px] font-semibold text-[#003296] flex items-center space-x-1.5 transition-colors cursor-pointer"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#003296]" />
+                  <BadgeCheck className="w-3.5 h-3.5 text-[#003296]" />
                   <span>CAC BN: {settings.cacNumber} (Verify)</span>
                 </button>
                 <a

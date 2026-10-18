@@ -4,7 +4,7 @@ import React, { use } from "react";
 import Link from "next/link";
 import ProductCard from "@/app/components/ProductCard";
 import { DOOR_PRODUCTS, CATEGORIES, DoorProduct } from "@/app/data/doorsData";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 interface CollectionMeta {
   title: string;

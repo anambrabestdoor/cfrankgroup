@@ -39,7 +39,7 @@ export const CATEGORIES = [
 export const CATEGORY_GROUPS = [
   {
     id: "doors",
-    title: "Category A: Premium Doors & Architectural Entrances",
+    title: "Doors & Entrances",
     subcategories: [
       { id: "foreign-hdf", name: "Foreign HDF Luxury Doors", filterCategory: "hdf-doors" },
       { id: "security-steel", name: "Security & Bulletproof Doors", filterCategory: "security-doors" },
@@ -50,7 +50,7 @@ export const CATEGORY_GROUPS = [
   },
   {
     id: "sanitary",
-    title: "Category B: Luxury Sanitary Ware & Bathroom Fittings",
+    title: "Sanitary Wares & Fittings",
     subcategories: [
       { id: "wc", name: "Water Closets & Toilets", filterCategory: "sanitary-fittings" },
       { id: "basins", name: "Wash Hand Basins", filterCategory: "sanitary-fittings" },

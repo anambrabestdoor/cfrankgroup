@@ -1,76 +1,112 @@
 "use client";
 
 import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import CartDrawer from "../components/CartDrawer";
-import SearchOverlay from "../components/SearchOverlay";
-import { Sparkles, Calendar, User, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { Calendar, ArrowRight, BookOpen } from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 const ARTICLES = [
   {
-    id: 1,
-    title: "How to Build a Glass Skin Routine with Heartleaf & PDRN",
-    date: "July 26, 2026",
-    author: "ANUA Skincare Lab",
-    excerpt: "Learn how pairing 77% Heartleaf extract with low-molecular Salmon PDRN restores skin barrier balance and creates an instant, long-lasting glass-skin glow.",
-    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
+    id: "turkish-vs-israeli-doors",
+    title: "Turkish Armoured Steel Doors vs. Israeli Security Doors: What Nigerian Builders Must Know",
+    date: "October 14, 2026",
+    category: "Security Doors",
+    excerpt: "A direct comparison of gauge thickness, rockwool thermal acoustic core insulation, multi-point deadbolt locks, and exterior powder-coat durability in Nigerian weather.",
+    image: "/products/turkish-luxury-door.jpg",
   },
   {
-    id: 2,
-    title: "The Ultimate Guide to Fading Post-Acne Dark Spots",
-    date: "July 20, 2026",
-    author: "Dr. Sarah Kim, Dermatologist",
-    excerpt: "Discover why 10% Niacinamide + 4% Tranexamic Acid is the dermatologist-recommended duo for hyperpigmentation and acne scars.",
-    image: "https://images.unsplash.com/photo-1608248597260-2e4a643e2264?auto=format&fit=crop&w=800&q=80",
+    id: "standard-door-sizes-nigeria",
+    title: "Standard Door Rough Openings in Nigeria: 3ft Single Leaf vs. 4ft & 5ft Double Leaf",
+    date: "September 28, 2026",
+    category: "Site Measurements",
+    excerpt: "Prevent costly masonry rework on your site. Accurate blockwork rough opening specifications for Turkish steel frames, Watson room doors, and luxury entrances.",
+    image: "/products/security-steel-door.jpg",
   },
   {
-    id: 3,
-    title: "Why Double Cleansing is Essential for Clogged Pores",
-    date: "July 14, 2026",
-    author: "Kendall's Beauty Team",
-    excerpt: "How oil cleansing dissolves sebum without clogging pores or stripping natural moisture.",
-    image: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800&q=80",
+    id: "waterproof-wpc-vs-wood-doors",
+    title: "Why Normal Wooden Doors Swell in Restrooms and Why 100% Waterproof WPC is Essential",
+    date: "September 15, 2026",
+    category: "Bathroom Doors",
+    excerpt: "How high humidity and direct shower splashes ruin untreated HDF, and why polymer-bonded composite doors provide lifelong termite and moisture immunity.",
+    image: "/products/waterproof-bathroom-door.jpg",
+  },
+  {
+    id: "sanitary-ware-inspection-guide",
+    title: "How to Inspect Water Closets, Ceramic Basins, and Brassware Before Offloading on Site",
+    date: "August 30, 2026",
+    category: "Sanitary Wares",
+    excerpt: "Key checklists for building contractors: siphon jet dual-flush testing, ceramic glaze hairline checks, and solid brass cartridge verification for long-lasting plumbing.",
+    image: "/products/luxury-toilet-wc.jpg",
   },
 ];
 
 export default function BlogPage() {
-  return (
-    <div className="min-h-screen bg-[#FAF9F6] text-black">
-      <Header />
-      <CartDrawer />
-      <SearchOverlay />
+  const { settings } = useApp();
 
-      <div className="bg-black text-white py-16 px-6 text-center">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-2">ANUA Journal</span>
-        <h1 className="font-serif text-4xl sm:text-5xl font-bold mb-3">Blog & Skincare Tips</h1>
-        <p className="text-sm text-gray-300 max-w-lg mx-auto">
-          Expert insights, science-backed formulation breakdowns, and glass-skin routines.
-        </p>
+  return (
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <div className="bg-[#0A192F] text-white py-14 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
+        <div className="max-w-3xl mx-auto space-y-3">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-blue-400 block">
+            Construction & Architecture Advice
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+            Depot Trade Notes & Builder Guides
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
+            Practical buying guides, door installation tips, and sanitary ware specifications from our depot team at Maraim Plaza, Ogidi.
+          </p>
+        </div>
       </div>
 
-      <main className="max-w-6xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {ARTICLES.map((article) => (
-            <article key={article.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-md transition-shadow">
-              <div className="aspect-video bg-gray-100 overflow-hidden">
-                <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+            <article
+              key={article.id}
+              className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs hover:border-[#003296] transition-colors flex flex-col"
+            >
+              <div className="relative aspect-video bg-slate-100 overflow-hidden">
+                <Image
+                  src={article.image}
+                  alt={article.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <span className="absolute top-3 left-3 px-2.5 py-1 bg-slate-900/85 text-white text-[10px] font-bold uppercase tracking-wider rounded-md">
+                  {article.category}
+                </span>
               </div>
-              <div className="p-6 space-y-3">
-                <div className="flex items-center gap-3 text-xs text-gray-400">
-                  <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{article.date}</span>
+              <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{article.date}</span>
+                  </div>
+                  <h2 className="font-bold text-base sm:text-lg text-slate-900 leading-snug">
+                    {article.title}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    {article.excerpt}
+                  </p>
                 </div>
-                <h3 className="font-serif font-bold text-lg text-black hover:underline">{article.title}</h3>
-                <p className="text-xs text-gray-600 leading-relaxed">{article.excerpt}</p>
+
+                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <Link
+                    href={`/shop`}
+                    className="text-xs font-bold text-[#003296] hover:underline flex items-center space-x-1"
+                  >
+                    <span>View Related Depot Products</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
               </div>
             </article>
           ))}
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
-
-

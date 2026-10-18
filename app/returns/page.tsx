@@ -1,50 +1,75 @@
 "use client";
 
 import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import CartDrawer from "../components/CartDrawer";
-import SearchOverlay from "../components/SearchOverlay";
-import { RotateCcw, ShieldCheck, CheckCircle } from "lucide-react";
+import Link from "next/link";
+import { RotateCcw, BadgeCheck, CheckCircle2, MessageSquare } from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 export default function ReturnsPage() {
-  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "help@anuaglobal.com";
+  const { settings } = useApp();
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-black">
-      <Header />
-      <CartDrawer />
-      <SearchOverlay />
-
-      <div className="bg-black text-white py-16 px-6 text-center">
-        <h1 className="font-serif text-4xl font-bold mb-2">30-Day Money Back Guarantee</h1>
-        <p className="text-xs uppercase tracking-widest text-gray-400">Returns & Refund Policy</p>
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <div className="bg-[#0A192F] text-white py-14 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
+        <div className="max-w-3xl mx-auto space-y-3">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-blue-400 block">
+            Quality Assurance & Depot Standards
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+            Inspection, Exchange & Return Policy
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
+            Transparent quality verification from pre-dispatch depot inspection to on-site delivery for all doors and sanitary fittings.
+          </p>
+        </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-6 py-16 space-y-8">
-        <div className="bg-white p-8 border border-gray-200 rounded-2xl space-y-6 text-sm text-gray-700 leading-relaxed">
-          <div className="flex items-center gap-3 text-black font-serif font-bold text-xl pb-4 border-b border-gray-100">
-            <RotateCcw className="w-6 h-6 text-[#2B4636]" />
-            <span>Hassle-Free 30-Day Returns</span>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
+        <div className="bg-white p-6 sm:p-8 border border-slate-200 rounded-2xl space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
+          <div className="flex items-center space-x-2 text-slate-900 font-bold text-base pb-3 border-b border-slate-100">
+            <BadgeCheck className="w-5 h-5 text-[#003296]" />
+            <span>Pre-Dispatch Verification Commitment</span>
           </div>
 
-          <p>
-            At ANUA, we stand behind the quality of our formulations. If you are not completely satisfied with your purchase, you may return unopened or gently used items within <strong>30 days of delivery</strong> for a full refund.
-          </p>
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-bold text-slate-900 mb-1">1. Depot Video & Photo Sign-Off Before Waybill</h4>
+              <p className="text-slate-600 text-xs leading-relaxed">
+                Before any door or sanitary set leaves our Maraim Plaza depot, our warehouse supervisor records clear photos and a short video clip of your exact unit (verifying door hand/swing direction, leaf dimensions, finish, keys, handles, and accessories) and sends it directly to your WhatsApp for approval.
+              </p>
+            </div>
 
-          <h3 className="font-serif font-bold text-base text-black">How to Initiate a Return:</h3>
-          <ol className="list-decimal pl-5 space-y-2">
-            <li>Email customer support at <a href={`mailto:${supportEmail}`} className="font-bold text-black underline">{supportEmail}</a> with your Order ID.</li>
-            <li>Receive a prepaid return shipping label via email.</li>
-            <li>Drop off the package at any authorized carrier location.</li>
-            <li>Refund will be credited to your original payment method within 3-5 business days.</li>
-          </ol>
+            <div>
+              <h4 className="font-bold text-slate-900 mb-1">2. On-Arrival Inspection at Offloading Point</h4>
+              <p className="text-slate-600 text-xs leading-relaxed">
+                Inspect your items immediately upon offloading at the transport park or your building site. If any factory imperfection or transit defect is detected, alert our sales desk immediately before signing the carrier release receipt.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-slate-900 mb-1">3. Exchange Guidelines</h4>
+              <ul className="list-disc pl-5 space-y-1 text-slate-600 text-xs">
+                <li>Items must be in original unwrapped condition, without mortar, cement splashes, or frame modifications.</li>
+                <li>Standard sizes (3ft x 7ft, 4ft x 7ft) can be swapped for alternative opening swings (inward-left vs. inward-right) subject to stock availability.</li>
+                <li>Custom-fabricated orders (special width/height cuts or custom sprayed HDF designs) are made to client architectural schedule and cannot be exchanged once fabricated.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span className="text-xs text-slate-500">Questions about item specifications or swaps?</span>
+            <a
+              href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I have a question regarding item inspection and exchange policy.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2.5 px-4 bg-[#25D366] text-white font-bold text-xs rounded-xl flex items-center space-x-2"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>Contact Sales Desk</span>
+            </a>
+          </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
-
-

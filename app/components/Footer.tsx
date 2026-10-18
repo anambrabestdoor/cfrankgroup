@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useApp } from "@/app/context/AppContext";
-import { ShieldCheck, MapPin, Phone, Mail, Clock, Store, Instagram, MessageSquare } from "lucide-react";
+import { BadgeCheck, MapPin, Phone, Mail, Clock, Store, Instagram, MessageSquare } from "lucide-react";
 
 export default function Footer() {
   const { settings, setCacModalOpen } = useApp();
@@ -33,7 +33,7 @@ export default function Footer() {
 
             {/* CAC Trust Badge */}
             <div className="inline-flex items-center space-x-2 py-2 px-3.5 bg-blue-50/80 border border-blue-200/70 rounded-full text-xs font-semibold text-[#003296]">
-              <ShieldCheck className="w-4 h-4 text-[#003296]" />
+              <BadgeCheck className="w-4 h-4 text-[#003296]" />
               <span>CAC BN: {settings.cacNumber} (CFrank Enterprise)</span>
               <button
                 type="button"

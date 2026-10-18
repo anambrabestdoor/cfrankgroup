@@ -90,7 +90,7 @@ function ShopContent() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* Main Group Switcher Tabs: All / Category A: Doors / Category B: Sanitary */}
+        {/* Main Group Switcher Tabs: All / Doors & Entrances / Sanitary Wares & Fittings */}
         <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
           <button
             onClick={() => {
@@ -103,7 +103,7 @@ function ShopContent() {
                 : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
             }`}
           >
-            All Inventory ({DOOR_PRODUCTS.length})
+            All Products
           </button>
 
           <button
@@ -117,7 +117,7 @@ function ShopContent() {
                 : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
             }`}
           >
-            Category A: Doors & Entrances
+            Doors & Entrances
           </button>
 
           <button
@@ -131,7 +131,7 @@ function ShopContent() {
                 : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
             }`}
           >
-            Category B: Sanitary Wares & Fittings
+            Sanitary Wares & Fittings
           </button>
         </div>
 

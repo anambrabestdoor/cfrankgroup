@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useApp } from "@/app/context/AppContext";
-import { ShieldCheck, Building2, Truck, ExternalLink, MapPin, CheckCircle, MessageSquare } from "lucide-react";
+import { BadgeCheck, Lock, Building2, Truck, ExternalLink, MapPin, CheckCircle, MessageSquare } from "lucide-react";
 
 export default function AboutPage() {
   const { settings, setCacModalOpen } = useApp();
@@ -131,7 +131,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <div className="pt-2 flex items-center space-x-2 text-[11px] text-slate-500">
-                <ShieldCheck className="w-4 h-4 text-[#003296]" />
+                <BadgeCheck className="w-4 h-4 text-[#003296]" />
                 <span>Publicly verifiable on search.cac.gov.ng</span>
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
           <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-2">
             <div className="w-10 h-10 rounded-full bg-blue-50 text-[#003296] mx-auto flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5" />
+              <Lock className="w-5 h-5" />
             </div>
             <h3 className="text-sm font-bold text-slate-900">Tested Heavy Steel</h3>
             <p className="text-xs text-slate-500 leading-relaxed">

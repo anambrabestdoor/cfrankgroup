@@ -5,7 +5,7 @@ import Link from "next/link";
 import Hero from "@/app/components/Hero";
 import { useApp } from "@/app/context/AppContext";
 import {
-  ShieldCheck,
+  BadgeCheck,
   Home,
   HardHat,
   Store,
@@ -21,7 +21,6 @@ import {
   Minus,
   CheckCircle,
   Truck,
-  Sparkles,
 } from "lucide-react";
 
 export default function StorefrontPage() {
@@ -423,7 +422,7 @@ export default function StorefrontPage() {
             <div className="lg:col-span-5 bg-[#003296] text-white rounded-[32px] sm:rounded-[44px] p-8 sm:p-12 flex flex-col justify-between space-y-8 shadow-xl relative overflow-hidden">
               <div className="space-y-6 relative z-10">
                 <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/15 text-blue-100 text-xs font-bold uppercase tracking-wider">
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <BadgeCheck className="w-3.5 h-3.5" />
                   <span>Direct Importer Advantage</span>
                 </div>
 
@@ -458,7 +457,7 @@ export default function StorefrontPage() {
               {/* Card 1 */}
               <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-[24px] sm:rounded-[28px] p-7 sm:p-8 border border-slate-200/80 shadow-xs flex items-start space-x-4">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-5 h-5" />
+                  <BadgeCheck className="w-5 h-5" />
                 </div>
                 <div className="space-y-1">
                   <h3 className="text-lg font-bold text-slate-900 tracking-tight">

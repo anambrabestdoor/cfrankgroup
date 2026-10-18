@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useApp } from "@/app/context/AppContext";
-import { Shield, Home, Droplets, Key, Check, ArrowRight, MessageSquare } from "lucide-react";
+import { Lock, Home, Droplets, Key, Check, ArrowRight, MessageSquare } from "lucide-react";
 import { buildWhatsAppOrderUrl } from "@/lib/settings";
 
 interface OptionItem {
@@ -17,7 +17,7 @@ const DOOR_TYPES: OptionItem[] = [
     id: "security",
     label: "Security Entrance Door",
     description: "Heavy-gauge Turkish & Israeli steel doors for main entrances.",
-    icon: <Shield className="w-5 h-5" />,
+    icon: <Lock className="w-5 h-5" />,
   },
   {
     id: "interior",

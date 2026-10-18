@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useApp } from "@/app/context/AppContext";
-import { ShoppingCart, MessageSquare, ChevronDown, Search, ArrowRight, ShieldCheck } from "lucide-react";
+import { ShoppingCart, MessageSquare, ChevronDown, Search, ArrowRight } from "lucide-react";
 
 export default function Header() {
   const { cartCount, setCartOpen, setMobileMenuOpen, setSearchOpen, settings } = useApp();
@@ -54,7 +54,7 @@ export default function Header() {
           </Link>
 
           {/* 2. Desktop Navigation — Center Floating Pill Capsule (Duevy Style) */}
-          <nav className="hidden lg:flex items-center space-x-1 bg-slate-100/90 p-1.5 rounded-full border border-slate-200/60 shadow-xs">
+          <nav className="hidden lg:flex items-center space-x-1 bg-[#F4F3ED] p-1.5 rounded-full border border-stone-200/60 shadow-2xs">
             <Link
               href="/"
               className="px-4 py-1.5 text-xs font-bold text-slate-700 hover:text-[#003296] hover:bg-white rounded-full transition-all"
@@ -80,11 +80,11 @@ export default function Header() {
                   className="absolute top-full -left-20 mt-2 w-[580px] bg-white rounded-3xl shadow-2xl border border-slate-200/90 p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
                 >
                   <div className="grid grid-cols-2 gap-5 divide-x divide-slate-100">
-                    {/* Category A: Doors & Entrances */}
+                    {/* Doors & Entrances */}
                     <div className="space-y-3">
                       <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
                         <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#003296]">
-                          Category A: Doors
+                          Doors & Entrances
                         </span>
                         <Link
                           href="/shop?category=doors"
@@ -163,11 +163,11 @@ export default function Header() {
                       </div>
                     </div>
 
-                    {/* Category B: Sanitary Ware & Fittings */}
+                    {/* Sanitary Ware & Fittings */}
                     <div className="space-y-3 pl-5">
                       <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
                         <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#003296]">
-                          Category B: Sanitary
+                          Sanitary Wares & Fittings
                         </span>
                         <Link
                           href="/shop?category=sanitary-fittings"
@@ -238,7 +238,7 @@ export default function Header() {
                           onClick={() => setProductsDropdownOpen(false)}
                           className="w-full py-2 px-3 bg-slate-50 hover:bg-blue-50 text-[#003296] font-bold text-xs rounded-xl flex items-center justify-between transition-colors"
                         >
-                          <span>Explore All 26+ Inventory Items</span>
+                          <span>Explore All Products</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
@@ -301,11 +301,11 @@ export default function Header() {
               <span>WhatsApp Order</span>
             </a>
 
-            {/* Duevy-Style 2-Line Minimalist Circular Menu Toggle (=) */}
+            {/* Duevy-Style 2-Line Minimalist Circular Menu Toggle (=) — strictly mobile/tablet only */}
             <button
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open navigation menu"
-              className="w-10 h-10 rounded-full bg-slate-100/90 hover:bg-slate-200 text-slate-900 flex flex-col items-center justify-center space-y-1.5 transition-colors cursor-pointer"
+              className="lg:hidden w-10 h-10 rounded-full bg-slate-100/90 hover:bg-slate-200 text-slate-900 flex flex-col items-center justify-center space-y-1.5 transition-colors cursor-pointer"
             >
               <span className="w-4 h-[2px] bg-slate-900 rounded-full block"></span>
               <span className="w-4 h-[2px] bg-slate-900 rounded-full block"></span>
