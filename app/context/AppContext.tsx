@@ -152,11 +152,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         price: i.price,
         size: i.size,
       })),
-      total: cartTotal,
+      total: cartTotal > 0 ? cartTotal : undefined,
       targetPhone: settings.whatsappNumber,
+      cartTemplate: settings.whatsappCartTemplate,
     });
     window.open(url, "_blank", "noopener,noreferrer");
-  }, [cart, cartTotal, settings.whatsappNumber]);
+  }, [cart, cartTotal, settings.whatsappNumber, settings.whatsappCartTemplate]);
 
   return (
     <AppContext.Provider

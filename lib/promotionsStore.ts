@@ -1,5 +1,4 @@
-// Shared mutable promotions store (in-memory)
-// Replace array mutations with Firestore calls for production persistence
+// Shared mutable promotions store for Anambra Best Door / CFrank Enterprise
 
 export interface Promotion {
   id: string;
@@ -16,23 +15,23 @@ export interface Promotion {
 export const promotionsStore: Promotion[] = [
   {
     id: "promo-1",
-    title: "Welcome Glow — 15% Off Your First Order",
-    description: "New to ANUA? Start your clean Korean skincare journey with 15% off your first order.",
-    discountPercent: 15,
-    voucherCode: "ANUAFIRST",
+    title: "Estate Bulk Discount — 10% Off 10+ Doors",
+    description: "Special builder and contractor terms for 10 or more Turkish security doors or foreign HDF room doors.",
+    discountPercent: 10,
+    voucherCode: "CFRANKBULK",
     expiresAt: "2026-12-31T23:59:59Z",
-    heroImage: "https://images.unsplash.com/photo-1526947425960-945c6e72858f?q=80&w=600&auto=format&fit=crop",
+    heroImage: "/products/bullet-proof-door.jpg",
     active: true,
     createdAt: new Date().toISOString(),
   },
   {
     id: "promo-2",
-    title: "PDRN Summer Bundle — Save 25%",
-    description: "Stock up on our viral PDRN collection at 25% off. Limited time offer.",
-    discountPercent: 25,
-    voucherCode: "PDRNBUNDLE",
-    expiresAt: "2026-09-01T23:59:59Z",
-    heroImage: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=600&auto=format&fit=crop",
+    title: "Complete Sanitary & Bathroom Package Deal",
+    description: "Special project pricing on executive water closets, dining basins, and shower rooms.",
+    discountPercent: 8,
+    voucherCode: "SANITARYSET",
+    expiresAt: "2026-12-31T23:59:59Z",
+    heroImage: "/products/cubicle-shower-room.jpg",
     active: true,
     createdAt: new Date().toISOString(),
   },

@@ -13,15 +13,17 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { addToCart } = useApp();
+  const { addToCart, settings } = useApp();
 
   const handleQuickWhatsApp = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const url = buildWhatsAppOrderUrl({
       productName: product.name,
-      price: product.price,
+      price: product.price && product.price > 0 ? product.price : undefined,
       quantity: 1,
+      targetPhone: settings.whatsappNumber,
+      inquiryTemplate: settings.whatsappInquiryTemplate,
     });
     window.open(url, "_blank", "noopener,noreferrer");
   };
@@ -73,21 +75,27 @@ export default function ProductCard({ product }: ProductCardProps) {
           </h3>
         </Link>
 
-        {/* Price Row matching the Archive Structure */}
+        {/* Price & Action Row */}
         <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
           <div>
-            <div className="flex items-baseline space-x-1.5">
-              <span className="text-xs sm:text-sm font-extrabold text-slate-950">
-                ₦{product.price.toLocaleString()}
-              </span>
-              {product.originalPrice > product.price && (
-                <span className="text-[10px] text-slate-400 line-through">
-                  ₦{product.originalPrice.toLocaleString()}
+            {product.price && product.price > 0 ? (
+              <div className="flex items-baseline space-x-1.5">
+                <span className="text-xs sm:text-sm font-extrabold text-slate-950">
+                  ₦{product.price.toLocaleString()}
                 </span>
-              )}
-            </div>
-            <span className="text-[9px] text-slate-400 block">
-              {product.stockStatus === "in_stock" ? "In Stock (Ogidi Depot)" : "Contact for Stock"}
+                {product.originalPrice && product.originalPrice > product.price && (
+                  <span className="text-[10px] text-slate-400 line-through">
+                    ₦{product.originalPrice.toLocaleString()}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <span className="text-xs font-bold text-[#003296] block">
+                Price on Request
+              </span>
+            )}
+            <span className="text-[10px] text-slate-400 block mt-0.5">
+              {product.stockStatus === "in_stock" ? "In Stock" : "Available to Order"}
             </span>
           </div>
 

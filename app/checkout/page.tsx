@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/app/context/AppContext";
-import { ArrowLeft, MessageSquare, ShoppingBag, ShieldCheck, MapPin } from "lucide-react";
+import { ArrowLeft, MessageSquare, ShoppingCart, ShieldCheck, MapPin } from "lucide-react";
 import { buildWhatsAppOrderUrl } from "@/lib/settings";
 
 export default function CheckoutPage() {
@@ -30,8 +30,9 @@ export default function CheckoutPage() {
         price: i.price,
         size: i.size,
       })),
-      total: cartTotal,
+      total: cartTotal > 0 ? cartTotal : undefined,
       additionalNotes: orderNote,
+      cartTemplate: settings.whatsappCartTemplate,
     });
 
     window.open(url, "_blank", "noopener,noreferrer");
@@ -54,10 +55,10 @@ export default function CheckoutPage() {
               WhatsApp Order Finalization
             </span>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-              Review Your Door Order
+              Review Your Product Inquiries
             </h1>
             <p className="text-xs text-slate-500 mt-1">
-              We do not collect automated online card payments. Your order is sent directly to our sales manager on WhatsApp to confirm stock availability, verify dimensions, and calculate waybill delivery to your city.
+              We do not collect automated online card payments. Your order is sent directly to our sales desk on WhatsApp to confirm real-time stock availability, verify dimensions, and calculate nationwide waybill delivery.
             </p>
           </div>
 
@@ -65,7 +66,7 @@ export default function CheckoutPage() {
           <div className="space-y-3 border-t border-b border-slate-100 py-4">
             {cart.length === 0 ? (
               <div className="text-center py-8 text-xs text-slate-400">
-                Your cart is empty. Please add doors from the catalogue before proceeding.
+                Your cart is empty. Please add items from the catalogue before proceeding.
               </div>
             ) : (
               cart.map((item) => (
@@ -76,9 +77,15 @@ export default function CheckoutPage() {
                       Qty: {item.quantity} {item.size ? `• Spec: ${item.size}` : ""}
                     </span>
                   </div>
-                  <span className="font-bold text-[#003296]">
-                    ₦{(item.price * item.quantity).toLocaleString()}
-                  </span>
+                  {item.price && item.price > 0 ? (
+                    <span className="font-bold text-[#003296]">
+                      ₦{(item.price * item.quantity).toLocaleString()}
+                    </span>
+                  ) : (
+                    <span className="font-bold text-[#003296]">
+                      Price on Request
+                    </span>
+                  )}
                 </div>
               ))
             )}
@@ -87,7 +94,11 @@ export default function CheckoutPage() {
           {/* Total */}
           <div className="flex justify-between items-center text-sm font-bold text-slate-900">
             <span>Estimated Total:</span>
-            <span className="text-xl font-black text-[#003296]">₦{cartTotal.toLocaleString()}</span>
+            {cartTotal > 0 ? (
+              <span className="text-xl font-black text-[#003296]">₦{cartTotal.toLocaleString()}</span>
+            ) : (
+              <span className="text-sm font-bold text-[#003296]">Confirmed via WhatsApp</span>
+            )}
           </div>
 
           {/* Customer Details Form */}
@@ -146,15 +157,15 @@ export default function CheckoutPage() {
             <button
               type="submit"
               disabled={cart.length === 0}
-              className="w-full py-3.5 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95 disabled:opacity-50 text-xs sm:text-sm"
+              className="w-full py-3.5 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95 disabled:opacity-50 text-xs sm:text-sm cursor-pointer"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Forward Order to WhatsApp Sales Desk</span>
+              <span>Forward Inquiries to WhatsApp Sales Desk</span>
             </button>
           </form>
 
           <div className="pt-2 text-center text-[11px] text-slate-400">
-            Showroom Depot: Shop 14 Chubby Plaza Ogidi • CAC BN: {settings.cacNumber}
+            {settings.address} • CAC Registered: {settings.parentCompany} (BN: {settings.cacNumber})
           </div>
         </div>
       </div>

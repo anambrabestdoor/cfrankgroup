@@ -24,9 +24,9 @@ export default function ChatWidgetSlot() {
           >
             <X className="w-3 h-3" />
           </button>
-          <p className="font-bold text-slate-900 mb-0.5">Need door advice or price quotes?</p>
+          <p className="font-bold text-slate-900 mb-0.5">Need product advice or price quotes?</p>
           <p className="text-[11px] text-slate-500">
-            Our Ogidi showroom sales desk is available on WhatsApp to answer your inquiries.
+            Our sales desk is available on WhatsApp to answer your inquiries.
           </p>
         </div>
       )}

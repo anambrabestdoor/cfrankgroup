@@ -13,12 +13,12 @@ export default function FAQPage() {
     {
       id: "faq-1",
       question: "What steel gauge are your Turkish security entrance doors?",
-      answer: "Our Turkish armoured security doors are constructed with genuine 1.5mm to 2.0mm electro-galvanized cold-rolled steel plates with internal vertical and horizontal steel stiffeners and high-density rockwool insulation. We welcome clients to inspect leaf weight and steel gauge physically at our Chubby Plaza depot.",
+      answer: "Our Turkish armoured security doors are constructed with genuine 1.5mm to 2.0mm electro-galvanized cold-rolled steel plates with internal vertical and horizontal steel stiffeners and high-density rockwool insulation. We welcome clients to inspect leaf weight and steel gauge physically at our Maraim Plaza depot.",
     },
     {
       id: "faq-2",
       question: "Can I inspect the doors in person before placing an order?",
-      answer: "Yes, absolutely. Our showroom depot is located at Shop 14 Chubby Plaza, Building Material International Market Ogidi, Onitsha. You can visit Monday through Saturday from 8:00 AM to 5:30 PM to examine doors, lock mechanisms, and finishes.",
+      answer: "Yes, absolutely. Our store and depot is located at No 16/17, Maraim Plaza Building Material Ogidi, Anambra State. You can visit Monday through Saturday from 8:00 AM to 5:30 PM to examine doors, lock mechanisms, and finishes.",
     },
     {
       id: "faq-3",
@@ -86,7 +86,7 @@ export default function FAQPage() {
         <div className="pt-8 text-center bg-white p-8 rounded-2xl border border-slate-200 space-y-3">
           <h3 className="text-sm font-bold text-slate-900">Have a specific question about your wall openings?</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
-            Our Ogidi showroom sales manager is available on WhatsApp to review your dimensions and provide advice.
+            Our sales team is available on WhatsApp to review your dimensions, confirm stock, and provide quotes.
           </p>
           <a
             href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I have a question regarding door dimensions and waybill delivery.")}`}

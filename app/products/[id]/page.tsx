@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Truck,
   MessageSquare,
-  ShoppingBag,
+  ShoppingCart,
   Store,
   Check,
   Plus,
@@ -87,11 +87,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const handleDirectWhatsApp = () => {
     const url = buildWhatsAppOrderUrl({
       productName: product.name,
-      price: product.price,
+      price: product.price && product.price > 0 ? product.price : undefined,
       quantity,
       size: selectedSize,
       orientation: selectedOrientation,
       targetPhone: settings.whatsappNumber,
+      inquiryTemplate: settings.whatsappInquiryTemplate,
     });
     window.open(url, "_blank", "noopener,noreferrer");
   };
@@ -197,14 +198,22 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             {/* Price Box */}
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-wrap items-baseline justify-between gap-2">
               <div>
-                <span className="text-xs text-slate-500 font-medium block">Showroom Selling Price:</span>
+                <span className="text-xs text-slate-500 font-medium block">Price:</span>
                 <div className="flex items-baseline space-x-2">
-                  <span className="text-2xl sm:text-3xl font-extrabold text-[#003296]">
-                    ₦{product.price.toLocaleString()}
-                  </span>
-                  {product.originalPrice > product.price && (
-                    <span className="text-sm text-slate-400 line-through">
-                      ₦{product.originalPrice.toLocaleString()}
+                  {product.price && product.price > 0 ? (
+                    <>
+                      <span className="text-2xl sm:text-3xl font-extrabold text-[#003296]">
+                        ₦{product.price.toLocaleString()}
+                      </span>
+                      {product.originalPrice && product.originalPrice > product.price && (
+                        <span className="text-sm text-slate-400 line-through">
+                          ₦{product.originalPrice.toLocaleString()}
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    <span className="text-2xl sm:text-3xl font-extrabold text-[#003296]">
+                      Price on Request
                     </span>
                   )}
                 </div>
@@ -212,7 +221,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <div className="text-right">
                 <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
                   <Check className="w-3 h-3" />
-                  <span>{product.stockStatus === "in_stock" ? `${product.stock} in stock (Ogidi Depot)` : "Pre-Order"}</span>
+                  <span>{product.stockStatus === "in_stock" ? "In Stock" : "Available to Order"}</span>
                 </span>
               </div>
             </div>
@@ -289,19 +298,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             <div className="space-y-2.5 pt-2">
               <button
                 onClick={handleDirectWhatsApp}
-                className="w-full py-3.5 px-6 bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95"
+                className="w-full py-3.5 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95 cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>Order via WhatsApp Direct</span>
+                <span>Inquire on WhatsApp</span>
               </button>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <button
                   onClick={handleAddToCart}
-                  className="py-3 px-4 bg-[#003296] hover:bg-[#092b7c] text-white text-xs font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95"
+                  className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold rounded-xl flex items-center justify-center space-x-2 transition-colors cursor-pointer"
                 >
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>{addedNotice ? "Added to Cart!" : "Add to Local Cart"}</span>
+                  <ShoppingCart className="w-3.5 h-3.5 text-slate-700" />
+                  <span>{addedNotice ? "Added to Cart!" : "Add to Cart"}</span>
                 </button>
 
                 {product.jijiUrl && (

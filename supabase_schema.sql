@@ -1,208 +1,171 @@
 -- ============================================================================
--- PHASE 1 & 2: SUPABASE POSTGRESQL SCHEMA DESIGN & SECURITY POLICIES
+-- SUPABASE POSTGRESQL SCHEMA DESIGN & SECURITY POLICIES
 -- File: supabase_schema.sql
--- Description: Production-grade database DDL, triggers, and Row-Level
---              Security (RLS) policies for Anua Clean Skincare Storefront.
+-- Project: Anambra Best Door by CFrank Enterprise
+-- Description: Production-grade schema for door & sanitary products, dynamic
+--              site settings, WhatsApp inquiry templates, and quote requests.
 -- ============================================================================
 
--- Create custom user role enum
-CREATE TYPE user_role AS ENUM ('user', 'admin');
+-- Enable UUID extension
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Create profiles table linked to Supabase Auth
-CREATE TABLE public.profiles (
-  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+-- ============================================================================
+-- 1. PRODUCTS TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.products (
+  id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
-  role user_role NOT NULL DEFAULT 'user',
-  join_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  newsletter_subscribed BOOLEAN NOT NULL DEFAULT FALSE
-);
-
--- Enable RLS on profiles
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-
--- Profiles Policies
-CREATE POLICY "Allow public read-access to basic profiles"
-  ON public.profiles FOR SELECT
-  USING (true);
-
-CREATE POLICY "Allow users to update their own profiles"
-  ON public.profiles FOR UPDATE
-  USING (auth.uid() = id)
-  WITH CHECK (auth.uid() = id);
-
-CREATE POLICY "Allow system/auth to insert profiles"
-  ON public.profiles FOR INSERT
-  WITH CHECK (auth.uid() = id);
-
-CREATE POLICY "Allow admins full management of profiles"
-  ON public.profiles FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
-    )
-  );
-
--- ============================================================================
--- PRODUCTS TABLE
--- ============================================================================
-CREATE TABLE public.products (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  description TEXT NOT NULL,
-  price NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
-  original_price NUMERIC(10, 2) NOT NULL CHECK (original_price >= 0),
-  rating NUMERIC(3, 2) NOT NULL DEFAULT 5.0 CHECK (rating >= 0 AND rating <= 5.0),
-  reviews_count INT NOT NULL DEFAULT 0 CHECK (reviews_count >= 0),
-  image TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
   category TEXT NOT NULL,
-  subcategory TEXT NOT NULL,
+  category_label TEXT NOT NULL,
+  price NUMERIC(12, 2) DEFAULT 0 CHECK (price >= 0),
+  original_price NUMERIC(12, 2) DEFAULT 0 CHECK (original_price >= 0),
+  price_on_request BOOLEAN NOT NULL DEFAULT TRUE,
+  image TEXT NOT NULL,
+  gallery TEXT[] DEFAULT '{}'::TEXT[],
   badge TEXT,
+  rating NUMERIC(3, 2) NOT NULL DEFAULT 4.9 CHECK (rating >= 0 AND rating <= 5.0),
+  reviews_count INT NOT NULL DEFAULT 0 CHECK (reviews_count >= 0),
+  stock_status TEXT NOT NULL DEFAULT 'in_stock' CHECK (stock_status IN ('in_stock', 'pre_order', 'out_of_stock')),
+  stock INT NOT NULL DEFAULT 10 CHECK (stock >= 0),
+  short_description TEXT NOT NULL DEFAULT '',
+  description TEXT NOT NULL DEFAULT '',
+  features TEXT[] DEFAULT '{}'::TEXT[],
+  specifications JSONB NOT NULL DEFAULT '{}'::JSONB,
+  jiji_url TEXT,
   active BOOLEAN NOT NULL DEFAULT TRUE,
-  stock INT NOT NULL DEFAULT 0 CHECK (stock >= 0),
-  ingredients TEXT[] DEFAULT '{}'::TEXT[]
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- Enable RLS on products
+-- Indexing for fast search and category filtering
+CREATE INDEX IF NOT EXISTS idx_products_category ON public.products(category);
+CREATE INDEX IF NOT EXISTS idx_products_slug ON public.products(slug);
+CREATE INDEX IF NOT EXISTS idx_products_active ON public.products(active);
+
+-- Enable Row Level Security (RLS)
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 
--- Products Policies
-CREATE POLICY "Allow anyone to read active products"
+-- Allow public read access to active products
+CREATE POLICY "Allow public read access on active products"
   ON public.products FOR SELECT
-  USING (active = true OR EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
-  ));
+  USING (active = true);
 
-CREATE POLICY "Allow admins to manage products"
+-- Allow authenticated admins full management
+CREATE POLICY "Allow admin write access on products"
   ON public.products FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
-    )
-  );
-
--- ============================================================================
--- ORDERS TABLE
--- ============================================================================
-CREATE TABLE public.orders (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-  customer_name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  items JSONB NOT NULL, -- Array of ordered items: [{productId, productName, price, quantity}]
-  total NUMERIC(10, 2) NOT NULL CHECK (total >= 0),
-  date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'shipped', 'delivered'))
-);
-
--- Enable RLS on orders
-ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
-
--- Orders Policies
-CREATE POLICY "Allow users to view their own orders"
-  ON public.orders FOR SELECT
-  USING (auth.uid() = user_id OR email = (SELECT email FROM auth.users WHERE auth.users.id = auth.uid()));
-
-CREATE POLICY "Allow users to place orders"
-  ON public.orders FOR INSERT
-  WITH CHECK (auth.uid() = user_id OR auth.uid() IS NULL);
-
-CREATE POLICY "Allow admins full management of orders"
-  ON public.orders FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
-    )
-  );
-
--- ============================================================================
--- NEWSLETTERS TABLE
--- ============================================================================
-CREATE TABLE public.newsletters (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email TEXT UNIQUE NOT NULL,
-  subscribed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
-);
-
--- Enable RLS on newsletters
-ALTER TABLE public.newsletters ENABLE ROW LEVEL SECURITY;
-
--- Newsletters Policies
-CREATE POLICY "Allow anyone to sign up for newsletter"
-  ON public.newsletters FOR INSERT
+  TO authenticated
+  USING (true)
   WITH CHECK (true);
 
-CREATE POLICY "Allow admins to view and manage newsletters"
-  ON public.newsletters FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
-    )
-  );
+-- ============================================================================
+-- 2. SITE SETTINGS TABLE (Dynamic Templates, CAC Info, Phone & Address)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.site_settings (
+  id TEXT PRIMARY KEY DEFAULT 'global',
+  company_name TEXT NOT NULL DEFAULT 'Anambra Best Door',
+  parent_company TEXT NOT NULL DEFAULT 'CFrank Enterprise',
+  cac_number TEXT NOT NULL DEFAULT 'BN 2818981',
+  phone TEXT NOT NULL DEFAULT '+2348032766854',
+  phone_display TEXT NOT NULL DEFAULT '+234 803 276 6854',
+  whatsapp_number TEXT NOT NULL DEFAULT '2348032766854',
+  email TEXT NOT NULL DEFAULT 'sales@anambrabestdoor.ng',
+  address TEXT NOT NULL DEFAULT 'No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria',
+  market_location TEXT NOT NULL DEFAULT 'Maraim Plaza, Building Material International Market Ogidi, Anambra State',
+  working_hours TEXT NOT NULL DEFAULT 'Mon - Sat: 8:00 AM - 5:30 PM',
+  delivery_info TEXT NOT NULL DEFAULT 'Nationwide waybill delivery across all 36 states',
+  jiji_shop_url TEXT NOT NULL DEFAULT 'https://jiji.ng/shop/cfrankenterprise',
+  whatsapp_inquiry_template TEXT NOT NULL DEFAULT 'Hello CFrank Enterprise, I would like to inquire about the current price and stock availability for [Door Name] (Size: [Size], Quantity: [Qty]).',
+  whatsapp_cart_template TEXT NOT NULL DEFAULT 'Hello CFrank Enterprise, I would like to place an order inquiry for the following items from your catalogue:\n\n[Items]\n\nPlease advise on current pricing, stock availability, and waybill delivery terms.',
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+-- Enable RLS on site_settings
+ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read access to site settings
+CREATE POLICY "Allow public read access on site settings"
+  ON public.site_settings FOR SELECT
+  USING (true);
+
+-- Allow authenticated admin to update settings
+CREATE POLICY "Allow admin write access on site settings"
+  ON public.site_settings FOR ALL
+  TO authenticated
+  USING (true)
+  WITH CHECK (true);
 
 -- ============================================================================
--- AUTOMATIC ADMIN ROLES TRIGGER FUNCTION (SECURE CYBERSECURITY HARDENING)
+-- 3. QUOTE INQUIRIES & LEAD CAPTURE TABLE
 -- ============================================================================
--- Trigger function that executes on user sign-up to automatically handle
--- profiles creation and promotion of specific superuser emails.
--- This replaces vulnerable frontend check with locked-down server-side logic.
-
-CREATE OR REPLACE FUNCTION public.handle_new_user_signup()
-RETURNS TRIGGER AS $$
-DECLARE
-  assigned_role public.user_role;
-  display_name TEXT;
-BEGIN
-  -- Automatically flag  and admin@anua.com as superuser admin
-  IF LOWER(NEW.email) = '' OR LOWER(NEW.email) = 'admin@anua.com' THEN
-    assigned_role := 'admin'::public.user_role;
-  ELSE
-    assigned_role := 'user'::public.user_role;
-  END IF;
-
-  -- Derive a fallback display name from user metadata or email if missing
-  display_name := COALESCE(NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1));
-
-  -- Insert profile entry
-  INSERT INTO public.profiles (id, name, email, role, join_date, newsletter_subscribed)
-  VALUES (
-    NEW.id,
-    display_name,
-    NEW.email,
-    assigned_role,
-    NOW(),
-    COALESCE((NEW.raw_user_meta_data->>'newsletter')::BOOLEAN, FALSE)
-  );
-
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Bind trigger to auth.users insertions
-CREATE OR REPLACE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user_signup();
-
--- ============================================================================
--- VERIFICATION CODES TABLE (FOR PASSWORDLESS OTP FLOW)
--- ============================================================================
-CREATE TABLE IF NOT EXISTS public.verification_codes (
-  email TEXT PRIMARY KEY,
-  code TEXT NOT NULL,
-  expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+CREATE TABLE IF NOT EXISTS public.quote_inquiries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_name TEXT,
+  customer_phone TEXT,
+  customer_email TEXT,
+  category TEXT,
+  product_name TEXT,
+  size TEXT,
+  orientation TEXT,
+  quantity INT DEFAULT 1,
+  notes TEXT,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'contacted', 'completed', 'cancelled')),
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- Enable RLS on verification_codes
-ALTER TABLE public.verification_codes ENABLE ROW LEVEL SECURITY;
+-- Enable RLS on quote_inquiries
+ALTER TABLE public.quote_inquiries ENABLE ROW LEVEL SECURITY;
 
--- Allow public read/upsert access for OTP authentication routines
-CREATE POLICY "Allow system/api upsert access to verification codes"
-  ON public.verification_codes FOR ALL
+-- Allow public to insert quote inquiries
+CREATE POLICY "Allow public insert on quote inquiries"
+  ON public.quote_inquiries FOR INSERT
+  WITH CHECK (true);
+
+-- Allow authenticated admins to view and update quote inquiries
+CREATE POLICY "Allow admin management on quote inquiries"
+  ON public.quote_inquiries FOR ALL
+  TO authenticated
   USING (true)
   WITH CHECK (true);
+
+-- ============================================================================
+-- 4. INITIAL SEED FOR SITE SETTINGS
+-- ============================================================================
+INSERT INTO public.site_settings (
+  id,
+  company_name,
+  parent_company,
+  cac_number,
+  phone,
+  phone_display,
+  whatsapp_number,
+  email,
+  address,
+  market_location,
+  working_hours,
+  delivery_info,
+  jiji_shop_url,
+  whatsapp_inquiry_template,
+  whatsapp_cart_template
+) VALUES (
+  'global',
+  'Anambra Best Door',
+  'CFrank Enterprise',
+  'BN 2818981',
+  '+2348032766854',
+  '+234 803 276 6854',
+  '2348032766854',
+  'sales@anambrabestdoor.ng',
+  'No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria',
+  'Maraim Plaza, Building Material International Market Ogidi, Anambra State',
+  'Mon - Sat: 8:00 AM - 5:30 PM',
+  'Nationwide waybill delivery across all 36 states',
+  'https://jiji.ng/shop/cfrankenterprise',
+  'Hello CFrank Enterprise, I would like to inquire about the current price and stock availability for [Door Name] (Size: [Size], Quantity: [Qty]).',
+  'Hello CFrank Enterprise, I would like to place an order inquiry for the following items from your catalogue:\n\n[Items]\n\nPlease advise on current pricing, stock availability, and waybill delivery terms.'
+) ON CONFLICT (id) DO UPDATE SET
+  whatsapp_inquiry_template = EXCLUDED.whatsapp_inquiry_template,
+  whatsapp_cart_template = EXCLUDED.whatsapp_cart_template,
+  address = EXCLUDED.address,
+  market_location = EXCLUDED.market_location,
+  updated_at = NOW();

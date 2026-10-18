@@ -932,13 +932,13 @@ export default function AdminPage() {
 
                   <div>
                     <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Selling Price (₦) *
+                      Selling Price (₦) - Leave blank/0 for "Price on Request"
                     </label>
                     <input
                       type="number"
-                      required
-                      value={formPrice}
-                      onChange={(e) => setFormPrice(Number(e.target.value))}
+                      value={formPrice || ""}
+                      onChange={(e) => setFormPrice(Number(e.target.value) || 0)}
+                      placeholder="0 (Price on Request)"
                       className="w-full px-3 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl"
                     />
                   </div>
@@ -1002,7 +1002,7 @@ export default function AdminPage() {
                       }
                       className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
                     >
-                      <option value="in_stock">In Stock (Ogidi Depot)</option>
+                      <option value="in_stock">In Stock</option>
                       <option value="low_stock">Low Stock (Under 5 units)</option>
                       <option value="out_of_stock">Out of Stock</option>
                       <option value="made_to_order">Made to Order (Fabrication)</option>
@@ -1017,7 +1017,7 @@ export default function AdminPage() {
                       type="text"
                       value={formBadge}
                       onChange={(e) => setFormBadge(e.target.value)}
-                      placeholder="e.g. Best Seller / Showroom Favourite"
+                      placeholder="e.g. Best Seller / Contractor Pick"
                       className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
                     />
                   </div>
@@ -1542,6 +1542,46 @@ export default function AdminPage() {
                       setSiteSettingsForm({ ...siteSettingsForm, workingHours: e.target.value })
                     }
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+
+                <div className="sm:col-span-2 pt-2 border-t border-slate-100">
+                  <label className="font-bold text-slate-800 block mb-1">
+                    WhatsApp Single Product Inquiry Template
+                  </label>
+                  <p className="text-[11px] text-slate-500 mb-1.5">
+                    Tokens: <code className="bg-slate-100 px-1 py-0.5 rounded text-[#003296] font-mono">[Door Name]</code>, <code className="bg-slate-100 px-1 py-0.5 rounded text-[#003296] font-mono">[Size]</code>, <code className="bg-slate-100 px-1 py-0.5 rounded text-[#003296] font-mono">[Qty]</code>, <code className="bg-slate-100 px-1 py-0.5 rounded text-[#003296] font-mono">[Quantity]</code>
+                  </p>
+                  <textarea
+                    rows={3}
+                    value={siteSettingsForm.whatsappInquiryTemplate}
+                    onChange={(e) =>
+                      setSiteSettingsForm({
+                        ...siteSettingsForm,
+                        whatsappInquiryTemplate: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="font-bold text-slate-800 block mb-1">
+                    WhatsApp Multi-Item Cart Inquiry Template
+                  </label>
+                  <p className="text-[11px] text-slate-500 mb-1.5">
+                    Token: <code className="bg-slate-100 px-1 py-0.5 rounded text-[#003296] font-mono">[Items]</code>
+                  </p>
+                  <textarea
+                    rows={3}
+                    value={siteSettingsForm.whatsappCartTemplate}
+                    onChange={(e) =>
+                      setSiteSettingsForm({
+                        ...siteSettingsForm,
+                        whatsappCartTemplate: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
                   />
                 </div>
               </div>

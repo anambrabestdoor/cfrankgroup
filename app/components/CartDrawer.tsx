@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useApp } from "@/app/context/AppContext";
-import { X, Trash2, Plus, Minus, MessageSquare, ShoppingBag } from "lucide-react";
+import { X, Trash2, Plus, Minus, MessageSquare, ShoppingCart } from "lucide-react";
 
 export default function CartDrawer() {
   const { cart, cartOpen, setCartOpen, removeFromCart, updateQuantity, cartTotal, sendWhatsAppOrder, clearCart } = useApp();
@@ -27,13 +27,13 @@ export default function CartDrawer() {
           {/* Drawer Header */}
           <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
             <div className="flex items-center space-x-2">
-              <ShoppingBag className="w-5 h-5 text-[#003296]" />
-              <h2 className="text-sm font-bold text-slate-900">Your Saved Doors ({cart.length})</h2>
+              <ShoppingCart className="w-5 h-5 text-[#003296]" />
+              <h2 className="text-sm font-bold text-slate-900">Your Cart ({cart.length})</h2>
             </div>
             <button
               onClick={() => setCartOpen(false)}
               aria-label="Close cart drawer"
-              className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -44,20 +44,20 @@ export default function CartDrawer() {
             {cart.length === 0 ? (
               <div className="text-center py-16 space-y-4">
                 <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 mx-auto flex items-center justify-center">
-                  <ShoppingBag className="w-8 h-8" />
+                  <ShoppingCart className="w-8 h-8" />
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-bold text-slate-800">Your cart is currently empty</p>
                   <p className="text-xs text-slate-500 max-w-xs mx-auto">
-                    Browse our high-gauge security doors, wooden room doors, or smart locks to add items.
+                    Browse our high-gauge security doors, luxury HDF room doors, or bathroom fittings to add items.
                   </p>
                 </div>
                 <Link
                   href="/shop"
                   onClick={() => setCartOpen(false)}
-                  className="inline-block py-2.5 px-5 bg-[#003296] text-white text-xs font-semibold rounded-xl hover:bg-[#092b7c] transition-colors"
+                  className="inline-block py-2.5 px-5 bg-[#003296] text-white text-xs font-semibold rounded-xl hover:bg-[#002266] transition-colors"
                 >
-                  Browse Catalogue
+                  Browse Products
                 </Link>
               </div>
             ) : (
@@ -94,9 +94,15 @@ export default function CartDrawer() {
                           Spec: {item.size}
                         </span>
                       )}
-                      <span className="text-xs font-extrabold text-[#003296] block mt-0.5">
-                        ₦{item.price.toLocaleString()}
-                      </span>
+                      {item.price && item.price > 0 ? (
+                        <span className="text-xs font-extrabold text-[#003296] block mt-0.5">
+                          ₦{item.price.toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold text-[#003296] block mt-0.5">
+                          Price on Request
+                        </span>
+                      )}
                     </div>
 
                     {/* Quantity Selector */}
@@ -118,9 +124,15 @@ export default function CartDrawer() {
                           <Plus className="w-3 h-3" />
                         </button>
                       </div>
-                      <span className="text-[11px] text-slate-400">
-                        Subtotal: ₦{(item.price * item.quantity).toLocaleString()}
-                      </span>
+                      {item.price && item.price > 0 ? (
+                        <span className="text-[11px] text-slate-400">
+                          Subtotal: ₦{(item.price * item.quantity).toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-slate-500">
+                          Qty: {item.quantity}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -131,35 +143,44 @@ export default function CartDrawer() {
           {/* Drawer Footer & WhatsApp Action */}
           {cart.length > 0 && (
             <div className="p-6 border-t border-slate-100 bg-slate-50/70 space-y-3.5">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600 font-medium">Estimated Total:</span>
-                <span className="text-base font-extrabold text-slate-950">
-                  ₦{cartTotal.toLocaleString()}
-                </span>
-              </div>
+              {cartTotal > 0 ? (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-600 font-medium">Estimated Total:</span>
+                  <span className="text-base font-extrabold text-slate-950">
+                    ₦{cartTotal.toLocaleString()}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-600 font-medium">Pricing:</span>
+                  <span className="text-xs font-bold text-[#003296]">
+                    Direct quote on WhatsApp
+                  </span>
+                </div>
+              )}
 
-              <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800 leading-snug">
-                💬 <strong>Direct WhatsApp Confirmation:</strong> Submitting will send an itemized list to CFrank Enterprise sales desk to confirm stock and waybill delivery.
+              <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-[11px] text-blue-900 leading-snug">
+                💬 <strong>Direct WhatsApp Inquiry:</strong> Submitting will send your itemized list to CFrank Enterprise to confirm real-time price, stock availability, and delivery options.
               </div>
 
               <button
                 onClick={sendWhatsAppOrder}
-                className="w-full py-3.5 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95 text-xs sm:text-sm"
+                className="w-full py-3.5 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95 text-xs sm:text-sm cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>Send Order via WhatsApp</span>
+                <span>Send Inquiries via WhatsApp</span>
               </button>
 
               <div className="flex items-center justify-between pt-1">
                 <button
                   onClick={clearCart}
-                  className="text-[11px] text-slate-400 hover:text-red-600 transition-colors"
+                  className="text-[11px] text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
                 >
                   Clear Cart
                 </button>
                 <button
                   onClick={() => setCartOpen(false)}
-                  className="text-[11px] text-slate-600 hover:underline"
+                  className="text-[11px] text-slate-600 hover:underline cursor-pointer"
                 >
                   Continue Browsing
                 </button>

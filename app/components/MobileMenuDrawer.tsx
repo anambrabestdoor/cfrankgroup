@@ -1,13 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/app/context/AppContext";
-import { X, ArrowRight, Phone, MessageSquare, ShieldCheck, ShoppingBag, Store } from "lucide-react";
+import { X, ChevronDown, MessageSquare, ShoppingCart, ShieldCheck } from "lucide-react";
 import { CATEGORIES } from "@/app/data/doorsData";
 
 export default function MobileMenuDrawer() {
   const { mobileMenuOpen, setMobileMenuOpen, setCacModalOpen, settings, cartCount, setCartOpen } = useApp();
+  const [categoriesExpanded, setCategoriesExpanded] = useState(true);
 
   if (!mobileMenuOpen) return null;
 
@@ -18,138 +19,132 @@ export default function MobileMenuDrawer() {
       aria-label="Navigation Menu"
       className="fixed inset-0 z-50 bg-white flex flex-col justify-between animate-fade-in overflow-y-auto"
     >
-      {/* Top Bar with Logo & Close Button */}
-      <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-        <div className="flex items-center space-x-2">
-          <span className="font-bold text-lg tracking-tight text-slate-900">
-            ANAMBRA <span className="text-[#003296]">BEST DOOR</span>
-          </span>
-        </div>
+      {/* Top Header with Close Button */}
+      <div className="flex items-center justify-between px-6 py-6">
+        <Link
+          href="/"
+          onClick={() => setMobileMenuOpen(false)}
+          className="text-xl font-black tracking-tight text-slate-900"
+        >
+          ANAMBRA <span className="text-[#003296]">BEST DOOR</span>
+        </Link>
         <button
           onClick={() => setMobileMenuOpen(false)}
           aria-label="Close menu"
-          className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors"
+          className="w-11 h-11 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Main Navigation Links */}
-      <div className="px-6 py-6 flex-1 space-y-6">
-        {/* Trust Pill */}
-        <button
-          onClick={() => {
-            setMobileMenuOpen(false);
-            setCacModalOpen(true);
-          }}
-          className="w-full py-2.5 px-3.5 bg-blue-50/70 border border-blue-200/80 rounded-xl flex items-center justify-between text-xs text-[#003296] font-semibold"
-        >
-          <div className="flex items-center space-x-2">
-            <ShieldCheck className="w-4 h-4 text-[#003296]" />
-            <span>CAC Registered: {settings.parentCompany}</span>
-          </div>
-          <span className="text-[11px] underline">View Certificate</span>
-        </button>
-
-        {/* Primary Page Links */}
-        <div className="space-y-4 pt-2">
+      {/* Main Navigation - Bold, Clean Typography like Video */}
+      <div className="px-6 py-4 flex-1 space-y-6">
+        <nav className="space-y-4">
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-2xl font-bold text-slate-900 hover:text-[#003296] transition-colors"
+            className="block text-3xl sm:text-4xl font-extrabold text-slate-900 hover:text-[#003296] tracking-tight transition-colors"
           >
             Home
           </Link>
-          <Link
-            href="/shop"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center justify-between text-2xl font-bold text-slate-900 hover:text-[#003296] transition-colors"
-          >
-            <span>All Products</span>
-            <ArrowRight className="w-5 h-5 text-slate-400" />
-          </Link>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <Link
+                href="/shop"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-3xl sm:text-4xl font-extrabold text-slate-900 hover:text-[#003296] tracking-tight transition-colors"
+              >
+                Products
+              </Link>
+              <button
+                onClick={() => setCategoriesExpanded(!categoriesExpanded)}
+                aria-label="Toggle categories"
+                className="p-2 text-slate-400 hover:text-slate-700"
+              >
+                <ChevronDown className={`w-6 h-6 transition-transform duration-200 ${categoriesExpanded ? "rotate-180" : ""}`} />
+              </button>
+            </div>
+
+            {categoriesExpanded && (
+              <div className="mt-3 ml-2 pl-4 border-l-2 border-slate-100 space-y-2.5">
+                <Link
+                  href="/shop"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm font-semibold text-slate-700 hover:text-[#003296]"
+                >
+                  All Products
+                </Link>
+                {CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={`/shop?category=${cat.id}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-sm font-medium text-slate-500 hover:text-[#003296]"
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
           <Link
             href="/about"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-2xl font-bold text-slate-900 hover:text-[#003296] transition-colors"
+            className="block text-3xl sm:text-4xl font-extrabold text-slate-900 hover:text-[#003296] tracking-tight transition-colors"
           >
-            About CFrank
+            About
           </Link>
+
           <Link
             href="/contact"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-2xl font-bold text-slate-900 hover:text-[#003296] transition-colors"
+            className="block text-3xl sm:text-4xl font-extrabold text-slate-900 hover:text-[#003296] tracking-tight transition-colors"
           >
-            Contact & Showroom
+            Contact
           </Link>
-          <a
-            href={settings.jijiShopUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between text-xl font-bold text-emerald-800 hover:text-emerald-950 transition-colors"
+        </nav>
+
+        {/* CAC Registration Trust */}
+        <div className="pt-6">
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              setCacModalOpen(true);
+            }}
+            className="inline-flex items-center space-x-2 text-xs text-slate-500 hover:text-[#003296] transition-colors"
           >
-            <div className="flex items-center space-x-2">
-              <Store className="w-5 h-5" />
-              <span>Official Jiji.ng Store</span>
-            </div>
-            <ArrowRight className="w-4 h-4 text-emerald-700" />
-          </a>
-        </div>
-
-        {/* Categories Section */}
-        <div className="pt-4 border-t border-slate-100">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-3">
-            Product Categories
-          </span>
-          <div className="space-y-2.5">
-            {CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/shop?category=${cat.id}`}
-                onClick={() => setMobileMenuOpen(false)}
-                className="block text-sm font-medium text-slate-700 hover:text-[#003296] py-1 transition-colors"
-              >
-                {cat.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Showroom Address */}
-        <div className="pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-1">
-          <span className="font-semibold text-slate-700 block">Ogidi Showroom Depot</span>
-          <p>{settings.address}</p>
-          <p className="text-[11px] text-slate-400">Hours: {settings.workingHours}</p>
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>CAC Registered: {settings.parentCompany}</span>
+            <span className="underline font-semibold">View Verification</span>
+          </button>
         </div>
       </div>
 
-      {/* Bottom Sticky Action Buttons */}
-      <div className="p-6 border-t border-slate-100 bg-slate-50/60 space-y-2.5">
+      {/* Bottom Sleek Pill Action Buttons Matching Video sec_01.5.jpg */}
+      <div className="p-6 space-y-3">
         <a
-          href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I am inquiring about door orders from your website.")}`}
+          href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
+            "Hello CFrank Enterprise, I would like to inquire about current price and stock availability."
+          )}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full py-3.5 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-all text-sm"
+          className="w-full py-4 px-6 bg-[#003296] hover:bg-[#002266] text-white font-bold rounded-full flex items-center justify-center space-x-2 shadow-sm transition-all text-sm active:scale-95"
         >
           <MessageSquare className="w-4 h-4" />
-          <span>Chat on WhatsApp</span>
+          <span>Inquire on WhatsApp</span>
         </a>
-        <a
-          href={`tel:${settings.phone}`}
-          className="w-full py-3 px-4 bg-[#003296] hover:bg-[#092b7c] text-white font-semibold rounded-xl flex items-center justify-center space-x-2 transition-colors text-sm"
-        >
-          <Phone className="w-4 h-4" />
-          <span>Call Showroom: {settings.phoneDisplay}</span>
-        </a>
+
         <button
           onClick={() => {
             setMobileMenuOpen(false);
             setCartOpen(true);
           }}
-          className="w-full py-2.5 text-xs text-slate-600 hover:text-slate-900 font-medium flex items-center justify-center space-x-1.5"
+          className="w-full py-3.5 px-6 bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold rounded-full flex items-center justify-center space-x-2 transition-colors text-sm"
         >
-          <ShoppingBag className="w-4 h-4 text-slate-500" />
-          <span>View Saved Cart ({cartCount})</span>
+          <ShoppingCart className="w-4 h-4 text-slate-700" />
+          <span>View Cart ({cartCount})</span>
         </button>
       </div>
     </div>

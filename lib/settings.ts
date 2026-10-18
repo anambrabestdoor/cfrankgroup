@@ -19,6 +19,8 @@ export interface SiteSettings {
   instagramUrl: string;
   jijiShopUrl: string;
   githubUrl: string;
+  whatsappInquiryTemplate: string;
+  whatsappCartTemplate: string;
   serviceAreas: string[];
 }
 
@@ -27,7 +29,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   parentCompany: "CFrank Enterprise",
   proprietor: "Chidera Frank Okonkwo",
   tagline: "Direct Importer of Heavy-Gauge Security Doors & Building Fittings",
-  description: "Anambra Best Door Enterprises is a specialized construction activities and door fittings enterprise operated by CFrank Enterprise (Chidera Frank Okonkwo) at Maraim Plaza, Building Material International Market Ogidi, Anambra State. Supplying premium steel security doors, interior wooden doors, bullet proof doors, HDF doors, and building fittings nationwide.",
+  description: "Anambra Best Door Enterprises is a specialized construction activities and door fittings enterprise operated by CFrank Enterprise (Chidera Frank Okonkwo) at Maraim Plaza, Building Material International Market Ogidi, Anambra State. Supplying premium steel security doors, interior wooden doors, bullet proof doors, HDF doors, sanitary wares, and building fittings nationwide.",
   address: "No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria",
   marketLocation: "Maraim Plaza, Building Material International Market, Ogidi, Onitsha",
   phone: "+2347070070305",
@@ -43,6 +45,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   instagramUrl: "https://www.instagram.com/anambrabestdoor/",
   jijiShopUrl: "https://jiji.ng/shop/anambrabestdoor",
   githubUrl: "https://github.com/anambrabestdoor/anambrabestdoor",
+  whatsappInquiryTemplate: "Hello CFrank Enterprise, I would like to inquire about the current price and stock availability for [Door Name] (Size: [Size], Quantity: [Qty]).",
+  whatsappCartTemplate: "Hello CFrank Enterprise, I would like to inquire about current price and availability for the following items from your catalogue:\n\n[Items]\n\nPlease confirm availability and delivery terms to my project site.",
   serviceAreas: [
     "Anambra (Onitsha, Awka, Nnewi, Ogidi)",
     "Asaba & Delta State",
@@ -54,7 +58,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   ],
 };
 
-// Helper to format WhatsApp order message
+// Helper to format WhatsApp order message using dynamic templates
 export function buildWhatsAppOrderUrl(params: {
   productName?: string;
   price?: number;
@@ -62,33 +66,50 @@ export function buildWhatsAppOrderUrl(params: {
   size?: string;
   orientation?: string;
   additionalNotes?: string;
-  cartItems?: Array<{ name: string; quantity: number; price: number; size?: string }>;
+  cartItems?: Array<{ name: string; quantity: number; price?: number; size?: string }>;
   total?: number;
   targetPhone?: string;
+  inquiryTemplate?: string;
+  cartTemplate?: string;
 }): string {
   const phone = params.targetPhone || DEFAULT_SITE_SETTINGS.whatsappNumber;
   let text = "";
 
   if (params.cartItems && params.cartItems.length > 0) {
-    text = `Hello Anambra Best Door Enterprises (CFrank Enterprise),\n\nI would like to place an order from your website catalogue:\n\n`;
+    const rawTemplate = params.cartTemplate || DEFAULT_SITE_SETTINGS.whatsappCartTemplate;
+    let itemsText = "";
     params.cartItems.forEach((item, idx) => {
-      text += `${idx + 1}. *${item.name}* (Qty: ${item.quantity}) - ₦${(item.price * item.quantity).toLocaleString()}\n`;
-      if (item.size) text += `   Size/Spec: ${item.size}\n`;
+      itemsText += `${idx + 1}. *${item.name}* (Qty: ${item.quantity})`;
+      if (item.size) itemsText += ` - Spec: ${item.size}`;
+      if (item.price && item.price > 0) itemsText += ` - ₦${(item.price * item.quantity).toLocaleString()}`;
+      itemsText += `\n`;
     });
-    if (params.total) {
-      text += `\n*Total Amount:* ₦${params.total.toLocaleString()}\n`;
-    }
-    text += `\nPlease confirm availability and delivery terms to my location from Maraim Plaza Ogidi.`;
+
+    text = rawTemplate
+      .replace(/\[Items\]/gi, itemsText.trim())
+      .replace(/\[Market Location\]/gi, DEFAULT_SITE_SETTINGS.marketLocation);
   } else if (params.productName) {
-    text = `Hello Anambra Best Door Enterprises (CFrank Enterprise),\n\nI am interested in ordering:\n*${params.productName}*\n`;
-    if (params.price) text += `Price: ₦${params.price.toLocaleString()}\n`;
-    if (params.quantity) text += `Quantity: ${params.quantity}\n`;
-    if (params.size) text += `Size/Spec: ${params.size}\n`;
-    if (params.orientation) text += `Opening Orientation: ${params.orientation}\n`;
-    if (params.additionalNotes) text += `Note: ${params.additionalNotes}\n`;
-    text += `\nPlease confirm stock at Maraim Plaza Ogidi and shipping details.`;
+    const rawTemplate = params.inquiryTemplate || DEFAULT_SITE_SETTINGS.whatsappInquiryTemplate;
+    const name = params.productName || "Product";
+    const size = params.size || "Standard Spec";
+    const qty = String(params.quantity || 1);
+
+    text = rawTemplate
+      .replace(/\[Door Name\]/gi, name)
+      .replace(/\[Product Name\]/gi, name)
+      .replace(/\[Size\]/gi, size)
+      .replace(/\[Quantity\]/gi, qty)
+      .replace(/\[Qty\]/gi, qty)
+      .replace(/\[Market Location\]/gi, DEFAULT_SITE_SETTINGS.marketLocation);
+
+    if (params.orientation) {
+      text += `\nOpening Orientation: ${params.orientation}`;
+    }
+    if (params.additionalNotes) {
+      text += `\nNote: ${params.additionalNotes}`;
+    }
   } else {
-    text = `Hello Anambra Best Door Enterprises (CFrank Enterprise),\n\nI am contacting you from your website. I would like to inquire about your door inventory and pricing at Maraim Plaza Building Material Ogidi.`;
+    text = `Hello CFrank Enterprise, I am contacting you from your website. I would like to inquire about your product inventory, current prices, and delivery terms.`;
   }
 
   return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;

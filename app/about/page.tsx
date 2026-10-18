@@ -58,12 +58,12 @@ export default function AboutPage() {
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-md">
             <Image
               src="/products/bullet-proof-door.jpeg"
-              alt="Anambra Best Door Showroom Stock at Maraim Plaza Ogidi"
+              alt="Anambra Best Door Inventory Stock at Maraim Plaza Ogidi"
               fill
               className="object-cover"
             />
             <div className="absolute bottom-3 left-3 right-3 p-2.5 bg-slate-900/90 backdrop-blur-md rounded-xl text-white text-[11px] font-semibold flex items-center justify-between">
-              <span className="truncate max-w-[220px]">Showroom: {settings.marketLocation}</span>
+              <span className="truncate max-w-[220px]">Depot: {settings.marketLocation}</span>
               <span className="text-blue-300 font-bold shrink-0">In Stock</span>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function AboutPage() {
             </div>
             <h3 className="text-sm font-bold text-slate-900">Physical Market Hub</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Visit our showroom at {settings.marketLocation} to personally inspect leaf finishes, lock cylinders, and frame alignments.
+              Visit our store depot at {settings.marketLocation} to personally inspect leaf finishes, lock cylinders, and frame alignments.
             </p>
           </div>
 

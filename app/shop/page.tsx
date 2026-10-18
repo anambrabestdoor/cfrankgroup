@@ -44,14 +44,16 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Archive Header */}
-      <div className="bg-[#0A192F] text-white py-12 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
+      <div className="bg-white border-b border-slate-200/80 py-10 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-3xl mx-auto space-y-3">
-
-          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block">
+            Direct Inventory Catalog
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
             Security Doors & Building Fittings
           </h1>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            All prices in Nigerian Naira (₦). Genuine heavy-gauge steel, precision joinery, and reliable door hardware. Available for retail and contractor wholesale with nationwide dispatch.
+          <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+            High-gauge security entrance doors, luxury foreign HDF room doors, waterproof bathroom doors, and sanitary fittings. Nationwide dispatch from Maraim Plaza, Ogidi.
           </p>
         </div>
       </div>
@@ -142,7 +144,7 @@ export default function ShopPage() {
           <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-4">
             <p className="text-base font-bold text-slate-800">No matching products found</p>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              We may have unlisted variations in stock at Shop 14 Chubby Plaza Ogidi.
+              We may have unlisted variations in stock at our Maraim Plaza depot, Ogidi.
             </p>
             <div className="pt-2 flex justify-center gap-3">
               <button

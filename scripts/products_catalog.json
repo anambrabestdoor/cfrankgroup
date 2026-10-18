@@ -1,0 +1,797 @@
+[
+  {
+    "id": "prod-001",
+    "slug": "interior-luxury-foreign-hdf-door",
+    "name": "Interior Luxury Foreign HDF Door",
+    "category": "hdf-doors",
+    "categoryLabel": "HDF & Room Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/interior-luxury-foreign-hdf-door.jpeg",
+    "gallery": [
+      "/products/interior-luxury-foreign-hdf-door.jpeg"
+    ],
+    "badge": "Showroom Favorite",
+    "stockStatus": "in_stock",
+    "stock": 25,
+    "shortDescription": "Imported high-density foreign HDF interior door with precision CNC grooved design and protective acoustic core.",
+    "description": "Crafted from foreign high-density fibreboard with precision CNC groove patterns, this Interior Luxury Foreign HDF Door combines architectural refinement with acoustic resistance and dimensional stability. Suitable for residential estates, hotels, and master bedrooms.",
+    "specifications": {
+      "Material": "Foreign High-Density Fibreboard (HDF)",
+      "Dimensions": "3ft x 7ft (900mm x 2100mm)",
+      "Core Infill": "Tubular Acoustic Chipboard Core",
+      "Finish": "Pre-Finished Moisture-Resistant Coating",
+      "Application": "Master Bedrooms, Living Rooms & Suites"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Interior Luxury Foreign HDF Door | Anambra Best Door",
+    "seoDescription": "Foreign luxury HDF interior doors available at Anambra Best Door Enterprises. Direct import quality.",
+    "focusKeyphrase": "Foreign HDF Door",
+    "featured": true,
+    "active": true
+  },
+  {
+    "id": "prod-002",
+    "slug": "hdf-wooden-door-with-complete-fittings",
+    "name": "HDF Wooden Door with Complete Fittings",
+    "category": "hdf-doors",
+    "categoryLabel": "HDF & Room Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/hdf-wooden-door-with-complete-fittings.jpeg",
+    "gallery": [
+      "/products/hdf-wooden-door-with-complete-fittings.jpeg"
+    ],
+    "badge": "Complete Set",
+    "stockStatus": "in_stock",
+    "stock": 30,
+    "shortDescription": "Complete package including HDF door leaf, matching adjustable frame, architrave, lockset, and heavy bearing hinges.",
+    "description": "All components needed for a room door installation in one complete bundle. Includes pre-sized HDF leaf, matching wooden jambs, architraves, mortise lockset, keys, and 3 ball-bearing hinges.",
+    "specifications": {
+      "Package": "Leaf + Frame + Architrave + Lockset + Hinges",
+      "Dimensions": "3ft x 7ft",
+      "Surface": "Melamine Coated High-Density Board",
+      "Fittings": "Complete Heavy-Duty Hardware Included"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "HDF Wooden Door with Complete Fittings | CFrank Enterprise",
+    "seoDescription": "HDF wooden door packages with matching frames, architraves, and locks at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "HDF Door with Complete Fittings",
+    "featured": true,
+    "active": true
+  },
+  {
+    "id": "prod-003",
+    "slug": "hdf-construction-on-demand",
+    "name": "HDF Construction On Demand",
+    "category": "hdf-doors",
+    "categoryLabel": "HDF & Room Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/hdf-construction-on-demand.jpeg",
+    "gallery": [
+      "/products/hdf-construction-on-demand.jpeg"
+    ],
+    "badge": "Contractor Bulk",
+    "stockStatus": "made_to_order",
+    "stock": 50,
+    "shortDescription": "Custom-sized HDF flush and panel door construction for bulk building projects and commercial developments.",
+    "description": "Tailored on-demand fabrication for real estate developers, contractors, and builders. Available in custom heights, widths, and veneer textures with rapid fulfillment.",
+    "specifications": {
+      "Service": "Custom Dimensions & Bulk Construction",
+      "Lead Time": "Rapid fulfillment on contractor schedules",
+      "Frame Infill": "Hardwood Skeleton with Semi-Solid or Solid Core",
+      "Customization": "Veneer grain, groove depth, and sizes on demand"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Custom HDF Door Construction | Anambra Best Door",
+    "seoDescription": "Custom HDF door fabrication and bulk project supply by CFrank Enterprise.",
+    "focusKeyphrase": "Custom HDF Door Construction",
+    "featured": true,
+    "active": true
+  },
+  {
+    "id": "prod-004",
+    "slug": "watson-door",
+    "name": "Watson Door",
+    "category": "interior-doors",
+    "categoryLabel": "Interior Wooden Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/watson-door.jpeg",
+    "gallery": [
+      "/products/watson-door.jpeg"
+    ],
+    "badge": "Interior Standard",
+    "stockStatus": "in_stock",
+    "stock": 35,
+    "shortDescription": "Solid engineered timber Watson interior room door with pre-hung frame and smooth pre-finished surface.",
+    "description": "The Watson Door is a trusted interior room door standard across Nigeria. Built with seasoned solid timber rails, acoustic infill core, and luxury veneer finish that requires no additional painting.",
+    "specifications": {
+      "Material": "Seasoned Timber Rails & Engineered Core",
+      "Dimensions": "2.5ft x 7ft / 3ft x 7ft (750/900mm x 2100mm)",
+      "Leaf Thickness": "40mm",
+      "Components": "Matching Frame & Architrave Set Available"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Watson Interior Door | Anambra Best Door Enterprises",
+    "seoDescription": "Original Watson interior room doors with frames and architraves at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Watson Door",
+    "featured": true,
+    "active": true
+  },
+  {
+    "id": "prod-005",
+    "slug": "4ft-watson-door",
+    "name": "4ft Watson Door",
+    "category": "interior-doors",
+    "categoryLabel": "Interior Wooden Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/4ft-watson.jpeg",
+    "gallery": [
+      "/products/4ft-watson.jpeg"
+    ],
+    "badge": "Wide Format",
+    "stockStatus": "in_stock",
+    "stock": 15,
+    "shortDescription": "Extra-wide 4ft Watson interior door for master bedrooms, executive offices, and spacious living lounges.",
+    "description": "Designed for grand interior room openings, the 4ft Watson Door provides a generous passage with smooth operation, solid acoustic core, and matching wooden frames.",
+    "specifications": {
+      "Material": "Engineered Timber Core & Hardwood Rails",
+      "Dimensions": "4ft x 7ft (1200mm x 2100mm)",
+      "Leaf Thickness": "45mm",
+      "Finish": "Pre-Finished Luxury Woodgrain"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "4ft Watson Door | Anambra Best Door Enterprises",
+    "seoDescription": "4ft Watson wide interior room doors in stock at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "4ft Watson Door",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-006",
+    "slug": "bullet-proof-door",
+    "name": "Bullet Proof Door",
+    "category": "security-doors",
+    "categoryLabel": "Security & Steel Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/bullet-proof-door.jpeg",
+    "gallery": [
+      "/products/bullet-proof-door.jpeg"
+    ],
+    "badge": "Maximum Security",
+    "stockStatus": "in_stock",
+    "stock": 12,
+    "shortDescription": "Ultra heavy-gauge bullet-resistant security door with reinforced structural steel core and multi-point deadbolt locks.",
+    "description": "Designed for high-security perimeter defense, this Bullet Proof Door features a reinforced ballistic-grade steel leaf, multi-layered armour plating, heavy-duty anti-jemmy security hinges, and tamper-proof multi-point locking.",
+    "specifications": {
+      "Material": "Reinforced Ballistic Steel Core",
+      "Steel Gauge": "2.0mm Frame / 1.8mm Leaf",
+      "Dimensions": "3ft x 7ft / 4ft x 7ft",
+      "Lock System": "16-Point Multi-Directional Deadbolt Mechanism",
+      "Core Infill": "High-Density Sound & Heat Resistant Core"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Bullet Proof Security Door | Anambra Best Door",
+    "seoDescription": "Heavy-gauge Bullet Proof Doors at Anambra Best Door Enterprises. Nationwide delivery available.",
+    "focusKeyphrase": "Bullet Proof Door",
+    "featured": true,
+    "active": true
+  },
+  {
+    "id": "prod-007",
+    "slug": "bible-design-cast-door",
+    "name": "Bible Design Cast Door",
+    "category": "luxury-doors",
+    "categoryLabel": "Luxury & Cast Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/bible-design-cast-door.jpeg",
+    "gallery": [
+      "/products/bible-design-cast-door.jpeg"
+    ],
+    "badge": "Cast Aluminium",
+    "stockStatus": "in_stock",
+    "stock": 10,
+    "shortDescription": "Cast aluminium security door featuring ornamental Bible design pattern with reinforced security core.",
+    "description": "The Bible Design Cast Door delivers majestic entrance aesthetics combined with reinforced industrial steel security. Features a solid cast aluminium decorative face with multi-point perimeter locks and weather-resistant patina finish.",
+    "specifications": {
+      "Material": "Solid Cast Aluminium Face + Heavy Steel Skeleton",
+      "Dimensions": "3ft x 7ft / 4ft x 7ft",
+      "Lock System": "14-Point Anti-Tamper Deadbolts",
+      "Finish": "Antiqued Bronze & Gold Patina"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Bible Design Cast Door | Anambra Best Door",
+    "seoDescription": "Exquisite Bible Design Cast Doors from direct importers at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Bible Design Cast Door",
+    "featured": true,
+    "active": true
+  },
+  {
+    "id": "prod-008",
+    "slug": "italian-copper-door",
+    "name": "Italian Copper Door",
+    "category": "luxury-doors",
+    "categoryLabel": "Luxury & Cast Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/italian-copper.jpeg",
+    "gallery": [
+      "/products/italian-copper.jpeg"
+    ],
+    "badge": "Italian Craft",
+    "stockStatus": "in_stock",
+    "stock": 8,
+    "shortDescription": "Italian luxury copper finish security door engineered with electro-plated copper skin and heavy steel chassis.",
+    "description": "Engineered to Italian architectural standards, this Italian Copper Door offers rich metallic warmth and unbreakable security. Features authentic embossed copper skin over an electro-galvanized heavy steel core.",
+    "specifications": {
+      "Material": "Electro-Plated Embossed Copper & Cold-Rolled Steel",
+      "Dimensions": "3ft x 7ft / 4ft x 7ft",
+      "Lock System": "16-Point Multi-Lock Cylinder",
+      "Hinges": "4 Heavy-Duty Bearing Security Hinges"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Italian Copper Security Door | Anambra Best Door",
+    "seoDescription": "Original Italian Copper security doors at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Italian Copper Door",
+    "featured": true,
+    "active": true
+  },
+  {
+    "id": "prod-009",
+    "slug": "israeli-door",
+    "name": "Israeli Door",
+    "category": "security-doors",
+    "categoryLabel": "Security & Steel Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/israeli-door.jpeg",
+    "gallery": [
+      "/products/israeli-door.jpeg"
+    ],
+    "badge": "4-Way Multi-Bolt",
+    "stockStatus": "in_stock",
+    "stock": 25,
+    "shortDescription": "High-security Israeli 4-way multi-bolt security door engineered for extreme perimeter defense.",
+    "description": "Renowned globally for multi-locking engineering, the Israeli Door uses 4-directional steel locking bars driven by a single high-security cylinder.",
+    "specifications": {
+      "Material": "Cold-Rolled Galvanized Steel",
+      "Steel Gauge": "1.5mm Leaf / 1.8mm Frame",
+      "Lock System": "4-Way 12-Bolt Geometric Locking System",
+      "Dimensions": "3ft x 7ft (900mm x 2100mm)"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Israeli Security Door | Anambra Best Door",
+    "seoDescription": "Authentic Israeli 4-way security doors available at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Israeli Door",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-010",
+    "slug": "juihua-3ft-door",
+    "name": "Juihua 3ft Door",
+    "category": "security-doors",
+    "categoryLabel": "Security & Steel Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/juihua-3ft-door.jpeg",
+    "gallery": [
+      "/products/juihua-3ft-door.jpeg"
+    ],
+    "badge": "In Stock",
+    "stockStatus": "in_stock",
+    "stock": 18,
+    "shortDescription": "Juihua 3ft commercial grade steel entrance door with durable finish and multi-point security.",
+    "description": "The Juihua 3ft Door provides reliable security and modern styling for residential apartments and commercial developments. Fitted with factory handles, lock body, and sound dampening seals.",
+    "specifications": {
+      "Material": "Electro-Galvanized Steel",
+      "Dimensions": "3ft x 7ft (900mm x 2100mm)",
+      "Lock System": "Multi-Point Security Lock",
+      "Fittings": "Complete Handles & Keyed Cylinder Included"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Juihua 3ft Steel Door | Anambra Best Door",
+    "seoDescription": "Juihua 3ft steel security doors in stock at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Juihua 3ft Door",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-011",
+    "slug": "american-panel-door",
+    "name": "American Panel Door",
+    "category": "security-doors",
+    "categoryLabel": "Security & Steel Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/american-panel-door.jpeg",
+    "gallery": [
+      "/products/american-panel-door.jpeg"
+    ],
+    "badge": "Popular Model",
+    "stockStatus": "in_stock",
+    "stock": 20,
+    "shortDescription": "American deep-embossed steel panel entrance door with classic curb appeal and weatherproof coating.",
+    "description": "Featuring classic deep-embossed panel design, the American Panel Door is crafted with heavy-gauge steel for long-lasting exterior resilience and architectural appeal.",
+    "specifications": {
+      "Material": "Galvanized Steel Sheet",
+      "Dimensions": "3ft x 7ft / 4ft x 7ft",
+      "Panel Design": "Classic American 6-Panel Embossment",
+      "Lock System": "Multi-Point Heavy Duty Deadbolts"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "American Panel Steel Door | Anambra Best Door",
+    "seoDescription": "High-grade American Panel steel security doors at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "American Panel Door",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-012",
+    "slug": "harmony-toilet-size-door",
+    "name": "Harmony Toilet Size Door",
+    "category": "bathroom-doors",
+    "categoryLabel": "Waterproof Bathroom Doors",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/harmony-toilet-size.jpeg",
+    "gallery": [
+      "/products/harmony-toilet-size.jpeg"
+    ],
+    "badge": "100% Waterproof",
+    "stockStatus": "in_stock",
+    "stock": 40,
+    "shortDescription": "100% waterproof and moisture-resistant Harmony door designed specifically for bathrooms and restrooms.",
+    "description": "Engineered specifically to withstand high humidity, steam, and direct water exposure. Will never warp, swell, rot, or harbor mold. Includes matching waterproof frame and privacy bathroom lockset.",
+    "specifications": {
+      "Material": "Extruded Waterproof Polymer / WPC Alloy",
+      "Dimensions": "2.5ft x 7ft (750mm x 2100mm)",
+      "Properties": "100% Waterproof, Termite-Proof, Mold-Proof",
+      "Lockset": "Internal Privacy Thumb-Turn Included"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Harmony Toilet Size Door | Anambra Best Door",
+    "seoDescription": "Waterproof Harmony toilet size doors for bathrooms and restrooms at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Harmony Toilet Door",
+    "featured": true,
+    "active": true
+  },
+  {
+    "id": "prod-013",
+    "slug": "executive-gold-wc",
+    "name": "Executive Gold WC",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Excutive Gøld wc.jpeg",
+    "gallery": [
+      "/products/Excutive Gøld wc.jpeg"
+    ],
+    "badge": "Luxury Gold",
+    "stockStatus": "in_stock",
+    "stock": 12,
+    "shortDescription": "High-luxury gold glazed ceramic water closet with dual-flush water-saving system and soft-closing seat.",
+    "description": "The Executive Gold WC brings royal elegance to modern master bathrooms. Made with nano-glazed vitreous china that resists stains and bacteria, featuring electro-plated gold accents and silent soft-close seat cover.",
+    "specifications": {
+      "Material": "Nano-Glazed Vitreous Ceramic with Gold Electro-Plating",
+      "Flush Type": "Dual-Flush Tornado Siphonic Flush",
+      "Seat Cover": "Soft-Closing Hydraulic Damper Seat",
+      "Drainage": "S-Trap Standard 300mm Rough-in"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Executive Gold WC Water Closet | Anambra Best Door",
+    "seoDescription": "Luxury Executive Gold WC water closets at Anambra Best Door Enterprises. High-end bathroom fittings.",
+    "focusKeyphrase": "Executive Gold WC",
+    "featured": true,
+    "active": true
+  },
+  {
+    "id": "prod-014",
+    "slug": "golden-wc-ideal-england-with-big-basin",
+    "name": "Golden WC Ideal England with Big Basin",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Golden wc ideal England with big basin.jpeg",
+    "gallery": [
+      "/products/Golden wc ideal England with big basin.jpeg"
+    ],
+    "badge": "Complete Suite",
+    "stockStatus": "in_stock",
+    "stock": 8,
+    "shortDescription": "Matching English luxury set featuring gold rimmed WC toilet paired with a generous matching vanity basin.",
+    "description": "A coordinated sanitary suite for luxury residential suites. Combines an ergonomic English style WC toilet with high-capacity matching ceramic basin, finished in scratch-resistant white and gold detailing.",
+    "specifications": {
+      "Set Includes": "Water Closet + Pedestal Basin Set",
+      "Finish": "Deep Glazed White Ceramic with Mirror Gold Accents",
+      "Flush Mechanism": "High-Efficiency Water-Saving Mechanism"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Golden WC Ideal England Suite | Anambra Best Door",
+    "seoDescription": "Golden WC Ideal England toilet suite with matching basin at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Golden WC England Set",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-015",
+    "slug": "golden-sink-italy",
+    "name": "Golden Sink Italy",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Golden Sink Italy .jpeg",
+    "gallery": [
+      "/products/Golden Sink Italy .jpeg"
+    ],
+    "badge": "Italian Style",
+    "stockStatus": "in_stock",
+    "stock": 15,
+    "shortDescription": "Italian style stainless steel kitchen sink coated in brushed PVD gold titanium finish.",
+    "description": "Engineered with heavy-gauge 304 food-grade stainless steel coated in PVD brushed gold. Anti-scratch, heat resistant, with sound-dampening pads and anti-condensation undercoating.",
+    "specifications": {
+      "Material": "SUS304 Stainless Steel with PVD Gold Nano-Coat",
+      "Installation": "Topmount or Undermount",
+      "Features": "Sound-Deadening Insulation & Fast Drainage Waste"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Golden Sink Italy | Anambra Best Door Enterprises",
+    "seoDescription": "Luxury Italian golden kitchen sinks in stock at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Golden Sink Italy",
+    "featured": true,
+    "active": true
+  },
+  {
+    "id": "prod-016",
+    "slug": "cubicle-shower-room",
+    "name": "Cubicle Shower Room",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Cubicle shower room.jpeg",
+    "gallery": [
+      "/products/Cubicle shower room.jpeg"
+    ],
+    "badge": "Tempered Glass",
+    "stockStatus": "in_stock",
+    "stock": 10,
+    "shortDescription": "Modern tempered glass corner shower enclosure with sliding door and aluminium frame.",
+    "description": "Crafted from 8mm explosion-proof tempered glass with stainless steel rollers and rust-resistant aluminum profiles. Keeps bathroom floors completely dry while elevating interior aesthetics.",
+    "specifications": {
+      "Glass": "8mm Toughened Safety Tempered Glass",
+      "Frame": "Anodized Corrosion-Resistant Aluminium",
+      "Door Type": "Smooth Gliding Double Roller Mechanism"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Cubicle Shower Room Enclosure | Anambra Best Door",
+    "seoDescription": "Tempered glass cubicle shower rooms at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Cubicle Shower Room",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-017",
+    "slug": "power-shower",
+    "name": "Power Shower",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Power shower.jpeg",
+    "gallery": [
+      "/products/Power shower.jpeg"
+    ],
+    "badge": "Thermostatic",
+    "stockStatus": "in_stock",
+    "stock": 20,
+    "shortDescription": "Multi-function thermostatic rain shower column with hand wand, overhead drench, and body jets.",
+    "description": "The Power Shower panel system transforms daily showers into a spa experience. Features solid brass mixer valve, large overhead rain head, flexible hand spray, and targeted body massage nozzles.",
+    "specifications": {
+      "Material": "Solid Brass Valve Body + Stainless Steel Panel",
+      "Functions": "Overhead Rain Head, Hand Spray & Massage Jets",
+      "Finish": "Matte Black & Chrome Options"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Power Shower Column System | Anambra Best Door",
+    "seoDescription": "Multi-jet power shower columns available at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Power Shower Column",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-018",
+    "slug": "big-brother-tap",
+    "name": "Big Brother Tap",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Big Brother Tap.jpeg",
+    "gallery": [
+      "/products/Big Brother Tap.jpeg"
+    ],
+    "badge": "Heavy Brass",
+    "stockStatus": "in_stock",
+    "stock": 35,
+    "shortDescription": "Heavy solid brass architectural basin mixer tap with precision ceramic cartridge.",
+    "description": "Solid forged brass construction with high-arc gooseneck spout, drip-free ceramic disc valve, and smooth hot/cold water regulation.",
+    "specifications": {
+      "Material": "100% Solid Brass Core",
+      "Valve": "Drip-Free Tested Ceramic Disc Cartridge",
+      "Flow": "Aerated Water Saving Flow"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Big Brother Tap Heavy Brass Mixer | Anambra Best Door",
+    "seoDescription": "Solid brass Big Brother taps and sanitary mixers at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Big Brother Tap",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-019",
+    "slug": "big-brother-tap-model-2",
+    "name": "Big Brother Tap Model II",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Big brother tapp.jpeg",
+    "gallery": [
+      "/products/Big brother tapp.jpeg"
+    ],
+    "badge": "Contemporary",
+    "stockStatus": "in_stock",
+    "stock": 25,
+    "shortDescription": "Contemporary square-body architectural mixer tap for luxury washbasins and modern counters.",
+    "description": "Geometric square styling made with heavy brass forging, anti-limescale aerator, and scratch-resistant finish for long-lasting performance.",
+    "specifications": {
+      "Design": "Square Geometric Body",
+      "Cartridge": "Ceramic Disc Cartridge",
+      "Finish": "Mirror Polished Chrome / Electro-Coated"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Big Brother Tap Model II | Anambra Best Door",
+    "seoDescription": "Modern architectural basin mixer taps at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Big Brother Tap Model 2",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-020",
+    "slug": "dining-basin",
+    "name": "Dining Basin",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Dining basin.jpeg",
+    "gallery": [
+      "/products/Dining basin.jpeg"
+    ],
+    "badge": "Countertop Basin",
+    "stockStatus": "in_stock",
+    "stock": 18,
+    "shortDescription": "Countertop decorative ceramic dining area handwash basin with high-gloss glaze.",
+    "description": "Designed for guest dining areas and executive washrooms. Smooth surface that wipes clean instantly, with overflow protection and universal drain cutout.",
+    "specifications": {
+      "Type": "Above-Counter Vessel Basin",
+      "Material": "Vitreous Ceramic with High-Gloss Glaze",
+      "Dimensions": "Standard Countertop Footprint"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Decorative Dining Basin | Anambra Best Door Enterprises",
+    "seoDescription": "Countertop decorative dining handwash basins at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Dining Handwash Basin",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-021",
+    "slug": "golden-executive-basin",
+    "name": "Golden Executive Basin",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Golden excutive.jpeg",
+    "gallery": [
+      "/products/Golden excutive.jpeg"
+    ],
+    "badge": "Executive Gold",
+    "stockStatus": "in_stock",
+    "stock": 14,
+    "shortDescription": "Luxury gold pattern countertop washbasin engineered for premium guest suites and executive restrooms.",
+    "description": "Features rich metallic gold ornamentation fired into the ceramic body to guarantee zero peeling, discoloration, or fading.",
+    "specifications": {
+      "Type": "Luxury Vessel Basin",
+      "Finish": "Kiln-Fired Metallic Gold & Pure White Ceramic",
+      "Maintenance": "Stain-Resistant Non-Porous Surface"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Golden Executive Basin | Anambra Best Door",
+    "seoDescription": "Executive gold ceramic washbasins at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Golden Executive Basin",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-022",
+    "slug": "pioneer-special-sink",
+    "name": "Pioneer Special Sink",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Pioneer SPecial Sink.jpeg",
+    "gallery": [
+      "/products/Pioneer SPecial Sink.jpeg"
+    ],
+    "badge": "Heavy Gauge",
+    "stockStatus": "in_stock",
+    "stock": 22,
+    "shortDescription": "Heavy-duty Pioneer stainless steel double bowl kitchen sink with drainer board.",
+    "description": "Industrial resilience for domestic and commercial kitchens. Deep bowl design prevents water splashback, accompanied by heavy soundproof rubber dampeners.",
+    "specifications": {
+      "Configuration": "Double Bowl with Integrated Drainer",
+      "Material": "Commercial-Grade Stainless Steel",
+      "Features": "Overflow Port & Anti-Clog Waste Strainer"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Pioneer Special Kitchen Sink | Anambra Best Door",
+    "seoDescription": "Commercial grade Pioneer stainless steel kitchen sinks at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Pioneer Special Sink",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-023",
+    "slug": "plain-india-basin",
+    "name": "Plain India Basin",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Plain India basin.jpeg",
+    "gallery": [
+      "/products/Plain India basin.jpeg"
+    ],
+    "badge": "Essential Series",
+    "stockStatus": "in_stock",
+    "stock": 45,
+    "shortDescription": "Classic pure white vitreous ceramic washbasin for residential apartments and commercial buildings.",
+    "description": "Reliable, functional, and durable ceramic basin ideal for large-scale apartment developments, schools, and offices.",
+    "specifications": {
+      "Material": "Vitreous Ceramic",
+      "Mounting": "Wall-Hung or Pedestal Compatible",
+      "Color": "Classic Brilliant White"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Plain India Ceramic Washbasin | Anambra Best Door",
+    "seoDescription": "Standard white ceramic washbasins for building projects at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Plain India Basin",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-024",
+    "slug": "pro-wc",
+    "name": "Pro WC",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/Pro wc.jpeg",
+    "gallery": [
+      "/products/Pro wc.jpeg"
+    ],
+    "badge": "Modern Rimless",
+    "stockStatus": "in_stock",
+    "stock": 28,
+    "shortDescription": "Modern rimless water closet toilet with efficient vortex flushing and quick-release seat.",
+    "description": "The Pro WC features modern rimless bowl technology that eliminates hidden corners where germs accumulate. Easy to sanitize with powerful single-push flush.",
+    "specifications": {
+      "Bowl Technology": "Hygienic Rimless Bowl",
+      "Flushing": "High-Pressure Vortex System",
+      "Seat": "Quick-Release Easy Clean Dampened Seat"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "Pro WC Rimless Toilet | Anambra Best Door Enterprises",
+    "seoDescription": "Pro WC rimless toilets with vortex flushing at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "Pro WC Toilet",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-025",
+    "slug": "v-star-crola-with-big-basin",
+    "name": "V Star Crola with Big Basin",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/V star  Crola with big basin.jpeg",
+    "gallery": [
+      "/products/V star  Crola with big basin.jpeg"
+    ],
+    "badge": "Ensuite Combo",
+    "stockStatus": "in_stock",
+    "stock": 16,
+    "shortDescription": "V Star Crola luxury toilet suite paired with high-volume vanity basin for master ensuites.",
+    "description": "A coordinated sanitary ensemble engineered for durability, modern ergonomics, and elegant aesthetics.",
+    "specifications": {
+      "Set Type": "Complete WC and Vanity Basin Combo",
+      "Ceramic": "Double-Fired Pure White Vitreous China",
+      "Mechanism": "Heavy-Duty Dual Flush Valve"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "V Star Crola Toilet Suite | Anambra Best Door",
+    "seoDescription": "V Star Crola luxury toilet and basin suites at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "V Star Crola Suite",
+    "featured": false,
+    "active": true
+  },
+  {
+    "id": "prod-026",
+    "slug": "v-star-medium-pro",
+    "name": "V Star Medium Pro WC",
+    "category": "sanitary-fittings",
+    "categoryLabel": "Sanitary & Bathroom Fittings",
+    "price": 0,
+    "originalPrice": 0,
+    "priceOnRequest": true,
+    "image": "/products/V star medium pro.jpeg",
+    "gallery": [
+      "/products/V star medium pro.jpeg"
+    ],
+    "badge": "Compact Design",
+    "stockStatus": "in_stock",
+    "stock": 20,
+    "shortDescription": "Space-saving medium profile water closet toilet engineered for guest bathrooms and compact ensuites.",
+    "description": "Offers full-size comfort in a compact footprint. Quiet gravity-flush mechanism and stain-resistant glaze.",
+    "specifications": {
+      "Profile": "Medium Compact Footprint",
+      "Trap Type": "Fully Glazed S-Trap",
+      "Efficiency": "Eco Dual Flush Water Saving"
+    },
+    "jijiUrl": "https://jiji.ng/shop/anambrabestdoor",
+    "seoTitle": "V Star Medium Pro Compact WC | Anambra Best Door",
+    "seoDescription": "V Star Medium Pro compact water closets at Anambra Best Door Enterprises.",
+    "focusKeyphrase": "V Star Medium Pro",
+    "featured": false,
+    "active": true
+  }
+]

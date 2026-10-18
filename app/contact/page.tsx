@@ -21,16 +21,16 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Header Banner */}
-      <div className="bg-[#0A192F] text-white py-16 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
+      <div className="bg-white border-b border-slate-200/80 py-12 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-3xl mx-auto space-y-3">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-blue-400 block">
-            Showroom Depot & Customer Desk
+          <span className="text-[11px] font-bold uppercase tracking-widest text-[#003296] block">
+            Customer Service & Order Desk
           </span>
-          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
             Contact Anambra Best Door
           </h1>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Visit our Ogidi showroom depot or connect directly with our sales desk on WhatsApp for live price quotes, wall measurements, and nationwide delivery schedules.
+          <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+            Visit our store depot or connect directly with our sales desk on WhatsApp for live price quotes, wall measurements, and nationwide delivery schedules.
           </p>
         </div>
       </div>
@@ -56,7 +56,7 @@ export default function ContactPage() {
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-bold text-slate-900 block">Showroom Depot Address</span>
+                  <span className="font-bold text-slate-900 block">Store & Depot Address</span>
                   <p className="text-slate-600 mt-0.5 leading-relaxed">{settings.address}</p>
                 </div>
               </div>
@@ -88,7 +88,7 @@ export default function ContactPage() {
                     href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I am contacting you from your website contact page.")}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mt-2 py-1.5 px-3 bg-[#25D366] text-white font-bold text-xs rounded-lg shadow-xs"
+                    className="inline-block mt-2 py-1.5 px-3 bg-[#25D366] text-white font-bold text-xs rounded-lg shadow-xs cursor-pointer"
                   >
                     Open WhatsApp Chat
                   </a>
@@ -101,7 +101,7 @@ export default function ContactPage() {
                   <Clock className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-bold text-slate-900 block">Showroom Hours</span>
+                  <span className="font-bold text-slate-900 block">Operating Hours</span>
                   <p className="text-slate-600 mt-0.5">{settings.workingHours} (Sundays Closed)</p>
                 </div>
               </div>
@@ -110,7 +110,7 @@ export default function ContactPage() {
               <div className="flex flex-wrap gap-2 pt-2">
                 <button
                   onClick={() => setCacModalOpen(true)}
-                  className="py-2 px-3 bg-white border border-slate-200 hover:border-[#003296] rounded-xl text-[11px] font-semibold text-[#003296] flex items-center space-x-1.5 transition-colors"
+                  className="py-2 px-3 bg-white border border-slate-200 hover:border-[#003296] rounded-xl text-[11px] font-semibold text-[#003296] flex items-center space-x-1.5 transition-colors cursor-pointer"
                 >
                   <ShieldCheck className="w-3.5 h-3.5 text-[#003296]" />
                   <span>CAC BN: {settings.cacNumber} (Verify)</span>
@@ -135,7 +135,7 @@ export default function ContactPage() {
                 <CheckCircle className="w-12 h-12 text-emerald-600 mx-auto" />
                 <h3 className="text-xl font-bold text-slate-900">Message Dispatched!</h3>
                 <p className="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
-                  Your inquiry has been compiled and sent to our sales desk. A showroom representative will assist you promptly.
+                  Your inquiry has been compiled and sent to our sales desk. A sales representative will assist you promptly.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}

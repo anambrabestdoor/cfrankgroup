@@ -21,18 +21,6 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
-      {
-        protocol: "https",
-        hostname: "anua.us",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "anuaglobal.com",
-        port: "",
-        pathname: "/**",
-      },
     ],
   },
 };

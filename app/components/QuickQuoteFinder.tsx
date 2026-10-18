@@ -61,7 +61,7 @@ const SIZE_OPTIONS: OptionItem[] = [
   {
     id: "custom",
     label: "Custom / Not Sure",
-    description: "Request a showroom technician to advise on your wall openings.",
+    description: "Request our technical team to advise on your wall openings.",
     icon: <span className="font-bold text-xs">?</span>,
   },
 ];

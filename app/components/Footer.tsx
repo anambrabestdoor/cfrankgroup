@@ -80,7 +80,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/contact" className="hover:text-white transition-colors">
-                  Showroom & Depot Location
+                  Store & Depot Location
                 </Link>
               </li>
               <li>
@@ -116,12 +116,12 @@ export default function Footer() {
           {/* Showroom & Depot Contact */}
           <div className="space-y-3">
             <h3 className="text-white text-xs font-bold uppercase tracking-wider">
-              Ogidi Showroom Depot
+              Depot & Store Location
             </h3>
             <div className="space-y-2 text-slate-400 text-xs">
               <div className="flex items-start space-x-2">
                 <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-
+                <span>{settings.address}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-blue-400 shrink-0" />

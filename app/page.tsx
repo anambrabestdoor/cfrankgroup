@@ -82,66 +82,22 @@ export default function StorefrontPage() {
       {/* 3. Interactive Step-by-Step Quote Tool (Video Inspired) */}
       <QuickQuoteFinder />
 
-      {/* 4. Category Grid Spotlight */}
-      <section className="py-12 px-4 sm:px-6 max-w-7xl mx-auto w-full">
-        <div className="flex items-end justify-between mb-6">
-          <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block mb-1">
-              Explore By Application
-            </span>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight">
-              Browse Building Product Categories
-            </h2>
-          </div>
-          <Link
-            href="/shop"
-            className="hidden sm:flex items-center space-x-1 text-xs font-bold text-[#003296] hover:underline"
-          >
-            <span>View All</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-          {CATEGORIES.filter((c) => c.id !== "all").slice(0, 4).map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/shop?category=${cat.id}`}
-              className="p-4 rounded-xl border border-slate-200/90 bg-white hover:border-[#003296] hover:shadow-md transition-all flex flex-col justify-between group"
-            >
-              <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                  Category
-                </span>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#003296] transition-colors leading-snug">
-                  {cat.name}
-                </h3>
-              </div>
-              <div className="mt-4 flex items-center justify-between text-[11px] text-slate-500 font-medium">
-                <span>View Products</span>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#003296] transition-transform group-hover:translate-x-1" />
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 5. Best Sellers & Featured Products Grid (2-Column Mobile Archive Structure) */}
+      {/* 4. Best Sellers & Featured Products Grid */}
       <section className="py-12 px-4 sm:px-6 max-w-7xl mx-auto w-full">
         <div className="flex items-end justify-between mb-6 pb-3 border-b border-slate-200/80">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block mb-1">
-              Ogidi Showroom Inventory
+              Verified Inventory
             </span>
             <h2 className="text-xl sm:text-3xl font-black text-slate-950 tracking-tight">
-              Featured Security & Interior Doors
+              Featured Doors & Bathroom Fittings
             </h2>
           </div>
           <Link
             href="/shop"
             className="flex items-center space-x-1 text-xs font-bold text-[#003296] hover:underline"
           >
-            <span>View Full Archive</span>
+            <span>View All Products</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -154,7 +110,7 @@ export default function StorefrontPage() {
         </div>
       </section>
 
-      {/* 5B. Dedicated Interior & HDF Doors Spotlight */}
+      {/* 5. Dedicated Interior & HDF Doors Spotlight */}
       <section className="py-12 px-4 sm:px-6 bg-slate-50 border-t border-slate-200/80">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-3 border-b border-slate-200/80">
@@ -166,14 +122,14 @@ export default function StorefrontPage() {
                 Engineered HDF & Wooden Room Doors
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl leading-relaxed">
-                Complete pre-hung door packages with matching architraves, mortise locksets, and on-demand custom project fabrication direct from Ogidi depot.
+                Complete pre-hung door packages with matching architraves, mortise locksets, and on-demand custom project fabrication with nationwide delivery.
               </p>
             </div>
             <Link
               href="/collections/hdf-doors"
               className="inline-flex items-center space-x-1.5 py-2 px-4 bg-white border border-slate-200 rounded-xl text-xs font-bold text-[#003296] hover:bg-slate-50 transition-colors self-start sm:self-auto shadow-xs"
             >
-              <span>Explore HDF Catalogue</span>
+              <span>Explore HDF Products</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -186,32 +142,32 @@ export default function StorefrontPage() {
         </div>
       </section>
 
-      {/* 6. Physical Showroom & Inspection Reassurance */}
+      {/* 6. Physical Depot & Inspection Reassurance */}
       <section className="py-12 px-4 sm:px-6 bg-white border-t border-slate-200/80">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7 space-y-4">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block">
-              Physical Market Presence
+              Direct Warehouse Presence
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Visit Our Warehouse & Showroom at Maraim Plaza, Ogidi
+              Physical Depot & Warehouse Inspection
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              We welcome building contractors, architects, real estate developers, and homeowners to inspect door leaf gauges, lock mechanisms, and finishes in person. Located at Maraim Plaza, Building Material International Market, Ogidi, Anambra State.
+              We welcome building contractors, architects, real estate developers, and homeowners to inspect door leaf gauges, lock mechanisms, and finishes in person at {settings.address}.
             </p>
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <a
-                href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like directions to your showroom at Maraim Plaza Ogidi.")}`}
+                href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like directions to your store and warehouse.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="py-2.5 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 shadow-sm"
+                className="py-2.5 px-4 bg-[#003296] hover:bg-[#002266] text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 shadow-sm cursor-pointer"
               >
                 <MessageSquare className="w-3.5 h-3.5" />
-                <span>Get Showroom Directions on WhatsApp</span>
+                <span>Get Store Directions on WhatsApp</span>
               </a>
               <button
                 onClick={() => setCacModalOpen(true)}
-                className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-xl flex items-center space-x-1.5"
+                className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-xl flex items-center space-x-1.5 cursor-pointer"
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-[#003296]" />
                 <span>Verify CAC Registration</span>

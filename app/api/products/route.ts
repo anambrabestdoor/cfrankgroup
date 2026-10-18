@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { DOOR_PRODUCTS, DoorProduct } from "@/app/data/doorsData";
 import { db } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
   try {
-    const products = await db.getProducts();
-    const token = req.cookies.get("token")?.value;
-    const payload = token ? db.verifyToken(token) : null;
-    const isAdmin = payload?.role === "admin";
+    // If Supabase or DB is configured, we could read from it, otherwise return authentic catalog
+    const { searchParams } = new URL(req.url);
+    const category = searchParams.get("category");
 
-    // Standard storefront guests can only see active products
-    const filteredProducts = isAdmin
-      ? products
-      : products.filter((p) => p.active);
+    let products: DoorProduct[] = DOOR_PRODUCTS;
 
-    return NextResponse.json(filteredProducts);
+    if (category && category !== "all") {
+      products = products.filter((p) => p.category === category);
+    }
+
+    return NextResponse.json(products);
   } catch (error) {
     console.error("Products GET error:", error);
     return NextResponse.json({ error: "Failed to fetch products." }, { status: 500 });
@@ -33,37 +34,57 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, subtitle, description, price, originalPrice, rating, reviewsCount, image, category, subcategory, badge, active, stock, ingredients, skinConcerns, featured, kendallFav } = body;
+    const {
+      name,
+      slug,
+      category,
+      categoryLabel,
+      price,
+      originalPrice,
+      priceOnRequest,
+      image,
+      badge,
+      stockStatus,
+      stock,
+      shortDescription,
+      description,
+      features,
+      specifications,
+      jijiUrl,
+    } = body;
 
-    if (!name || !description || price === undefined || !image || !category || !subcategory) {
-      return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
+    if (!name || !image || !category) {
+      return NextResponse.json({ error: "Missing required fields (name, image, category)." }, { status: 400 });
     }
 
-    const created = await db.createProduct({
+    const newProduct: DoorProduct = {
+      id: `prod-${Date.now()}`,
       name,
-      subtitle: subtitle || "",
-      description,
-      price: Number(price),
-      originalPrice: originalPrice !== undefined ? Number(originalPrice) : Number(price),
-      rating: rating !== undefined ? Number(rating) : 4.8,
-      reviewsCount: reviewsCount !== undefined ? Number(reviewsCount) : 0,
-      image,
+      slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
       category,
-      subcategory,
-      badge: badge || null,
-      active: active !== undefined ? !!active : true,
+      categoryLabel: categoryLabel || category.replace(/-/g, " ").toUpperCase(),
+      price: price ? Number(price) : 0,
+      originalPrice: originalPrice ? Number(originalPrice) : 0,
+      priceOnRequest: priceOnRequest !== false,
+      image,
+      gallery: [image],
+      badge: badge || undefined,
+      stockStatus: stockStatus || "in_stock",
       stock: stock !== undefined ? Number(stock) : 10,
-      ingredients: Array.isArray(ingredients) ? ingredients : [],
-      skinConcerns: Array.isArray(skinConcerns) ? skinConcerns : [],
-      featured: !!featured,
-      kendallFav: !!kendallFav,
-    });
+      shortDescription: shortDescription || "",
+      description: description || "",
+      features: Array.isArray(features) ? features : [],
+      specifications: specifications || {},
+      jijiUrl: jijiUrl || undefined,
+      seoTitle: `${name} | Anambra Best Door`,
+      seoDescription: shortDescription || description || name,
+      focusKeyphrase: name,
+      active: true,
+    };
 
-    return NextResponse.json(created, { status: 201 });
+    return NextResponse.json(newProduct, { status: 201 });
   } catch (error) {
     console.error("Products POST error:", error);
     return NextResponse.json({ error: "Failed to create product." }, { status: 500 });
   }
 }
-
-

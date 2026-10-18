@@ -40,12 +40,12 @@ export function getCloudinaryOptimizedUrl(publicIdOrUrl: string, options?: { wid
 /**
  * Server-side upload function for image assets
  */
-export async function uploadImageToCloudinary(fileBase64: string, folder = 'anua_skincare') {
+export async function uploadImageToCloudinary(fileBase64: string, folder = 'anambra_best_door') {
   const instance = getCloudinary();
   if (!process.env.CLOUDINARY_API_SECRET) {
     console.warn('[Cloudinary] CLOUDINARY_API_SECRET missing. Returning standard image asset URI.');
     return {
-      url: fileBase64.startsWith('data:') ? 'https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=800' : fileBase64,
+      url: fileBase64.startsWith('data:') ? '/products/bullet-proof-door.jpg' : fileBase64,
       public_id: `demo_${Date.now()}`,
     };
   }
