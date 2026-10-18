@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/* ════════════════════════════════════════════════════════════════
+   ANAMBRA BEST DOOR (CFRANK ENTERPRISE) — MODERN DESIGN SYSTEM
+   ════════════════════════════════════════════════════════════════ */
+
+:root {
+  --primary-navy: #0A192F;
+  --brand-blue: #003296;
+  --accent-blue: #1D4ED8;
+  --slate-dark: #0F172A;
+  --slate-body: #334155;
+  --slate-muted: #64748B;
+  --surface-light: #F8FAFC;
+  --surface-white: #FFFFFF;
+  --border-light: #E2E8F0;
+  --whatsapp-green: #25D366;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--surface-light);
+  color: var(--slate-dark);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Prevent accidental horizontal overflow globally */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Focus styles for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+/* Organic curved underline highlight */
+.highlight-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.highlight-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 6px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' preserveAspectRatio='none'%3E%3Cpath d='M2 15 Q 50 2, 98 14' stroke='%231D4ED8' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  opacity: 0.85;
+}
+
+/* Card hover micro-transitions */
+.hover-card-elevate {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.hover-card-elevate:hover {
+  transform: translateY(-2px);
+  border-color: #CBD5E1;
+  box-shadow: 0 10px 25px -5px rgba(10, 25, 47, 0.06), 0 8px 10px -6px rgba(10, 25, 47, 0.04);
+}
+
+/* Floating island header */
+.floating-header-glass {
+  background-color: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
