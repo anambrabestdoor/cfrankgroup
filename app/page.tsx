@@ -12,8 +12,22 @@ import { ShieldCheck, Truck, Store, Award, ArrowRight, MessageSquare, MapPin } f
 export default function StorefrontPage() {
   const { settings, setCacModalOpen } = useApp();
 
-  // Highlight featured items for the homepage
-  const featuredProducts = DOOR_PRODUCTS.slice(0, 6);
+  // Curated featured selection prioritizing prominent HDF models alongside top security doors
+  const featuredProducts = [
+    DOOR_PRODUCTS.find((p) => p.slug === "interior-luxury-foreign-hdf-door")!,
+    DOOR_PRODUCTS.find((p) => p.slug === "bullet-proof-door")!,
+    DOOR_PRODUCTS.find((p) => p.slug === "hdf-wooden-door-with-complete-fittings")!,
+    DOOR_PRODUCTS.find((p) => p.slug === "bible-design-cast-door")!,
+    DOOR_PRODUCTS.find((p) => p.slug === "hdf-construction-on-demand")!,
+    DOOR_PRODUCTS.find((p) => p.slug === "watson-door")!,
+    DOOR_PRODUCTS.find((p) => p.slug === "italian-copper-door")!,
+    DOOR_PRODUCTS.find((p) => p.slug === "harmony-toilet-size-door")!,
+  ].filter(Boolean);
+
+  // Dedicated HDF Collection for homepage spotlight
+  const hdfProducts = DOOR_PRODUCTS.filter(
+    (p) => p.category === "hdf-doors" || p.slug.includes("hdf") || p.slug.includes("watson")
+  ).slice(0, 4);
 
   return (
     <div className="flex flex-col w-full">
@@ -38,7 +52,7 @@ export default function StorefrontPage() {
               <Store className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-xs font-bold text-slate-900 block">Chubby Plaza Depot</span>
+              <span className="text-xs font-bold text-slate-900 block">Maraim Plaza Depot</span>
               <span className="text-[11px] text-slate-500 block">Direct Ogidi market stock</span>
             </div>
           </div>
@@ -137,6 +151,38 @@ export default function StorefrontPage() {
           {featuredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
+        </div>
+      </section>
+
+      {/* 5B. Dedicated Interior & HDF Doors Spotlight */}
+      <section className="py-12 px-4 sm:px-6 bg-slate-50 border-t border-slate-200/80">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-3 border-b border-slate-200/80">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block mb-1">
+                Interior Woodwork & Estate Fittings
+              </span>
+              <h2 className="text-xl sm:text-3xl font-black text-slate-950 tracking-tight">
+                Engineered HDF & Wooden Room Doors
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl leading-relaxed">
+                Complete pre-hung door packages with matching architraves, mortise locksets, and on-demand custom project fabrication direct from Ogidi depot.
+              </p>
+            </div>
+            <Link
+              href="/collections/hdf-doors"
+              className="inline-flex items-center space-x-1.5 py-2 px-4 bg-white border border-slate-200 rounded-xl text-xs font-bold text-[#003296] hover:bg-slate-50 transition-colors self-start sm:self-auto shadow-xs"
+            >
+              <span>Explore HDF Catalogue</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+            {hdfProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
         </div>
       </section>
 

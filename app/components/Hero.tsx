@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useApp } from "@/app/context/AppContext";
@@ -8,6 +8,26 @@ import { ArrowRight, MessageSquare, ShieldCheck, Truck, Store } from "lucide-rea
 
 export default function Hero() {
   const { settings, setCacModalOpen } = useApp();
+  const [heroDoor, setHeroDoor] = useState<"security" | "hdf">("security");
+
+  const currentDoor =
+    heroDoor === "security"
+      ? {
+          title: "Bullet Proof Door",
+          subtitle: "Armoured Steel Security",
+          price: "₦520,000",
+          image: "/products/bullet-proof-door.jpeg",
+          slug: "bullet-proof-door",
+          tag: "Perimeter Security",
+        }
+      : {
+          title: "Interior Luxury Foreign HDF Door",
+          subtitle: "Precision-Engineered Interior",
+          price: "₦210,000",
+          image: "/products/interior-luxury-foreign-hdf-door.jpeg",
+          slug: "interior-luxury-foreign-hdf-door",
+          tag: "Interior Room & Estate Standard",
+        };
 
   return (
     <section className="relative bg-white pt-6 pb-12 sm:pt-10 sm:pb-16 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 overflow-hidden">
@@ -23,7 +43,7 @@ export default function Hero() {
 
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-950 tracking-tight leading-[1.15]">
-              Heavy-Gauge Steel Security Doors.{" "}
+              Heavy-Gauge Security & Luxury HDF Doors.{" "}
               <span className="highlight-underline text-[#003296]">
                 Direct from Ogidi Depot.
               </span>
@@ -31,7 +51,7 @@ export default function Hero() {
 
             {/* Subtitle / Description */}
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-              {settings.companyName}, operated by {settings.parentCompany} ({settings.proprietor || "Chidera Frank Okonkwo"}), is your verified direct supplier of bullet proof doors, cast security doors, Watson interior room doors, and waterproof toilet doors at {settings.address}. Serving contractors, builders, and homeowners across Nigeria.
+              {settings.companyName}, operated by {settings.parentCompany} ({settings.proprietor || "Chidera Frank Okonkwo"}), is your direct source for foreign luxury HDF room doors, complete fitted wooden sets, and heavy-gauge bullet proof doors at {settings.address}. Direct depot inventory for estates, contractors, and homeowners.
             </p>
 
             {/* CTA Buttons */}
@@ -58,7 +78,7 @@ export default function Hero() {
             <div className="pt-4 grid grid-cols-2 sm:grid-cols-3 gap-3 text-left border-t border-slate-100 max-w-lg mx-auto lg:mx-0">
               <div className="flex items-center space-x-2 text-[11px] font-semibold text-slate-700">
                 <ShieldCheck className="w-4 h-4 text-[#003296] shrink-0" />
-                <span>100% Solid Steel Gauge</span>
+                <span>Solid Steel & HDF Core</span>
               </div>
               <div className="flex items-center space-x-2 text-[11px] font-semibold text-slate-700">
                 <Truck className="w-4 h-4 text-[#003296] shrink-0" />
@@ -75,16 +95,42 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right Column: Hero Visual Feature with Authentic Door Photo */}
-          <div className="lg:col-span-5 relative">
+          {/* Right Column: Hero Visual Feature with Switcher */}
+          <div className="lg:col-span-5 relative space-y-3">
+            {/* Subtle Switcher Pills */}
+            <div className="flex items-center justify-center lg:justify-start space-x-2 p-1 bg-slate-100 rounded-xl max-w-xs mx-auto lg:mx-0">
+              <button
+                type="button"
+                onClick={() => setHeroDoor("security")}
+                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all ${
+                  heroDoor === "security"
+                    ? "bg-white text-[#003296] shadow-xs"
+                    : "text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                Security Steel
+              </button>
+              <button
+                type="button"
+                onClick={() => setHeroDoor("hdf")}
+                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all ${
+                  heroDoor === "hdf"
+                    ? "bg-white text-[#003296] shadow-xs"
+                    : "text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                Luxury HDF Room
+              </button>
+            </div>
+
             <div className="relative mx-auto max-w-md lg:max-w-none rounded-2xl overflow-hidden border border-slate-200/90 shadow-xl bg-slate-100 aspect-[4/5] sm:aspect-[4/4.8]">
               <Image
-                src="/products/bullet-proof-door.jpeg"
-                alt="Bullet Proof Security Door by Anambra Best Door Enterprises"
+                src={currentDoor.image}
+                alt={`${currentDoor.title} by Anambra Best Door Enterprises`}
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 40vw"
-                className="object-cover object-center"
+                className="object-cover object-center transition-all duration-300"
               />
 
               {/* Floating Overlay Card (Video Aesthetic) */}
@@ -92,16 +138,16 @@ export default function Hero() {
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#003296] block">
-                      Featured In-Stock Model
+                      {currentDoor.tag}
                     </span>
-                    <span className="text-xs sm:text-sm font-extrabold text-slate-900 block">
-                      Bullet Proof Door
+                    <span className="text-xs sm:text-sm font-extrabold text-slate-900 block truncate max-w-[200px]">
+                      {currentDoor.title}
                     </span>
-                    <span className="text-xs font-bold text-slate-700">₦520,000</span>
+                    <span className="text-xs font-bold text-slate-700">{currentDoor.price}</span>
                   </div>
                   <Link
-                    href="/products/bullet-proof-door"
-                    className="py-1.5 px-3 bg-[#003296] hover:bg-[#092b7c] text-white text-[11px] font-semibold rounded-lg flex items-center space-x-1"
+                    href={`/products/${currentDoor.slug}`}
+                    className="py-1.5 px-3 bg-[#003296] hover:bg-[#092b7c] text-white text-[11px] font-semibold rounded-lg flex items-center space-x-1 shrink-0"
                   >
                     <span>View Specs</span>
                     <ArrowRight className="w-3 h-3" />
