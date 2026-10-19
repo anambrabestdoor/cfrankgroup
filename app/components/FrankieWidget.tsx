@@ -37,9 +37,14 @@ export default function FrankieWidget() {
       id: "welcome",
       role: "assistant",
       content:
-        "Hello! I'm Frankie, your trade specialist at Anambra Best Door (CFrank Enterprise). Looking for foreign HDF room doors, Turkish security doors, or sanitary fittings? Ask me about sizes, depot stock at Ogidi, or nationwide delivery.",
+        "Hello! I'm Frankie, your trade specialist at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo). Whether you're building a new home, duplex, or hotel, ask me for door recommendations, pricing, sizes, or depot inspection at Ogidi.",
       timestamp: new Date().toISOString(),
       suggested_actions: [
+        {
+          label: "Suggest doors for my new house",
+          action_type: "prompt",
+          payload: "Which doors do you recommend for a new duplex?",
+        },
         {
           label: "What HDF room doors are in stock?",
           action_type: "prompt",
@@ -51,14 +56,9 @@ export default function FrankieWidget() {
           payload: "Tell me about Turkish security door gauges and sizes.",
         },
         {
-          label: "Depot address in Ogidi",
+          label: "Who owns CFrank Enterprise?",
           action_type: "prompt",
-          payload: "Where is your physical depot located in Ogidi?",
-        },
-        {
-          label: "How does waybill delivery work?",
-          action_type: "prompt",
-          payload: "How does waybill delivery work across Nigeria?",
+          payload: "Who owns CFrank Enterprise and what is your CAC registration?",
         },
       ],
     },
@@ -159,9 +159,14 @@ export default function FrankieWidget() {
         id: "welcome",
         role: "assistant",
         content:
-          "Hello! I'm Frankie, your trade specialist at Anambra Best Door (CFrank Enterprise). Looking for foreign HDF room doors, Turkish security doors, or sanitary fittings? Ask me about sizes, depot stock at Ogidi, or nationwide delivery.",
+          "Hello! I'm Frankie, your trade specialist at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo). Whether you're building a new home, duplex, or hotel, ask me for door recommendations, pricing, sizes, or depot inspection at Ogidi.",
         timestamp: new Date().toISOString(),
         suggested_actions: [
+          {
+            label: "Suggest doors for my new house",
+            action_type: "prompt",
+            payload: "Which doors do you recommend for a new duplex?",
+          },
           {
             label: "What HDF room doors are in stock?",
             action_type: "prompt",
@@ -173,9 +178,9 @@ export default function FrankieWidget() {
             payload: "Tell me about Turkish security door gauges and sizes.",
           },
           {
-            label: "Depot address in Ogidi",
+            label: "Who owns CFrank Enterprise?",
             action_type: "prompt",
-            payload: "Where is your physical depot located in Ogidi?",
+            payload: "Who owns CFrank Enterprise and what is your CAC registration?",
           },
         ],
       },
