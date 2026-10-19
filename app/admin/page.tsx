@@ -70,10 +70,10 @@ export default function AdminPage() {
   const [formCategory, setFormCategory] = useState<DoorProduct["category"]>("security-doors");
   const [formGroup, setFormGroup] = useState<"doors" | "sanitary">("doors");
   const [formSubcategory, setFormSubcategory] = useState<string>("Foreign HDF Luxury Doors");
-  const [formPrice, setFormPrice] = useState<number>(185000);
-  const [formOriginalPrice, setFormOriginalPrice] = useState<number>(210000);
+  const [formPrice, setFormPrice] = useState<number>(0);
+  const [formOriginalPrice, setFormOriginalPrice] = useState<number>(0);
   const [formPriceOnRequest, setFormPriceOnRequest] = useState(false);
-  const [formPriceMode, setFormPriceMode] = useState<"show_price" | "price_on_request" | "blank">("show_price");
+  const [formPriceMode, setFormPriceMode] = useState<"show_price" | "price_on_request" | "blank">("blank");
   const [formImage, setFormImage] = useState("/products/bullet-proof-door.jpeg");
   const [formBadge, setFormBadge] = useState("In Stock");
   const [formStock, setFormStock] = useState<number>(10);
@@ -178,10 +178,10 @@ export default function AdminPage() {
     setFormCategory("hdf-doors");
     setFormGroup("doors");
     setFormSubcategory("Foreign HDF Luxury Doors");
-    setFormPrice(185000);
-    setFormOriginalPrice(210000);
+    setFormPrice(0);
+    setFormOriginalPrice(0);
     setFormPriceOnRequest(false);
-    setFormPriceMode("show_price");
+    setFormPriceMode("blank");
     setFormImage("/products/interior-luxury-foreign-hdf-door.jpeg");
     setFormBadge("In Stock");
     setFormStock(15);

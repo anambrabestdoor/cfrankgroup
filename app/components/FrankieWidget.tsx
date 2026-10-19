@@ -115,7 +115,7 @@ export default function FrankieWidget() {
       }
     } catch {
       const waUrl = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-        "Hello CFrank Enterprise, I was chatting with Frankie and would like to confirm door details."
+        "Hello CFrank Enterprise, I would like to inquire about door orders and current stock."
       )}`;
       const callUrl = `tel:${settings.phone}`;
 
@@ -239,7 +239,7 @@ export default function FrankieWidget() {
             <div className="flex items-center gap-2 pt-2 border-t border-slate-800">
               <a
                 href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                  "Hello CFrank Enterprise, I was chatting with Frankie on your site and would like to speak directly with the sales desk regarding door orders."
+                  "Hello CFrank Enterprise, I would like to inquire about door orders and current stock."
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"

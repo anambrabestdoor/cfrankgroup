@@ -15,14 +15,10 @@ interface ChatTurn {
 function buildCatalogContext(): string {
   const activeProducts = DOOR_PRODUCTS.filter((p) => p.active !== false);
   const items = activeProducts.map((p) => {
-    const priceStr =
-      p.priceMode === "price_on_request" || p.priceOnRequest || !p.price || p.price === 0
-        ? "Price on Request (Contractor Quote)"
-        : `₦${p.price.toLocaleString()}`;
     const specs = Object.entries(p.specifications || {})
       .map(([k, v]) => `${k}: ${v}`)
       .join("; ");
-    return `• ${p.name} [Category: ${p.categoryLabel}] | Price: ${priceStr} | Specs: ${specs || p.shortDescription}`;
+    return `• ${p.name} [Category: ${p.categoryLabel}] | Specs: ${specs || p.shortDescription}`;
   });
 
   return items.join("\n");
@@ -89,7 +85,7 @@ COMMUNICATION STYLE:
  */
 function runDeterministicFrankie(message: string): { message: string; suggested_actions?: any[] } {
   const q = message.toLowerCase().trim();
-  const waUrl = `https://wa.me/${DEFAULT_SITE_SETTINGS.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I was chatting with Frankie and would like to confirm door details.")}`;
+  const waUrl = `https://wa.me/${DEFAULT_SITE_SETTINGS.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like to inquire about door orders and current stock.")}`;
   const callUrl = `tel:${DEFAULT_SITE_SETTINGS.phone}`;
 
   // 1. Off-topic detection
@@ -147,7 +143,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   ) {
     return {
       message:
-        "Here are our trade recommendations for fitting modern bathrooms and dining areas:\n\n1. Water Closets & Toilets:\n• Executive Gold Dual-Flush WC & England Suite Models: high-grade ceramic glaze, dual-flush water conservation (3L/6L), and soft-closing seat covers.\n\n2. Wash Hand Basins:\n• Dining Suites & Vanity Counters: contemporary ceramic bowls, executive dining wash basins, and Plain India vanity units paired with brass mixer taps.\n\n3. Showers & Enclosures:\n• Multi-jet power shower towers and tempered glass cubicle enclosures for luxury en-suite bathrooms.\n\n4. Critical Door Pairing (Trade Advice):\n• Never install standard timber doors for bathrooms! We stock 100% Waterproof WPC Composite Doors (from ₦85,000) that withstand hot water steam and will never rot, swell, or peel.\n\nAre you outfitting an entire building or replacing specific units? Chat directly with our sales team on WhatsApp for volume discounts.",
+        "Here are our trade recommendations for fitting modern bathrooms and dining areas:\n\n1. Water Closets & Toilets:\n• Executive Gold Dual-Flush WC & England Suite Models: high-grade ceramic glaze, dual-flush water conservation (3L/6L), and soft-closing seat covers.\n\n2. Wash Hand Basins:\n• Dining Suites & Vanity Counters: contemporary ceramic bowls, executive dining wash basins, and Plain India vanity units paired with brass mixer taps.\n\n3. Showers & Enclosures:\n• Multi-jet power shower towers and tempered glass cubicle enclosures for luxury en-suite bathrooms.\n\n4. Critical Door Pairing (Trade Advice):\n• Never install standard timber doors for bathrooms! We stock 100% Waterproof WPC Composite Doors that withstand hot water steam and will never rot, swell, or peel.\n\nAre you outfitting an entire building or replacing specific units? Chat directly with our sales team on WhatsApp for volume discounts.",
       suggested_actions: [
         { label: "View Sanitary Catalogue", action_type: "link", payload: "/collections/sanitary-fittings" },
         { label: "Waterproof Bathroom Doors", action_type: "link", payload: "/collections/bathroom-doors" },
@@ -172,7 +168,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   ) {
     return {
       message:
-        "Here are our recommendations for fitting your building project:\n\n1. Main Entrance & Exterior (Security First):\n• Best Choice: Turkish Heavy-Gauge Steel Security Door (1.5mm–2.0mm steel leaf, 14–18 point multipoint deadbolts).\n• For grand entrances: Choose our 4ft x 7ft (1.5-leaf) or 5ft x 7ft (double-leaf) configurations with cast aluminium panels.\n\n2. Bedrooms & Living Suites (Acoustics & Luxury):\n• Best Choice: Foreign Luxury HDF Room Doors (from ₦185,000 for complete pre-hung sets) or Watson Doors (from ₦135,000). The acoustic tubular core ensures privacy and eliminates room sound leakage.\n\n3. Bathrooms & En-Suite Toilets (Moisture Protection):\n• Best Choice: 100% Waterproof WPC Composite Doors (from ₦85,000). Never install regular timber room doors in bathrooms, as steam causes them to swell, peel, and rot over time.\n\nHow many bedrooms and entrance doors does your building require? We can prepare an itemized bill of quantities with bulk contractor discounts.",
+        "Here are our recommendations for fitting your building project:\n\n1. Main Entrance & Exterior (Security First):\n• Best Choice: Turkish Heavy-Gauge Steel Security Door (1.5mm–2.0mm steel leaf, 14–18 point multipoint deadbolts).\n• For grand entrances: Choose our 4ft x 7ft (1.5-leaf) or 5ft x 7ft (double-leaf) configurations with cast aluminium panels.\n\n2. Bedrooms & Living Suites (Acoustics & Luxury):\n• Best Choice: Foreign Luxury HDF Room Doors or Watson Doors. The acoustic tubular core ensures privacy and eliminates room sound leakage.\n\n3. Bathrooms & En-Suite Toilets (Moisture Protection):\n• Best Choice: 100% Waterproof WPC Composite Doors. Never install regular timber room doors in bathrooms, as steam causes them to swell, peel, and rot over time.\n\nHow many bedrooms and entrance doors does your building require? We can prepare an itemized bill of quantities with bulk contractor discounts.",
       suggested_actions: [
         { label: "Get Itemized WhatsApp Quote", action_type: "link", payload: waUrl },
         { label: "View HDF Collection", action_type: "link", payload: "/collections/hdf-doors" },
@@ -186,7 +182,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   if (q.includes("price") || q.includes("cost") || q.includes("how much") || q.includes("rate") || q.includes("quote")) {
     return {
       message:
-        "Here are our transparent starting prices based on complete pre-hung factory packages:\n\n• Foreign Luxury HDF Room Doors: ₦185,000 (Complete set: Leaf + Matching Frame Casing + Architraves + Mortise Lockset + Hinges)\n• HDF Wooden Door Package: ₦145,000 complete\n• Watson Interior Room Doors: ₦135,000 (Standard 3ft) | ₦220,000 (4ft Grand)\n• Waterproof Bathroom Doors: from ₦85,000 (100% moisture-proof composite)\n• Turkish Steel Security Doors: Heavy-gauge 14-point deadbolt entrance doors (Available in single, 1.5-leaf & double-leaf)\n• Sanitary Wares: Executive dual-flush water closets, vanity dining basins, power showers & brass mixer taps.\n\nAre you looking for single units or a bulk quotation for an entire building? Chat with our sales desk on WhatsApp for immediate invoice generation.",
+        "Pricing for our doors and sanitary wares depends on dimensions, leaf thickness, frame package, and order quantity. We provide wholesale and contractor quotations tailored to your exact bill of quantities.\n\nSend your door schedule or required opening sizes directly to our sales desk on WhatsApp for an immediate quotation.",
       suggested_actions: [
         { label: "Chat on WhatsApp for Quote", action_type: "link", payload: waUrl },
         { label: "Call Admin Directly", action_type: "call", payload: callUrl },
@@ -369,7 +365,7 @@ export async function POST(req: NextRequest) {
         try {
           const aiResponse = await callGemini(geminiKey, model, message, history);
           if (aiResponse) {
-            const waUrl = `https://wa.me/${DEFAULT_SITE_SETTINGS.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I was chatting with Frankie and would like to order or verify stock.")}`;
+            const waUrl = `https://wa.me/${DEFAULT_SITE_SETTINGS.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like to inquire about door orders and current stock.")}`;
             const callUrl = `tel:${DEFAULT_SITE_SETTINGS.phone}`;
 
             return NextResponse.json({

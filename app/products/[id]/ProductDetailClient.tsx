@@ -110,11 +110,10 @@ export default function ProductDetailClient({
                     key={idx}
                     type="button"
                     onClick={() => setSelectedImage(img)}
-                    className={`relative w-16 h-20 rounded-xl overflow-hidden border-2 shrink-0 ${
-                      selectedImage === img
-                        ? "border-[#003296]"
-                        : "border-transparent opacity-70 hover:opacity-100"
-                    }`}
+                    className={`relative w-16 h-20 rounded-xl overflow-hidden border-2 shrink-0 ${selectedImage === img
+                      ? "border-[#003296]"
+                      : "border-transparent opacity-70 hover:opacity-100"
+                      }`}
                   >
                     <Image
                       src={img}
@@ -126,18 +125,6 @@ export default function ProductDetailClient({
                 ))}
               </div>
             )}
-
-            {/* Reassurance Badge Bar below image */}
-            <div className="grid grid-cols-2 gap-2 pt-2 text-[11px] text-slate-600">
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center space-x-2">
-                <Lock className="w-4 h-4 text-[#003296] shrink-0" />
-                <span>Heavy-Gauge Tested Steel</span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center space-x-2">
-                <Truck className="w-4 h-4 text-[#003296] shrink-0" />
-                <span>Nationwide Crated Waybill</span>
-              </div>
-            </div>
           </div>
 
           {/* Details & Ordering Column */}
@@ -157,18 +144,10 @@ export default function ProductDetailClient({
             {/* Price Box */}
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-wrap items-baseline justify-between gap-2">
               <div>
-                <span className="text-xs text-slate-500 font-medium block">Price:</span>
-                <div className="flex items-baseline space-x-2">
-                  {product.priceMode === "blank" ? (
-                    <span className="text-xl sm:text-2xl font-extrabold text-[#003296]">
-                      Chat on WhatsApp for Price
-                    </span>
-                  ) : product.priceMode === "price_on_request" || product.priceOnRequest ? (
-                    <span className="text-2xl sm:text-3xl font-extrabold text-[#003296]">
-                      Price on Request
-                    </span>
-                  ) : product.price && product.price > 0 ? (
-                    <>
+                {product.price && product.price > 0 ? (
+                  <>
+                    <span className="text-xs text-slate-500 font-medium block">Price:</span>
+                    <div className="flex items-baseline space-x-2">
                       <span className="text-2xl sm:text-3xl font-extrabold text-[#003296]">
                         ₦{product.price.toLocaleString()}
                       </span>
@@ -177,13 +156,9 @@ export default function ProductDetailClient({
                           ₦{product.originalPrice.toLocaleString()}
                         </span>
                       )}
-                    </>
-                  ) : (
-                    <span className="text-xl sm:text-2xl font-extrabold text-[#003296]">
-                      Chat on WhatsApp for Price
-                    </span>
-                  )}
-                </div>
+                    </div>
+                  </>
+                ) : null}
               </div>
               <div className="text-right">
                 <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
@@ -207,11 +182,10 @@ export default function ProductDetailClient({
                       key={s}
                       type="button"
                       onClick={() => setSelectedSize(s)}
-                      className={`py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all ${
-                        selectedSize === s
-                          ? "border-[#003296] bg-blue-50/60 text-[#003296] ring-1 ring-[#003296]"
-                          : "border-slate-200 text-slate-700 bg-white hover:border-slate-300"
-                      }`}
+                      className={`py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all ${selectedSize === s
+                        ? "border-[#003296] bg-blue-50/60 text-[#003296] ring-1 ring-[#003296]"
+                        : "border-slate-200 text-slate-700 bg-white hover:border-slate-300"
+                        }`}
                     >
                       {s}
                     </button>
@@ -231,11 +205,10 @@ export default function ProductDetailClient({
                     key={o}
                     type="button"
                     onClick={() => setSelectedOrientation(o)}
-                    className={`py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all ${
-                      selectedOrientation === o
-                        ? "border-[#003296] bg-blue-50/60 text-[#003296] ring-1 ring-[#003296]"
-                        : "border-slate-200 text-slate-700 bg-white hover:border-slate-300"
-                    }`}
+                    className={`py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all ${selectedOrientation === o
+                      ? "border-[#003296] bg-blue-50/60 text-[#003296] ring-1 ring-[#003296]"
+                      : "border-slate-200 text-slate-700 bg-white hover:border-slate-300"
+                      }`}
                   >
                     {o}
                   </button>

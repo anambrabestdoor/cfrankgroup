@@ -78,15 +78,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Price & Action Row */}
         <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
           <div>
-            {product.priceMode === "blank" ? (
-              <span className="text-xs font-semibold text-slate-500 block">
-                Chat on WhatsApp
-              </span>
-            ) : product.priceMode === "price_on_request" || product.priceOnRequest ? (
-              <span className="text-xs font-bold text-[#003296] block">
-                Price on Request
-              </span>
-            ) : product.price && product.price > 0 ? (
+            {product.price && product.price > 0 ? (
               <div className="flex items-baseline space-x-1.5">
                 <span className="text-xs sm:text-sm font-extrabold text-slate-950">
                   ₦{product.price.toLocaleString()}
@@ -97,11 +89,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   </span>
                 )}
               </div>
-            ) : (
-              <span className="text-xs font-semibold text-slate-500 block">
-                Chat on WhatsApp
-              </span>
-            )}
+            ) : null}
             <span className="text-[10px] text-slate-400 block mt-0.5">
               {product.stockStatus === "in_stock" ? "In Stock" : "Available to Order"}
             </span>
