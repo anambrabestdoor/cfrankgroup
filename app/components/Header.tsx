@@ -77,7 +77,7 @@ export default function Header() {
               {productsDropdownOpen && (
                 <div
                   onMouseLeave={() => setProductsDropdownOpen(false)}
-                  className="absolute top-full -left-20 mt-2 w-[580px] bg-white rounded-3xl shadow-2xl border border-slate-200/90 p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                  className="absolute top-full -left-20 mt-2 w-[580px] bg-white rounded-xl shadow-2xl border border-slate-200/90 p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
                 >
                   <div className="grid grid-cols-2 gap-5 divide-x divide-slate-100">
                     {/* Doors & Entrances */}
@@ -252,7 +252,14 @@ export default function Header() {
               href="/about"
               className="px-4 py-1.5 text-xs font-bold text-slate-700 hover:text-[#003296] hover:bg-white rounded-full transition-all"
             >
-              Depot & About
+              About Us
+            </Link>
+
+            <Link
+              href="/downloads"
+              className="px-4 py-1.5 text-xs font-bold text-slate-700 hover:text-[#003296] hover:bg-white rounded-full transition-all"
+            >
+              Downloads
             </Link>
 
             <Link

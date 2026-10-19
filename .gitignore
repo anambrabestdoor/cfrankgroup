@@ -8,3 +8,12 @@ logs/
 .env*
 !.env.example
 tsconfig.tsbuildinfo
+
+# Planning documents, research videos, and reference plans
+new-building-plan/
+*building-plan*
+*buildingplan*
+plans/
+reference/
+scratch/
+

@@ -35,7 +35,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="group relative bg-white border border-slate-200/90 rounded-2xl overflow-hidden hover-card-elevate flex flex-col justify-between">
+    <div className="group relative bg-white border border-slate-200/90 rounded-xl overflow-hidden hover-card-elevate flex flex-col justify-between">
       {/* Product Image Link */}
       <Link href={`/products/${product.slug}`} className="block relative w-full aspect-[4/5] bg-slate-100 overflow-hidden">
         <Image

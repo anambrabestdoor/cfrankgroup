@@ -55,7 +55,7 @@ export default function OrderTrackingPage() {
       </div>
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 space-y-8">
-        <div className="bg-white p-6 sm:p-8 border border-slate-200 rounded-3xl shadow-xs space-y-6">
+        <div className="bg-white p-6 sm:p-8 border border-slate-200 rounded-xl shadow-xs space-y-6">
           <form onSubmit={handleTrack} className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -114,7 +114,7 @@ export default function OrderTrackingPage() {
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-2xl space-y-2 text-xs border border-slate-200/80">
+              <div className="bg-slate-50 p-4 rounded-lg space-y-2 text-xs border border-slate-200/80">
                 <p><strong>Customer:</strong> {trackedOrder.customerName}</p>
                 <p><strong>Total Amount:</strong> ₦{(trackedOrder.total || 0).toLocaleString()}</p>
                 <p><strong>Consignment Items:</strong> {trackedOrder.items?.length || 0} product(s)</p>

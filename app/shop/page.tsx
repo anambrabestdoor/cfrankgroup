@@ -136,7 +136,7 @@ function ShopContent() {
         </div>
 
         {/* Filter, Search & Sort Bar */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-4 sm:p-5 shadow-xs space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Search Input */}
             <div className="relative flex-1 max-w-md">
@@ -227,7 +227,7 @@ function ShopContent() {
 
         {/* Product Grid: 2-Column Mobile, 3-Column Tablet, 4-Column Desktop */}
         {filteredProducts.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-12 text-center space-y-4">
             <p className="text-base font-bold text-slate-800">No matching products found</p>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
               We may have unlisted variations in stock at our Maraim Plaza depot, Ogidi.

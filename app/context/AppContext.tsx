@@ -50,7 +50,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
   const [products, setProducts] = useState<DoorProduct[]>(DOOR_PRODUCTS);
 
-  // Load cart and settings from localStorage on mount
+  // Load cart, settings, and products from localStorage on mount
   useEffect(() => {
     try {
       const savedCart = localStorage.getItem("abd_cart_items");
@@ -60,6 +60,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const savedSettings = localStorage.getItem("abd_site_settings");
       if (savedSettings) {
         setSettings((prev) => ({ ...prev, ...JSON.parse(savedSettings) }));
+      }
+      const savedProducts = localStorage.getItem("abd_products");
+      if (savedProducts) {
+        setProducts(JSON.parse(savedProducts));
       }
     } catch {
       // LocalStorage error or private browsing fallback
@@ -74,6 +78,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       // storage quota or private window
     }
   }, [cart]);
+
+  // Sync products to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem("abd_products", JSON.stringify(products));
+    } catch {
+      // storage quota or private window
+    }
+  }, [products]);
 
   const addToCart = useCallback(
     (product: DoorProduct, options?: { size?: string; orientation?: string; quantity?: number }) => {

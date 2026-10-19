@@ -66,21 +66,21 @@ export default function WholesalePage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs space-y-2">
+          <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-xs space-y-2">
             <Building2 className="w-7 h-7 mx-auto text-[#003296]" />
             <h3 className="font-bold text-sm text-slate-900">Direct Importer Pricing</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
               Cut out secondary distributor markups. Receive container-direct factory rates on Turkish armoured doors and luxury HDF sets.
             </p>
           </div>
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs space-y-2">
+          <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-xs space-y-2">
             <Truck className="w-7 h-7 mx-auto text-[#003296]" />
             <h3 className="font-bold text-sm text-slate-900">Dedicated Site Haulage</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
               Consolidated trailer and truckway loads directly dispatched to your construction site anywhere in Nigeria.
             </p>
           </div>
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs space-y-2">
+          <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-xs space-y-2">
             <MessageSquare className="w-7 h-7 mx-auto text-[#003296]" />
             <h3 className="font-bold text-sm text-slate-900">Direct Sales Desk Contact</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
@@ -89,7 +89,7 @@ export default function WholesalePage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 sm:p-8 border border-slate-200 rounded-3xl shadow-xs">
+        <div className="bg-white p-6 sm:p-8 border border-slate-200 rounded-xl shadow-xs">
           {submitted ? (
             <div className="text-center py-12 space-y-4">
               <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />

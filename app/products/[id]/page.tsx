@@ -70,7 +70,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!product) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-4 py-16 bg-[#F8FAFC]">
-        <div className="text-center space-y-4 max-w-md bg-white p-8 rounded-3xl border border-slate-200">
+        <div className="text-center space-y-4 max-w-md bg-white p-8 rounded-xl border border-slate-200">
           <h1 className="text-2xl font-bold text-slate-900">Door Model Not Found</h1>
           <p className="text-xs text-slate-500">
             The requested door or fitting is not currently listed in our online inventory or may have been updated.

@@ -25,7 +25,7 @@ export default function ReturnsPage() {
       </div>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
-        <div className="bg-white p-6 sm:p-8 border border-slate-200 rounded-2xl space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <div className="bg-white p-6 sm:p-8 border border-slate-200 rounded-xl space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
           <div className="flex items-center space-x-2 text-slate-900 font-bold text-base pb-3 border-b border-slate-100">
             <BadgeCheck className="w-5 h-5 text-[#003296]" />
             <span>Pre-Dispatch Verification Commitment</span>

@@ -223,7 +223,7 @@ export default async function CollectionPage({ params }: PageProps) {
           </nav>
 
           {/* Hero Header Box */}
-          <header className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200/90 shadow-xs space-y-3">
+          <header className="bg-white p-6 sm:p-10 rounded-xl border border-slate-200/90 shadow-xs space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-blue-50 text-[#003296] text-[11px] font-bold uppercase tracking-wider">
                 <Warehouse className="w-3 h-3" />
@@ -244,7 +244,7 @@ export default async function CollectionPage({ params }: PageProps) {
 
             {/* Commercial Highlight for HDF and key doors */}
             {collection.commercialHighlight && (
-              <div className="mt-6 pt-6 border-t border-slate-100 bg-slate-50/70 -mx-6 -mb-6 sm:-mx-10 sm:-mb-10 p-6 sm:p-8 rounded-b-3xl">
+              <div className="mt-6 pt-6 border-t border-slate-100 bg-slate-50/70 -mx-6 -mb-6 sm:-mx-10 sm:-mb-10 p-6 sm:p-8 rounded-b-xl">
                 <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3">
                   {collection.commercialHighlight.heading}
                 </h2>
@@ -262,13 +262,13 @@ export default async function CollectionPage({ params }: PageProps) {
 
           {/* Products Grid */}
           {filtered.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 space-y-3">
+            <div className="text-center py-16 bg-white rounded-xl border border-slate-200 space-y-3">
               <p className="text-sm font-bold text-slate-800">
                 No products currently listed under this category.
               </p>
               <Link
                 href="/shop"
-                className="inline-block py-2.5 px-5 bg-[#003296] text-white text-xs font-bold rounded-xl"
+                className="inline-block py-2.5 px-5 bg-[#003296] text-white text-xs font-bold rounded-lg"
               >
                 Browse Full Catalogue
               </Link>

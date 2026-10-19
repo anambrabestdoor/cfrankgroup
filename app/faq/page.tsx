@@ -86,7 +86,7 @@ export default function FAQPage() {
         {doorFaqs.map((faq, idx) => (
           <div
             key={faq.id}
-            className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-xs"
+            className="bg-white border border-slate-200/90 rounded-xl overflow-hidden shadow-xs"
           >
             <button
               type="button"
@@ -108,7 +108,7 @@ export default function FAQPage() {
           </div>
         ))}
 
-        <div className="pt-8 text-center bg-white p-8 rounded-2xl border border-slate-200 space-y-3">
+        <div className="pt-8 text-center bg-white p-8 rounded-xl border border-slate-200 space-y-3">
           <h3 className="text-sm font-bold text-slate-900">Have a specific question about your wall openings?</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
             Our sales team is available on WhatsApp to review your dimensions, confirm stock, and provide quotes.

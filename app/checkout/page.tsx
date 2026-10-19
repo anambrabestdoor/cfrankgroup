@@ -49,7 +49,7 @@ export default function CheckoutPage() {
           <span>Continue Shopping</span>
         </Link>
 
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-xs space-y-6">
+        <div className="bg-white p-6 sm:p-8 rounded-xl border border-slate-200/90 shadow-xs space-y-6">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block mb-1">
               WhatsApp Order Finalization

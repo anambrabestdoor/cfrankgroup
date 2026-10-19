@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 
 export default function AdminPage() {
-  const { settings, updateSettings } = useApp();
+  const { settings, updateSettings, products, setProducts } = useApp();
 
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -50,12 +50,19 @@ export default function AdminPage() {
 
   // App / Tab State
   const [activeTab, setActiveTab] = useState<"products" | "inventory" | "settings" | "cac">("products");
-  const [productsList, setProductsList] = useState<DoorProduct[]>(DOOR_PRODUCTS);
+  const [productsList, setProductsList] = useState<DoorProduct[]>(products);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Sync products from context if updated externally
+  useEffect(() => {
+    if (products && products.length > 0) {
+      setProductsList(products);
+    }
+  }, [products]);
 
   // Form Fields for Products
   const [formName, setFormName] = useState("");
@@ -279,10 +286,14 @@ export default function AdminPage() {
     };
 
     if (editingId) {
-      setProductsList((prev) => prev.map((p) => (p.id === editingId ? newProd : p)));
+      const updated = productsList.map((p) => (p.id === editingId ? newProd : p));
+      setProductsList(updated);
+      setProducts(updated);
       showToast("Product updated successfully!");
     } else {
-      setProductsList((prev) => [newProd, ...prev]);
+      const updated = [newProd, ...productsList];
+      setProductsList(updated);
+      setProducts(updated);
       showToast("New product created and published!");
     }
 
@@ -292,22 +303,25 @@ export default function AdminPage() {
   // Delete product
   const handleDeleteProduct = (id: string) => {
     if (confirm("Are you sure you want to remove this product from catalogue?")) {
-      setProductsList((prev) => prev.filter((p) => p.id !== id));
+      const updated = productsList.filter((p) => p.id !== id);
+      setProductsList(updated);
+      setProducts(updated);
       showToast("Product deleted.");
     }
   };
 
   // Quick toggle stock status
   const handleToggleSoldOut = (id: string) => {
-    setProductsList((prev) =>
-      prev.map((p) => {
-        if (p.id === id) {
-          const nextStatus = p.stockStatus === "in_stock" ? "out_of_stock" : "in_stock";
-          return { ...p, stockStatus: nextStatus };
-        }
-        return p;
-      })
-    );
+    const updated: DoorProduct[] = productsList.map((p) => {
+      if (p.id === id) {
+        const nextStatus: DoorProduct["stockStatus"] =
+          p.stockStatus === "in_stock" ? "out_of_stock" : "in_stock";
+        return { ...p, stockStatus: nextStatus };
+      }
+      return p;
+    });
+    setProductsList(updated);
+    setProducts(updated);
     showToast("Stock status updated.");
   };
 
@@ -403,7 +417,7 @@ export default function AdminPage() {
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-6 shadow-2xl rounded-3xl sm:px-10 border border-slate-200">
+          <div className="bg-white py-8 px-6 shadow-2xl rounded-xl sm:px-10 border border-slate-200">
             <form onSubmit={handleLogin} className="space-y-5">
               {loginError && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start space-x-2.5 text-xs text-red-700">
@@ -495,7 +509,7 @@ export default function AdminPage() {
             aria-modal="true"
             className="fixed inset-0 z-50 overflow-hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
           >
-            <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+            <div className="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center space-x-2">
                   <KeyRound className="w-5 h-5 text-[#003296]" />
@@ -711,7 +725,7 @@ export default function AdminPage() {
               {/* Left Column: Product Information (8 Cols) */}
               <div className="lg:col-span-8 space-y-6">
                 {/* Title & Slug Box */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
                   <div>
                     <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block mb-1">
                       Product Title *
@@ -740,7 +754,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Short Description & Full Technical Specs */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
+                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
                   <div>
                     <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block mb-1">
                       Summary Excerpt (Card Display)
@@ -769,7 +783,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Dynamic Specifications Key-Value Editor */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
                       Technical Door Specifications
@@ -835,7 +849,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Yoast / Rank Math Style SEO Section */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
+                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div className="flex items-center space-x-2">
                       <Globe className="w-4 h-4 text-[#003296]" />
@@ -938,7 +952,7 @@ export default function AdminPage() {
               {/* Right Column: Pricing, Inventory, Jiji Link & Image (4 Cols) */}
               <div className="lg:col-span-4 space-y-6">
                 {/* Pricing & Stock Card */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
+                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
                   <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">
                     Pricing & Inventory
                   </h3>
@@ -1155,7 +1169,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Primary Image */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
                   <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">
                     Product Photography
                   </h3>
@@ -1183,7 +1197,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Cross-Channel Jiji Link */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
                   <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">
                     Cross-Channel Marketplace Link
                   </h3>
@@ -1228,7 +1242,7 @@ export default function AdminPage() {
             </div>
 
             {/* Filter Bar */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
               <div className="relative w-full sm:w-72">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -1256,7 +1270,7 @@ export default function AdminPage() {
             </div>
 
             {/* Products Table */}
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
@@ -1369,7 +1383,7 @@ export default function AdminPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {productsList.map((prod) => (
-                <div key={prod.id} className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+                <div key={prod.id} className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center space-x-2.5">
                       <div className="relative w-10 h-12 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
@@ -1413,8 +1427,8 @@ export default function AdminPage() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 space-y-6 shadow-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+            <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-6 shadow-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-xs">
                 <div>
                   <span className="text-slate-400 block text-[10px] uppercase font-bold">Registered Business Name</span>
                   <span className="font-extrabold text-slate-900 text-sm">{siteSettingsForm.companyName}</span>
@@ -1434,7 +1448,7 @@ export default function AdminPage() {
                   <span className="text-xs font-bold text-slate-800 block">
                     Page 1: Official CAC Status Report
                   </span>
-                  <div className="relative w-full h-80 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+                  <div className="relative w-full h-80 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
                     <Image
                       src={siteSettingsForm.cacCertificateUrl || "/cac-status-report-page1.jpeg"}
                       alt="CAC Status Report Page 1"
@@ -1448,7 +1462,7 @@ export default function AdminPage() {
                   <span className="text-xs font-bold text-slate-800 block">
                     Page 2: Proprietor Details (Chidera Frank Okonkwo)
                   </span>
-                  <div className="relative w-full h-80 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+                  <div className="relative w-full h-80 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
                     <Image
                       src={siteSettingsForm.cacPage2Url || "/cac-proprietor-page2.jpeg"}
                       alt="CAC Proprietor Details Page 2"
@@ -1474,7 +1488,7 @@ export default function AdminPage() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 space-y-4 shadow-xs">
+            <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-4 shadow-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
                   <label className="font-bold text-slate-700 block mb-1">Company Trading Name</label>

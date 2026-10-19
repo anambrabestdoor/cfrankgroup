@@ -5,20 +5,17 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   ArrowRight,
-  CheckCircle2,
   Play,
   X,
   ChevronLeft,
   ChevronRight,
+  CheckCircle2,
 } from "lucide-react";
 
 const heroSlides = [
   {
     id: "hdf-door",
-    tag: "Interior Room Door",
     title: "Foreign HDF Room Door",
-    specs: "Complete set with matching frame, architrave, hinges, and lock handle.",
-    badge: "In Stock at Ogidi",
     image: "/WhatsApp Image 2026-10-19 at 7.46.19 AM.jpeg",
     href: "/shop?category=hdf-doors",
     buttonText: "Browse Room Doors",
@@ -26,10 +23,7 @@ const heroSlides = [
   },
   {
     id: "security-door",
-    tag: "Main Entrance Door",
     title: "Heavy-Gauge Turkish Security Door",
-    specs: "Armoured steel leaf with multi-point deadlock and master laser keys.",
-    badge: "In Stock at Ogidi",
     image: "/WhatsApp Image 2026-10-19 at 7.46.18 AM.jpeg",
     href: "/shop?category=security-doors",
     buttonText: "Browse Security Doors",
@@ -37,10 +31,7 @@ const heroSlides = [
   },
   {
     id: "sanitary-wc",
-    tag: "Bathroom & Toilet",
     title: "Executive Luxury Water Closet (WC)",
-    specs: "Quality ceramic toilet set with dual-flush cistern and soft-closing seat cover.",
-    badge: "In Stock at Ogidi",
     image: "/products/Excutive Gøld wc.jpeg",
     href: "/shop?category=sanitary-fittings",
     buttonText: "Browse Sanitary Wares",
@@ -48,10 +39,7 @@ const heroSlides = [
   },
   {
     id: "residential-installation",
-    tag: "Estate Installations",
     title: "Luxury Pre-Hung Interior Sets",
-    specs: "Precision installed with acoustic sound damping across residential suites.",
-    badge: "Direct Importer",
     image: "/WhatsApp Image 2026-10-19 at 7.46.19 AM (2).jpeg",
     href: "/shop",
     buttonText: "Browse Our Doors",
@@ -69,7 +57,7 @@ export default function Hero() {
     if (isPaused) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 4500);
+    }, 4000);
     return () => clearInterval(timer);
   }, [isPaused]);
 
@@ -89,49 +77,37 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Headline, Real Trade Copy, Direct CTAs */}
           <div className="lg:col-span-7 space-y-5 text-left">
-            {/* 1. Trust & Location Pill */}
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 shadow-xs text-xs font-semibold text-[#003296]">
-              <CheckCircle2 className="w-4 h-4 text-[#003296] shrink-0" />
-              <span>Direct Importer • Maraim Plaza, Ogidi Onitsha</span>
+            {/* Quality Label Badge */}
+            <div className="inline-flex items-center gap-1.5 py-1 px-3 bg-blue-50/80 border border-blue-200/70 rounded-full text-xs font-bold text-[#003296] w-fit">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#003296]" />
+              <span>Quality Doors and Sanitary Wares</span>
             </div>
 
-            {/* 2. Main Headline */}
+            {/* 1. Main Headline */}
             <h1 className="text-3xl sm:text-5xl md:text-5xl lg:text-6xl font-black text-slate-950 tracking-tight leading-[1.12]">
-              Heavy-Gauge Steel Security,{" "}
-              <span className="block sm:inline">Luxury HDF Doors &</span>{" "}
-              <span className="relative inline-block text-[#003296]">
-                Sanitary Wares.
-                <svg
-                  className="absolute left-0 -bottom-2 w-full h-2.5 text-[#003296]/30 overflow-visible"
-                  viewBox="0 0 240 12"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  preserveAspectRatio="none"
-                >
-                  <path
-                    d="M3 8.5C50 3.5 120 4.5 237 7.5"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
+              Doors That Define Your Space.
             </h1>
 
-            {/* 3. Trade Authority Copy */}
-            <p className="text-xs sm:text-sm md:text-base text-slate-600 leading-relaxed font-normal max-w-xl">
-              Anambra Best Door (operated by CFrank Enterprise) is a leading South-East supplier and direct importer of heavy-gauge Turkish security doors, luxury interior HDF doors, waterproof bathroom doors, and commercial sanitary wares from the Onitsha building materials market (Ogidi) to residential estates, contractors, and builders across Nigeria.
+            {/* 2. Trade Copy */}
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed font-normal max-w-xl">
+              Anambra Best Door is a prominent door dealer and manufacturer in Anambra State, Nigeria, powered by C Frank Enterprise. From HDF interior doors to security doors and bathroom doors, Anambra Best Door helps homeowners, builders and contractors find the right fit for their projects.
+            </p>
+
+            {/* 3. Location Label */}
+            <p className="text-xs sm:text-sm font-semibold text-slate-500">
+              Physical depot at Maraim Plaza, Ogidi, Anambra State, Nigeria.
             </p>
 
             {/* 4. Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
               <Link
                 href="/shop"
                 className="py-3.5 px-7 bg-[#003296] hover:bg-[#002266] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-all active:scale-98 cursor-pointer"
               >
-                <span>SEE ALL PRODUCTS</span>
+                <span>Browse Our Doors</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
+
 
               {/* Watch Video Button */}
               <button
@@ -146,16 +122,16 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right Column: Physical Product Slideshow Showcase */}
+          {/* Right Column: Clean Architectural Physical Product Slideshow */}
           <div
             className="lg:col-span-5 w-full max-w-md mx-auto lg:max-w-none"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-md overflow-hidden p-3 sm:p-4 space-y-3">
-              {/* Product Slideshow Image Box */}
-              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
-                <Link href={slide.href} className="block w-full h-full relative">
+            <div className="bg-white rounded-lg border border-slate-200/90 shadow-sm p-2 sm:p-2.5">
+              {/* Product Slideshow Image Box (Subtle crisp corners, zero floating stickers) */}
+              <div className="relative aspect-[4/5] rounded-md overflow-hidden bg-slate-100 border border-slate-200">
+                <Link href={slide.href} className="block w-full h-full relative" aria-label={`View ${slide.title}`}>
                   <Image
                     src={slide.image}
                     alt={slide.alt}
@@ -164,11 +140,6 @@ export default function Hero() {
                     sizes="(max-width: 1024px) 100vw, 40vw"
                     className="object-cover object-center transition-opacity duration-500"
                   />
-
-                  {/* Badge Overlay */}
-                  <div className="absolute top-3 right-3 px-2.5 py-1 bg-slate-950/85 backdrop-blur-md text-white text-[10px] font-bold rounded-lg uppercase tracking-wider shadow-sm">
-                    {slide.badge}
-                  </div>
                 </Link>
 
                 {/* Slideshow Arrow Controls */}
@@ -196,15 +167,15 @@ export default function Hero() {
                   <ChevronRight className="w-4 h-4" />
                 </button>
 
-                {/* Pagination Dots */}
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center space-x-1.5 px-2 py-1 rounded-full bg-black/40 backdrop-blur-xs">
+                {/* Minimalist Pagination Dots */}
+                <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center space-x-1 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-xs">
                   {heroSlides.map((s, idx) => (
                     <button
                       key={s.id}
                       type="button"
                       onClick={() => setCurrentSlide(idx)}
-                      className={`h-2 rounded-full transition-all cursor-pointer ${
-                        currentSlide === idx ? "w-5 bg-white" : "w-2 bg-white/50 hover:bg-white/80"
+                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                        currentSlide === idx ? "w-4 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
                       }`}
                       aria-label={`Go to slide ${idx + 1}`}
                     />
@@ -212,38 +183,18 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Slide Information & Action Box */}
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#003296]">
-                    {slide.tag}
-                  </span>
-                  <span className="text-[11px] text-slate-500 font-medium">
-                    In stock at Maraim Plaza, Ogidi
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className="text-sm sm:text-base font-bold text-slate-950 leading-snug">
-                    {slide.title}
-                  </h3>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    {slide.specs}
-                  </p>
-                </div>
-
-                <div className="pt-2 border-t border-slate-200 flex items-center justify-between gap-2">
-                  <span className="text-xs text-slate-500">
-                    See designs & prices:
-                  </span>
-                  <Link
-                    href={slide.href}
-                    className="py-2 px-3.5 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl inline-flex items-center space-x-1.5 transition-colors cursor-pointer shrink-0"
-                  >
-                    <span>{slide.buttonText}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
+              {/* Clean Product Caption & Direct Browse Link (No Overcomplicated Labels) */}
+              <div className="pt-2.5 pb-1 px-1 flex items-center justify-between gap-3">
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                  {slide.title}
+                </h3>
+                <Link
+                  href={slide.href}
+                  className="text-xs font-bold text-[#003296] hover:underline inline-flex items-center space-x-1 shrink-0"
+                >
+                  <span>{slide.buttonText}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
           </div>
@@ -259,7 +210,7 @@ export default function Hero() {
           onClick={() => setVideoModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-sm sm:max-w-md bg-black rounded-3xl overflow-hidden shadow-2xl border border-slate-800"
+            className="relative w-full max-w-sm sm:max-w-md bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-3.5 bg-slate-900 text-white">

@@ -28,7 +28,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-sm">
-              Anambra Best Door (powered by CFrank Enterprise) supplies Turkish steel security doors, interior luxury HDF room doors, waterproof bathroom doors, and commercial sanitary fittings directly from Maraim Plaza, Building Material International Market Ogidi, to builders and residential estates nationwide.
+              Anambra Best Door (operated by CFrank Enterprise) supplies Turkish steel security doors, interior luxury HDF room doors, waterproof bathroom doors, and commercial sanitary fittings directly from Maraim Plaza, Building Material International Market, Ogidi, to builders and residential estates nationwide.
             </p>
 
             {/* CAC Trust Badge */}
@@ -100,35 +100,25 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Category A: Premium Doors & Architectural Entrances */}
+          {/* Category A: Doors & Entrances */}
           <div className="space-y-3">
             <h3 className="text-slate-900 text-xs font-bold uppercase tracking-wider">
               Doors & Entrances
             </h3>
             <ul className="space-y-2.5 text-slate-600 font-medium">
               <li>
-                <Link href="/shop?category=hdf-doors" className="hover:text-[#003296] transition-colors font-bold text-[#003296]">
-                  Foreign HDF Luxury Doors
+                <Link href="/shop?category=security-doors" className="hover:text-[#003296] transition-colors font-bold text-[#003296]">
+                  Turkish Steel Security Doors
                 </Link>
               </li>
               <li>
                 <Link href="/shop?category=hdf-doors" className="hover:text-[#003296] transition-colors">
-                  HDF Wooden Complete Sets
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=security-doors" className="hover:text-[#003296] transition-colors">
-                  Armoured & Bulletproof Doors
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=luxury-doors" className="hover:text-[#003296] transition-colors">
-                  Bible Design & Italian Copper
+                  Foreign HDF Interior Doors
                 </Link>
               </li>
               <li>
                 <Link href="/shop?category=interior-doors" className="hover:text-[#003296] transition-colors">
-                  Watson & American Panel Doors
+                  Watson & Panel Doors
                 </Link>
               </li>
               <li>
@@ -139,40 +129,36 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Category B: Luxury Sanitary Ware & Bathroom Fittings */}
+          {/* Category B: Sanitary Wares & Hardware */}
           <div className="space-y-3">
             <h3 className="text-slate-900 text-xs font-bold uppercase tracking-wider">
-              Sanitary Wares
+              Fittings & Hardware
             </h3>
             <ul className="space-y-2.5 text-slate-600 font-medium">
               <li>
-                <Link href="/shop?category=sanitary-fittings&sub=wc" className="hover:text-[#003296] transition-colors font-bold text-[#003296]">
-                  Executive Gold & Pro WCs
+                <Link href="/shop?category=sanitary-fittings" className="hover:text-[#003296] transition-colors font-bold text-[#003296]">
+                  Water Closets & Basins
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=sanitary-fittings&sub=wc" className="hover:text-[#003296] transition-colors">
-                  Golden WC Ideal England Set
+                <Link href="/shop?category=sanitary-fittings" className="hover:text-[#003296] transition-colors">
+                  Shower Systems & Sinks
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=sanitary-fittings&sub=basins" className="hover:text-[#003296] transition-colors">
-                  Dining & Plain India Basins
+                <Link href="/shop" className="hover:text-[#003296] transition-colors">
+                  Door Locks & Accessories
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=sanitary-fittings&sub=showers" className="hover:text-[#003296] transition-colors">
-                  Shower Cubicles & Power Towers
+                <Link href="/collections/hdf-doors" className="hover:text-[#003296] transition-colors">
+                  Complete Pre-Hung Sets
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=sanitary-fittings&sub=sinks" className="hover:text-[#003296] transition-colors">
-                  Italian Golden & Pioneer Sinks
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=sanitary-fittings&sub=taps" className="hover:text-[#003296] transition-colors">
-                  Big Brother Luxury Taps
+                <Link href="/downloads" className="hover:text-[#003296] transition-colors font-bold text-[#003296] flex items-center gap-1">
+                  <span>Download Catalogues</span>
+                  <span className="text-[10px] px-1.5 py-0.2 bg-blue-100 text-[#003296] rounded font-extrabold uppercase">PDF</span>
                 </Link>
               </li>
             </ul>
@@ -204,17 +190,6 @@ export default function Footer() {
                 <Clock className="w-4 h-4 text-[#003296] shrink-0" />
                 <span>{settings.workingHours}</span>
               </div>
-              <div className="pt-1">
-                <a
-                  href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like to place an order or inquiry.")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 py-1.5 px-3 bg-[#003296] hover:bg-[#002266] text-white rounded-full font-bold text-[11px] transition-colors"
-                >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>WhatsApp Depot Order</span>
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -222,13 +197,13 @@ export default function Footer() {
         {/* Bottom Attribution Line */}
         <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span>© 2026 Anambra Best Door. Powered by CFrank Enterprise</span>
+            <span>© 2026 Anambra Best Door. Operated by CFrank Enterprise</span>
             <span className="text-slate-300">|</span>
             <a
               href="https://kator.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-600 hover:text-[#003296] transition-colors hover:underline"
+              className="italic text-slate-600 hover:text-[#003296] transition-colors hover:underline"
             >
               Designed and Developed by
             </a>
@@ -242,9 +217,13 @@ export default function Footer() {
             </a>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <span>Direct Importer</span>
+            <Link href="/downloads" className="hover:text-[#003296] font-semibold transition-colors">
+              PDF Catalogues
+            </Link>
             <span>•</span>
-            <span>Nationwide Crated Waybill</span>
+            <span>Deliveries Arranged Across Nigeria</span>
+            <span>•</span>
+            <span>Maraim Plaza, Ogidi</span>
           </div>
         </div>
       </div>

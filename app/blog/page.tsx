@@ -65,7 +65,7 @@ export default function BlogPage() {
           {ARTICLES.map((article) => (
             <article
               key={article.id}
-              className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs hover:border-[#003296] transition-colors flex flex-col"
+              className="bg-white rounded-xl border border-slate-200/90 overflow-hidden shadow-xs hover:border-[#003296] transition-colors flex flex-col"
             >
               <div className="relative aspect-video bg-slate-100 overflow-hidden">
                 <Image

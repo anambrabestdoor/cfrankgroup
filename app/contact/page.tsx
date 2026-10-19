@@ -51,7 +51,7 @@ export default function ContactPage() {
 
             <div className="space-y-3 text-xs">
               {/* Showroom Address */}
-              <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-start space-x-3.5">
+              <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-start space-x-3.5">
                 <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
                   <MapPin className="w-4 h-4" />
                 </div>
@@ -62,7 +62,7 @@ export default function ContactPage() {
               </div>
 
               {/* Direct Phone Line */}
-              <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-start space-x-3.5">
+              <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-start space-x-3.5">
                 <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
                   <Phone className="w-4 h-4" />
                 </div>
@@ -75,7 +75,7 @@ export default function ContactPage() {
               </div>
 
               {/* Direct WhatsApp */}
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200/80 shadow-xs flex items-start space-x-3.5">
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200/80 shadow-xs flex items-start space-x-3.5">
                 <div className="w-8 h-8 rounded-lg bg-[#25D366] text-white flex items-center justify-center shrink-0">
                   <MessageSquare className="w-4 h-4" />
                 </div>
@@ -96,7 +96,7 @@ export default function ContactPage() {
               </div>
 
               {/* Working Hours */}
-              <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-start space-x-3.5">
+              <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-start space-x-3.5">
                 <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
                   <Clock className="w-4 h-4" />
                 </div>
@@ -110,7 +110,7 @@ export default function ContactPage() {
               <div className="flex flex-wrap gap-2 pt-2">
                 <button
                   onClick={() => setCacModalOpen(true)}
-                  className="py-2 px-3 bg-white border border-slate-200 hover:border-[#003296] rounded-xl text-[11px] font-semibold text-[#003296] flex items-center space-x-1.5 transition-colors cursor-pointer"
+                  className="py-2 px-3 bg-white border border-slate-200 hover:border-[#003296] rounded-lg text-[11px] font-semibold text-[#003296] flex items-center space-x-1.5 transition-colors cursor-pointer"
                 >
                   <BadgeCheck className="w-3.5 h-3.5 text-[#003296]" />
                   <span>CAC BN: {settings.cacNumber} (Verify)</span>
@@ -119,7 +119,7 @@ export default function ContactPage() {
                   href={settings.jijiShopUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-2 px-3 bg-white border border-slate-200 hover:border-emerald-600 rounded-xl text-[11px] font-semibold text-emerald-700 flex items-center space-x-1.5 transition-colors"
+                  className="py-2 px-3 bg-white border border-slate-200 hover:border-emerald-600 rounded-lg text-[11px] font-semibold text-emerald-700 flex items-center space-x-1.5 transition-colors"
                 >
                   <Store className="w-3.5 h-3.5" />
                   <span>Verified Jiji.ng Store</span>
@@ -129,7 +129,7 @@ export default function ContactPage() {
           </div>
 
           {/* Quick Contact & Quote Form */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-xs">
+          <div className="bg-white p-6 sm:p-8 rounded-xl border border-slate-200/90 shadow-xs">
             {submitted ? (
               <div className="py-12 text-center space-y-4">
                 <CheckCircle className="w-12 h-12 text-emerald-600 mx-auto" />
