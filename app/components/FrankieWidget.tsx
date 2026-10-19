@@ -7,9 +7,7 @@ import {
   Send,
   Phone,
   Sparkles,
-  Bot,
   ExternalLink,
-  ChevronRight,
   RotateCcw,
 } from "lucide-react";
 import { useApp } from "@/app/context/AppContext";
@@ -37,7 +35,7 @@ export default function FrankieWidget() {
       id: "welcome",
       role: "assistant",
       content:
-        "Hello! I'm Frankie, your trade specialist at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo). Whether you're building a new home, duplex, or hotel, ask me for door recommendations, pricing, sizes, or depot inspection at Ogidi.",
+        "Hello! I'm Frankie, your building co-planner and assistant at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo). Whether you're building a new home, duplex, or hotel, ask me for door recommendations, pricing, sizes, or depot inspection at Ogidi.",
       timestamp: new Date().toISOString(),
       suggested_actions: [
         {
@@ -159,7 +157,7 @@ export default function FrankieWidget() {
         id: "welcome",
         role: "assistant",
         content:
-          "Hello! I'm Frankie, your trade specialist at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo). Whether you're building a new home, duplex, or hotel, ask me for door recommendations, pricing, sizes, or depot inspection at Ogidi.",
+          "Hello! I'm Frankie, your building co-planner and assistant at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo). Whether you're building a new home, duplex, or hotel, ask me for door recommendations, pricing, sizes, or depot inspection at Ogidi.",
         timestamp: new Date().toISOString(),
         suggested_actions: [
           {
@@ -200,15 +198,22 @@ export default function FrankieWidget() {
           <div className="bg-[#0A192F] text-white p-3.5 sm:p-4 flex flex-col gap-2.5 border-b border-slate-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
-                <div className="relative w-8 h-8 rounded-lg bg-[#003296] text-white flex items-center justify-center font-black text-sm shadow-sm border border-blue-400/30">
-                  <Bot className="w-4 h-4 text-blue-200" />
-                  <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-slate-900"></span>
+                <div className="relative w-8 h-8 rounded-full bg-[#003296] text-white flex items-center justify-center font-black text-sm shadow-sm border border-blue-400/40">
+                  <MessageSquare className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <span className="font-extrabold text-sm text-white leading-tight">Frankie</span>
-                    <span className="text-[10px] px-1.5 py-0.2 bg-blue-900/80 text-blue-200 rounded font-bold uppercase tracking-wider">
-                      AI Specialist
+                    {/* Green pulsing dot showing active state */}
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-[10px] text-emerald-300 font-semibold">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                      </span>
+                      <span>Active</span>
+                    </span>
+                    <span className="text-[10px] px-1.5 py-0.5 bg-blue-900/80 text-blue-200 rounded font-bold uppercase tracking-wider">
+                      Co-Planner
                     </span>
                   </div>
                   <p className="text-[10px] text-slate-300">
@@ -356,12 +361,15 @@ export default function FrankieWidget() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          aria-label="Open Frankie AI Assistant"
-          className="group relative flex items-center gap-2 py-3 px-4 rounded-full bg-[#003296] hover:bg-[#002266] text-white shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer border border-blue-400/30"
+          aria-label="Chat with Frankie - Building Co-Planner"
+          className="group relative flex items-center gap-2.5 py-3 px-4 rounded-full bg-[#003296] hover:bg-[#002266] text-white shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer border border-blue-400/40"
         >
           <div className="relative flex items-center justify-center">
-            <Bot className="w-5 h-5 text-white" />
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#003296] animate-pulse"></span>
+            <MessageSquare className="w-5 h-5 text-white" />
+            <span className="absolute -top-1.5 -right-1.5 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400 border-2 border-[#003296]"></span>
+            </span>
           </div>
           <span className="text-xs font-bold tracking-tight">Chat with Frankie</span>
         </button>

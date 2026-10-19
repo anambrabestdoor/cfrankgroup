@@ -32,7 +32,7 @@ function buildFrankieSystemPrompt(): string {
   const catalogContext = buildCatalogContext();
 
   return `
-You are Frankie, the official AI trade specialist and proactive sales consultant for Anambra Best Door (operated by CFrank Enterprise).
+You are Frankie, the official AI assistant and building co-planner for Anambra Best Door (operated by CFrank Enterprise).
 
 OWNERSHIP & VERIFIED BUSINESS FACTS (NEVER INVENT FALSE DETAILS):
 - Parent Registered Corporate Entity: CFrank Enterprise
@@ -166,7 +166,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   ) {
     return {
       message:
-        "As your trade specialist, here is our expert recommendation for fitting your building project:\n\n1. Main Entrance & Exterior (Security First):\n• Best Choice: Turkish Heavy-Gauge Steel Security Door (1.5mm–2.0mm steel leaf, 14–18 point multipoint deadbolts).\n• For grand entrances: Choose our 4ft x 7ft (1.5-leaf) or 5ft x 7ft (double-leaf) configurations with cast aluminium panels.\n\n2. Bedrooms & Living Suites (Acoustics & Luxury):\n• Best Choice: Foreign Luxury HDF Room Doors (from ₦185,000 for complete pre-hung sets) or Watson Doors (from ₦135,000). The acoustic tubular core ensures privacy and eliminates room sound leakage.\n\n3. Bathrooms & En-Suite Toilets (Moisture Protection):\n• Best Choice: 100% Waterproof WPC Composite Doors (from ₦85,000). Never install regular timber room doors in bathrooms, as steam causes them to swell, peel, and rot over time.\n\nHow many bedrooms and entrance doors does your building require? We can prepare an itemized bill of quantities with bulk contractor discounts.",
+        "As your building co-planner, here is our recommendation for fitting your building project:\n\n1. Main Entrance & Exterior (Security First):\n• Best Choice: Turkish Heavy-Gauge Steel Security Door (1.5mm–2.0mm steel leaf, 14–18 point multipoint deadbolts).\n• For grand entrances: Choose our 4ft x 7ft (1.5-leaf) or 5ft x 7ft (double-leaf) configurations with cast aluminium panels.\n\n2. Bedrooms & Living Suites (Acoustics & Luxury):\n• Best Choice: Foreign Luxury HDF Room Doors (from ₦185,000 for complete pre-hung sets) or Watson Doors (from ₦135,000). The acoustic tubular core ensures privacy and eliminates room sound leakage.\n\n3. Bathrooms & En-Suite Toilets (Moisture Protection):\n• Best Choice: 100% Waterproof WPC Composite Doors (from ₦85,000). Never install regular timber room doors in bathrooms, as steam causes them to swell, peel, and rot over time.\n\nHow many bedrooms and entrance doors does your building require? We can prepare an itemized bill of quantities with bulk contractor discounts.",
       suggested_actions: [
         { label: "Get Itemized WhatsApp Quote", action_type: "link", payload: waUrl },
         { label: "View HDF Collection", action_type: "link", payload: "/collections/hdf-doors" },
@@ -288,7 +288,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   // Default friendly sales pitch
   return {
     message:
-      "Hello! I'm Frankie, your trade specialist at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo).\n\nI can help you select the right doors for your project, calculate opening sizes, or suggest the best combinations of Foreign HDF room doors, Turkish security steel doors, and waterproof sanitary fittings.\n\nWhat kind of building or renovation project are you working on right now?",
+      "Hello! I'm Frankie, your building co-planner and project assistant at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo).\n\nI can help you select the right doors for your project, calculate opening sizes, or suggest the best combinations of Foreign HDF room doors, Turkish security steel doors, and waterproof sanitary fittings.\n\nWhat kind of building or renovation project are you working on right now?",
     suggested_actions: [
       { label: "Suggest doors for my house", action_type: "prompt", payload: "Which doors do you recommend for a new duplex?" },
       { label: "What HDF room doors are in stock?", action_type: "prompt", payload: "What HDF room doors are in stock?" },
