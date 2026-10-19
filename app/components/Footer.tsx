@@ -156,9 +156,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/downloads" className="hover:text-[#003296] transition-colors font-bold text-[#003296] flex items-center gap-1">
-                  <span>Download Catalogues</span>
-                  <span className="text-[10px] px-1.5 py-0.2 bg-blue-100 text-[#003296] rounded font-extrabold uppercase">PDF</span>
+                <Link href="/downloads" className="hover:text-[#003296] transition-colors font-bold text-[#003296]">
+                  Downloads
                 </Link>
               </li>
             </ul>
@@ -218,7 +217,7 @@ export default function Footer() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Link href="/downloads" className="hover:text-[#003296] font-semibold transition-colors">
-              PDF Catalogues
+              Downloads
             </Link>
             <span>•</span>
             <span>Deliveries Arranged Across Nigeria</span>

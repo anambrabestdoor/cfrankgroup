@@ -8,7 +8,7 @@ import MobileMenuDrawer from "./components/MobileMenuDrawer";
 import CartDrawer from "./components/CartDrawer";
 import SearchOverlay from "./components/SearchOverlay";
 import CacVerificationModal from "./components/CacVerificationModal";
-import ChatWidgetSlot from "./components/ChatWidgetSlot";
+import FrankieWidget from "./components/FrankieWidget";
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://anambrabestdoor.com";
 
@@ -95,7 +95,7 @@ export default function RootLayout({
           <CartDrawer />
           <SearchOverlay />
           <CacVerificationModal />
-          <ChatWidgetSlot />
+          <FrankieWidget />
         </AppProvider>
       </body>
     </html>

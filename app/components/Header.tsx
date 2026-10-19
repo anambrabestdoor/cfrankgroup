@@ -256,17 +256,17 @@ export default function Header() {
             </Link>
 
             <Link
-              href="/downloads"
-              className="px-4 py-1.5 text-xs font-bold text-slate-700 hover:text-[#003296] hover:bg-white rounded-full transition-all"
-            >
-              Downloads
-            </Link>
-
-            <Link
               href="/contact"
               className="px-4 py-1.5 text-xs font-bold text-slate-700 hover:text-[#003296] hover:bg-white rounded-full transition-all"
             >
               Contact
+            </Link>
+
+            <Link
+              href="/downloads"
+              className="px-4 py-1.5 text-xs font-bold text-slate-700 hover:text-[#003296] hover:bg-white rounded-full transition-all"
+            >
+              Downloads
             </Link>
           </nav>
 

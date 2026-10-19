@@ -173,19 +173,19 @@ export default function MobileMenuDrawer() {
           </Link>
 
           <Link
-            href="/downloads"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-2xl font-bold text-slate-900 hover:text-[#003296] tracking-tight transition-colors"
-          >
-            Downloads
-          </Link>
-
-          <Link
             href="/contact"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-2xl font-bold text-slate-900 hover:text-[#003296] tracking-tight transition-colors"
           >
             Contact
+          </Link>
+
+          <Link
+            href="/downloads"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-2xl font-bold text-slate-900 hover:text-[#003296] tracking-tight transition-colors"
+          >
+            Downloads
           </Link>
         </nav>
 
