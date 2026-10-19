@@ -79,21 +79,21 @@ export default function StorefrontPage() {
 
       {/* 2. Section 2: "Who We Supply" (Compact py-8 sm:py-12 spacing) */}
       <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 space-y-2.5">
+        <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8 space-y-2.5">
           <div className="inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-xs font-bold text-[#003296]">
             <span>Who We Supply</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
-            Designed for those building with permanence.
+            The right doors for every kind of project.
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-            Whether securing a private residence or fitting an entire residential estate, our doors provide verified steel thickness, flawless timber finishing, and factory-direct pricing.
+            From a single home to a multi-unit development, Anambra Best Door helps homeowners, builders and trade buyers find doors that suit their spaces, designs and budgets. Explore our range of security doors, HDF wooden doors and other available designs, with options for individual purchases and bulk enquiries.
           </p>
         </div>
 
         {/* 3-Column Card Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-          {/* Card 1: Homeowners */}
+          {/* Card 1: Homeowners & Residential Projects */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -101,22 +101,28 @@ export default function StorefrontPage() {
                   <Home className="w-5 h-5" />
                 </div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Homeowners & Duplexes
+                  Homeowners & Residential Projects
                 </span>
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                Armoured Security & Protection
+                Make a lasting first impression.
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Armoured entrance doors featuring multi-point deadbolts, drill-resistant strike plates, and ornamental cast aluminium designs that safeguard your family with prestige.
+                Choose an entrance door that complements your home and interior doors that bring your spaces together. Explore security-focused entrance designs, decorative finishes and practical options for new builds, renovations and duplexes.
               </p>
             </div>
-            <div className="pt-3 border-t border-slate-100 flex items-center text-xs font-bold text-[#003296]">
-              <span>Turkish Steel & Cast Aluminum</span>
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <Link
+                href="/shop"
+                className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#003296] hover:underline"
+              >
+                <span>Explore Security Doors & HDF Wooden Doors</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
 
-          {/* Card 2: Contractors */}
+          {/* Card 2: Contractors & Property Developers */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -124,22 +130,22 @@ export default function StorefrontPage() {
                   <HardHat className="w-5 h-5" />
                 </div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Contractors & Developers
+                  Contractors & Property Developers
                 </span>
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                Bulk HDF Room Doors & Estate Batches
+                Door solutions for projects of every size.
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                High-density acoustic room doors, Watson designs, and pre-hung frames supplied in uniform batches for multi-unit estates and hotels with zero site delays.
+                Planning a residential development, apartment block, hotel or renovation? Discuss your door types, quantities, preferred designs and project requirements with us. We’ll help you explore suitable options and request a quote for your project.
               </p>
             </div>
             <div className="pt-3 border-t border-slate-100 flex items-center text-xs font-bold text-[#003296]">
-              <span>Foreign HDF & Pre-Hung Packages</span>
+              <span>HDF Wooden Doors · Bulk Orders · Project Enquiries</span>
             </div>
           </div>
 
-          {/* Card 3: Wholesalers */}
+          {/* Card 3: Dealers, Retailers & Wholesalers */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -147,19 +153,53 @@ export default function StorefrontPage() {
                   <Store className="w-5 h-5" />
                 </div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Dealers & Wholesalers
+                  Dealers, Retailers & Wholesalers
                 </span>
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                Direct Container Loads & Depot Rates
+                Source doors for your next order.
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Source directly from our Maraim Plaza depot at importer rates. We provide container offloading, palletized packing, and reliable haulage across Nigeria.
+                Looking to stock up or purchase multiple doors? Contact us to discuss available designs, quantities, pricing and collection or delivery arrangements. Whether you're buying for resale or sourcing materials for a project, we’ll help you establish the options available for your order.
               </p>
             </div>
             <div className="pt-3 border-t border-slate-100 flex items-center text-xs font-bold text-[#003296]">
-              <span>Direct Importer Wholesale Rates</span>
+              <span>Wholesale Enquiries · Multiple-Unit Orders · Trade Pricing</span>
             </div>
+          </div>
+        </div>
+
+        {/* Have a project in mind? Action Banner */}
+        <div className="mt-8 bg-slate-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-1.5 text-center md:text-left max-w-xl">
+            <h3 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight">
+              Have a project in mind?
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Tell us the type of doors you need, your preferred designs and the quantity required. We&apos;ll help you explore available options and discuss pricing.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+            <Link
+              href="/shop"
+              className="w-full sm:w-auto py-3 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-colors text-center cursor-pointer"
+            >
+              <span>Browse Our Doors</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+
+            <a
+              href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
+                "Hello CFrank Enterprise, I have a project in mind. I would like to discuss door types, preferred designs, quantities, and pricing."
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto py-3 px-6 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-colors text-center cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>Discuss Your Project on WhatsApp</span>
+            </a>
           </div>
         </div>
       </section>

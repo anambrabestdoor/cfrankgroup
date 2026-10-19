@@ -20,8 +20,8 @@ const heroSlides = [
     specs: "Complete set with matching frame, architrave, hinges, and lock handle.",
     badge: "In Stock at Ogidi",
     image: "/WhatsApp Image 2026-10-19 at 7.46.19 AM.jpeg",
-    href: "/collections/hdf-doors",
-    buttonText: "See All Room Doors",
+    href: "/shop?category=hdf-doors",
+    buttonText: "Browse Room Doors",
     alt: "Foreign Luxury HDF Wooden Door with complete frame and lock at Anambra Best Door",
   },
   {
@@ -31,8 +31,8 @@ const heroSlides = [
     specs: "Armoured steel leaf with multi-point deadlock and master laser keys.",
     badge: "In Stock at Ogidi",
     image: "/WhatsApp Image 2026-10-19 at 7.46.18 AM.jpeg",
-    href: "/collections/security-doors",
-    buttonText: "See All Security Doors",
+    href: "/shop?category=security-doors",
+    buttonText: "Browse Security Doors",
     alt: "Heavy-Gauge Turkish Steel Security Door displayed at Anambra Best Door depot, Ogidi",
   },
   {
@@ -42,8 +42,8 @@ const heroSlides = [
     specs: "Quality ceramic toilet set with dual-flush cistern and soft-closing seat cover.",
     badge: "In Stock at Ogidi",
     image: "/products/Excutive Gøld wc.jpeg",
-    href: "/collections/sanitary-fittings",
-    buttonText: "See All Sanitary Wares",
+    href: "/shop?category=sanitary-fittings",
+    buttonText: "Browse Sanitary Wares",
     alt: "Executive Luxury Water Closet by Anambra Best Door and CFrank Enterprise",
   },
   {
@@ -53,8 +53,8 @@ const heroSlides = [
     specs: "Precision installed with acoustic sound damping across residential suites.",
     badge: "Direct Importer",
     image: "/WhatsApp Image 2026-10-19 at 7.46.19 AM (2).jpeg",
-    href: "/shop?category=hdf-doors",
-    buttonText: "Browse Full Inventory",
+    href: "/shop",
+    buttonText: "Browse Our Doors",
     alt: "Anambra Best Door residential suite installation corridor",
   },
 ];
