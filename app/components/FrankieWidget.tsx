@@ -243,24 +243,28 @@ export default function FrankieWidget() {
             </div>
 
             {/* Quick Handover Bar: WhatsApp + Call Admin */}
-            <div className="flex items-center gap-2 pt-1 border-t border-slate-800/80">
+            <div className="flex items-center gap-2 pt-2 border-t border-slate-800/80">
               <a
                 href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                  "Hello CFrank Enterprise, I was chatting with Frankie on your site and would like to speak directly with a sales representative."
+                  "Hello CFrank Enterprise, I was chatting with Frankie on your site and would like to speak directly with the depot admin regarding door orders."
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-[11px] font-bold rounded-lg shadow-xs transition-colors cursor-pointer"
+                title="Chat directly on WhatsApp"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-[11px] font-bold rounded-lg shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer"
               >
-                <MessageSquare className="w-3.5 h-3.5" />
+                <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M17.472 14.382c-.301-.15-1.778-.877-2.054-.977-.275-.101-.476-.15-.677.15-.2.301-.777.978-.952 1.179-.176.2-.351.226-.652.075-.3-.151-1.27-.468-2.42-1.493-.895-.798-1.5-1.784-1.676-2.085-.175-.301-.019-.464.132-.614.136-.135.301-.351.452-.527.15-.175.2-.301.3-.501.1-.2.05-.376-.025-.526-.075-.151-.677-1.632-.927-2.234-.244-.586-.492-.507-.677-.516l-.577-.01c-.2 0-.526.075-.802.376-.276.301-1.053 1.028-1.053 2.508s1.078 2.909 1.229 3.11c.15.2 2.122 3.24 5.14 4.544.718.31 1.279.496 1.716.635.722.23 1.38.197 1.9.12.579-.087 1.778-.727 2.029-1.429.25-.702.25-1.304.175-1.43-.075-.125-.276-.2-.577-.35zM12.04 2C6.516 2 2.028 6.488 2.028 12.012c0 1.764.46 3.487 1.334 5.006L2 22.028l5.14-1.348a9.98 9.98 0 0 0 4.9 1.28c5.524 0 10.012-4.488 10.012-10.012A10.01 10.01 0 0 0 12.04 2zm0 18.293c-1.554 0-3.078-.418-4.409-1.209l-.316-.188-3.275.859.874-3.193-.206-.328a8.27 8.27 0 0 1-1.268-4.422c0-4.57 3.719-8.289 8.289-8.289 2.215 0 4.297.863 5.863 2.43 1.566 1.566 2.429 3.648 2.429 5.863 0 4.57-3.719 8.289-8.289 8.289z" />
+                </svg>
                 <span>Chat on WhatsApp</span>
               </a>
 
               <a
                 href={`tel:${settings.phone}`}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold rounded-lg border border-white/15 transition-colors cursor-pointer"
+                title={`Call Admin: ${settings.phoneDisplay}`}
+                className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold rounded-lg border border-white/20 transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer"
               >
-                <Phone className="w-3.5 h-3.5 text-blue-300" />
+                <Phone className="w-3.5 h-3.5 text-blue-300 shrink-0" />
                 <span>Call Admin</span>
               </a>
             </div>
@@ -301,8 +305,14 @@ export default function FrankieWidget() {
                             : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300"
                         }`}
                       >
-                        {act.action_type === "link" && <ExternalLink className="w-3 h-3" />}
-                        {act.action_type === "call" && <Phone className="w-3 h-3" />}
+                        {act.action_type === "link" && act.payload?.includes("wa.me") ? (
+                          <svg className="w-3 h-3 fill-current text-[#25D366] shrink-0" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.301-.15-1.778-.877-2.054-.977-.275-.101-.476-.15-.677.15-.2.301-.777.978-.952 1.179-.176.2-.351.226-.652.075-.3-.151-1.27-.468-2.42-1.493-.895-.798-1.5-1.784-1.676-2.085-.175-.301-.019-.464.132-.614.136-.135.301-.351.452-.527.15-.175.2-.301.3-.501.1-.2.05-.376-.025-.526-.075-.151-.677-1.632-.927-2.234-.244-.586-.492-.507-.677-.516l-.577-.01c-.2 0-.526.075-.802.376-.276.301-1.053 1.028-1.053 2.508s1.078 2.909 1.229 3.11c.15.2 2.122 3.24 5.14 4.544.718.31 1.279.496 1.716.635.722.23 1.38.197 1.9.12.579-.087 1.778-.727 2.029-1.429.25-.702.25-1.304.175-1.43-.075-.125-.276-.2-.577-.35zM12.04 2C6.516 2 2.028 6.488 2.028 12.012c0 1.764.46 3.487 1.334 5.006L2 22.028l5.14-1.348a9.98 9.98 0 0 0 4.9 1.28c5.524 0 10.012-4.488 10.012-10.012A10.01 10.01 0 0 0 12.04 2zm0 18.293c-1.554 0-3.078-.418-4.409-1.209l-.316-.188-3.275.859.874-3.193-.206-.328a8.27 8.27 0 0 1-1.268-4.422c0-4.57 3.719-8.289 8.289-8.289 2.215 0 4.297.863 5.863 2.43 1.566 1.566 2.429 3.648 2.429 5.863 0 4.57-3.719 8.289-8.289 8.289z" />
+                          </svg>
+                        ) : act.action_type === "link" ? (
+                          <ExternalLink className="w-3 h-3 text-[#003296]" />
+                        ) : null}
+                        {act.action_type === "call" && <Phone className="w-3 h-3 text-emerald-700" />}
                         {act.action_type === "prompt" && <Sparkles className="w-3 h-3 text-[#003296]" />}
                         <span>{act.label}</span>
                       </button>
