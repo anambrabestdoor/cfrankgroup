@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useApp } from "@/app/context/AppContext";
-import { BadgeCheck, MapPin, Phone, Mail, Clock, Store, Instagram, MessageSquare, ArrowUpRight } from "lucide-react";
+import { BadgeCheck, MapPin, Phone, Mail, Clock, Store, Instagram, MessageSquare } from "lucide-react";
 
 export default function Footer() {
   const { settings, setCacModalOpen } = useApp();
@@ -221,19 +221,24 @@ export default function Footer() {
 
         {/* Bottom Attribution Line */}
         <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
             <span>© 2026 Anambra Best Door. Powered by CFrank Enterprise</span>
             <span className="text-slate-300">|</span>
             <a
               href="https://kator.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 hover:bg-[#003296] text-slate-700 hover:text-white font-semibold transition-all border border-slate-200 hover:border-[#003296] shadow-2xs cursor-pointer"
-              title="Visit Kator portfolio"
+              className="text-slate-600 hover:text-[#003296] transition-colors hover:underline"
             >
-              <span>Designed &amp; Developed by</span>
-              <span className="font-extrabold text-[#003296] group-hover:text-white underline underline-offset-2">Kator</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              Designed and Developed by
+            </a>
+            <a
+              href="https://usemadar.top"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-slate-800 hover:text-[#003296] transition-colors hover:underline"
+            >
+              Madar
             </a>
           </div>
           <div className="flex flex-wrap items-center gap-3">
