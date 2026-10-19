@@ -66,6 +66,9 @@ export const metadata: Metadata = {
     icon: "/logo.png",
     apple: "/logo.png",
   },
+  verification: {
+    google: "iBRJRBa4MEc-8HGKT_j8rtYi8twd964563fAsFqdQs8",
+  },
 };
 
 export default function RootLayout({
@@ -76,6 +79,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="iBRJRBa4MEc-8HGKT_j8rtYi8twd964563fAsFqdQs8" />
         <JsonLd />
       </head>
       <body className="antialiased text-slate-900 bg-white font-sans min-h-screen flex flex-col justify-between" suppressHydrationWarning>

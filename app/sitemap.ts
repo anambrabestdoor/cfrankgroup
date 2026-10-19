@@ -1,11 +1,20 @@
 import { MetadataRoute } from "next";
-import { DOOR_PRODUCTS, CATEGORIES } from "@/app/data/doorsData";
+import { DOOR_PRODUCTS } from "@/app/data/doorsData";
+
+const COLLECTION_SLUGS = [
+  "hdf-doors",
+  "security-doors",
+  "interior-doors",
+  "bathroom-doors",
+  "luxury-doors",
+  "sanitary-fittings",
+];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://anambrabestdoor.com";
   const currentDate = new Date().toISOString();
 
-  // Static routes
+  // Static core routes
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}`,
@@ -20,6 +29,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/wholesale`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
       url: `${baseUrl}/about`,
       lastModified: currentDate,
       changeFrequency: "monthly",
@@ -29,31 +44,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/contact`,
       lastModified: currentDate,
       changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/wholesale`,
-      lastModified: currentDate,
-      changeFrequency: "monthly",
-      priority: 0.8,
+      priority: 0.75,
     },
     {
       url: `${baseUrl}/blog`,
       lastModified: currentDate,
       changeFrequency: "weekly",
-      priority: 0.75,
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/faq`,
       lastModified: currentDate,
       changeFrequency: "monthly",
-      priority: 0.7,
+      priority: 0.75,
     },
     {
       url: `${baseUrl}/shipping`,
       lastModified: currentDate,
       changeFrequency: "monthly",
-      priority: 0.6,
+      priority: 0.65,
     },
     {
       url: `${baseUrl}/returns`,
@@ -61,14 +70,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    {
+      url: `${baseUrl}/tracking`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
   ];
 
-  // Category filter routes
-  const categoryRoutes: MetadataRoute.Sitemap = CATEGORIES.filter((c) => c.id !== "all").map((cat) => ({
-    url: `${baseUrl}/shop?category=${cat.id}`,
+  // Clean canonical category / collection routes (HDF and Security doors prioritized)
+  const collectionRoutes: MetadataRoute.Sitemap = COLLECTION_SLUGS.map((slug) => ({
+    url: `${baseUrl}/collections/${slug}`,
     lastModified: currentDate,
     changeFrequency: "weekly",
-    priority: 0.8,
+    priority: slug === "hdf-doors" || slug === "security-doors" ? 0.9 : 0.8,
   }));
 
   // Dynamic Product routes
@@ -76,8 +91,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${baseUrl}/products/${p.slug}`,
     lastModified: currentDate,
     changeFrequency: "weekly",
-    priority: 0.85,
+    priority: p.featured ? 0.85 : 0.8,
   }));
 
-  return [...staticRoutes, ...categoryRoutes, ...productRoutes];
+  return [...staticRoutes, ...collectionRoutes, ...productRoutes];
 }

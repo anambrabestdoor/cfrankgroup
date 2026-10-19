@@ -40,7 +40,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <Link href={`/products/${product.slug}`} className="block relative w-full aspect-[4/5] bg-slate-100 overflow-hidden">
         <Image
           src={product.image}
-          alt={product.name}
+          alt={`${product.name} - ${product.categoryLabel} by CFrank Enterprise, Ogidi Onitsha`}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
@@ -78,7 +78,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Price & Action Row */}
         <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
           <div>
-            {product.priceOnRequest ? (
+            {product.priceMode === "blank" ? (
+              <span className="text-xs font-semibold text-slate-500 block">
+                Inquire on WhatsApp
+              </span>
+            ) : product.priceMode === "price_on_request" || product.priceOnRequest ? (
               <span className="text-xs font-bold text-[#003296] block">
                 Price on Request
               </span>
@@ -94,8 +98,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                 )}
               </div>
             ) : (
-              <span className="text-xs font-bold text-slate-700 block">
-                Contact Depot
+              <span className="text-xs font-semibold text-slate-500 block">
+                Inquire on WhatsApp
               </span>
             )}
             <span className="text-[10px] text-slate-400 block mt-0.5">

@@ -1,54 +1,133 @@
-"use client";
-
-import React, { use } from "react";
+import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import ProductCard from "@/app/components/ProductCard";
-import { DOOR_PRODUCTS, CATEGORIES, DoorProduct } from "@/app/data/doorsData";
-import { ArrowLeft } from "lucide-react";
+import { DOOR_PRODUCTS, DoorProduct } from "@/app/data/doorsData";
+import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
+import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, Warehouse } from "lucide-react";
 
 interface CollectionMeta {
   title: string;
+  seoTitle: string;
   desc: string;
-  categoryKey?: DoorProduct["category"];
+  categoryKey: DoorProduct["category"];
+  commercialHighlight?: {
+    heading: string;
+    points: string[];
+  };
 }
 
-const DOOR_COLLECTIONS: Record<string, CollectionMeta> = {
+const COLLECTIONS: Record<string, CollectionMeta> = {
+  "hdf-doors": {
+    title: "Luxury Foreign HDF Interior Room Doors",
+    seoTitle: "Foreign HDF Room Doors | Direct Importer Price | Anambra Best Door Ogidi",
+    desc: "Engineered high-density fibreboard (HDF) interior room doors built for private residences, hotel suites, and multi-unit estate developments across Nigeria. Complete packages available with factory-matched architraves, frames, and mortise locks.",
+    categoryKey: "hdf-doors",
+    commercialHighlight: {
+      heading: "Contractor & Builder Specifications for HDF Doors",
+      points: [
+        "Standard rough masonry opening: 3ft x 7ft (900mm x 2100mm) or custom height.",
+        "Supplied as full pre-hung package: Leaf, frame casing, architrave, and heavy hinges.",
+        "High-density compression core prevents bowing, warping, and surface cracking in humid weather.",
+        "Direct warehouse supply with bulk discounts for developers ordering 10 units or more.",
+      ],
+    },
+  },
   "security-doors": {
-    title: "Heavy-Gauge Security & Steel Doors",
-    desc: "Reinforced structural steel entrance doors, bullet proof doors, and multi-lock perimeter defense doors.",
+    title: "Heavy-Gauge Turkish Steel Security Doors",
+    seoTitle: "Turkish Armoured Security Doors | Ogidi Onitsha Depot | Anambra Best Door",
+    desc: "Reinforced structural steel entrance doors, bullet-resistant cores, multi-point deadbolt perimeter locks, and heavy-duty tamper-proof hinges. Directly imported and inspected at our Maraim Plaza depot.",
     categoryKey: "security-doors",
+    commercialHighlight: {
+      heading: "Security Door Quality Assurance",
+      points: [
+        "Electro-galvanized cold-rolled steel plates with internal steel reinforcement ribs.",
+        "Rockwool acoustic and thermal core insulation.",
+        "Multi-point perimeter locking with laser-cut computerized keys.",
+        "Custom double leaf (4.5ft x 7ft & 5ft x 7ft) and standard 3ft / 4ft single leaves in stock.",
+      ],
+    },
   },
   "interior-doors": {
-    title: "Interior Wooden Room Doors",
-    desc: "Watson doors, luxury foreign HDF models, and pre-hung room doors with matching architraves and mortise locks.",
+    title: "Interior Wooden Doors & Watson Panel Doors",
+    seoTitle: "Interior Wooden Room Doors | American Panel & Watson | Anambra Best Door",
+    desc: "Solid timber core interior doors, American panel finishes, and Watson room doors tailored for modern bedroom and office entries.",
     categoryKey: "interior-doors",
   },
-  "hdf-doors": {
-    title: "HDF & Engineered Flush Doors",
-    desc: "High-density fibreboard doors, complete door packages, and custom on-demand project fabrication.",
-    categoryKey: "hdf-doors",
-  },
   "bathroom-doors": {
-    title: "Waterproof Bathroom & Restroom Doors",
-    desc: "100% moisture-proof, rot-proof, and termite-proof doors for humid environments and domestic restrooms.",
+    title: "100% Waterproof WPC Bathroom Doors",
+    seoTitle: "Waterproof Bathroom Doors WPC | Anti-Swelling Moisture Proof | Onitsha",
+    desc: "Monolithic polymer composite restroom doors 100% immune to water, shower steam, moisture condensation, and termites. Solves the persistent problem of rotting door bases in Nigerian bathrooms.",
     categoryKey: "bathroom-doors",
+    commercialHighlight: {
+      heading: "Why WPC Outlasts Wood in Nigerian Bathrooms",
+      points: [
+        "Zero wood fiber absorption: will never swell, peel, or warp from water contact.",
+        "Termite-proof and fungus-resistant material composition.",
+        "Pre-fitted frosted glass inserts and privacy mortise deadbolts.",
+      ],
+    },
   },
   "luxury-doors": {
-    title: "Luxury Cast Aluminium & Copper Doors",
-    desc: "Ornamental Bible cast doors and electro-plated Italian copper doors for prestigious entrances.",
+    title: "Luxury Cast Aluminium & Copper Villa Doors",
+    seoTitle: "Luxury Cast Aluminium & Copper Doors | Bible Design | Anambra Best Door",
+    desc: "Monumental Bible cast aluminium doors and electro-plated Italian copper doors engineered for landmark residences, duplex main entrances, and executive conference halls.",
     categoryKey: "luxury-doors",
+  },
+  "sanitary-fittings": {
+    title: "Executive Sanitary Wares & Bathroom Fittings",
+    seoTitle: "Sanitary Wares & Water Closets | Ogidi Building Materials Market",
+    desc: "Heavy ceramic water closets, dual-flush siphon toilets, countertop wash hand basins, and solid brass plumbing fixtures for residential and commercial projects.",
+    categoryKey: "sanitary-fittings",
   },
 };
 
-export default function CollectionPage({
-  params,
-}: {
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://anambrabestdoor.com";
+
+interface PageProps {
   params: Promise<{ slug: string }>;
-}) {
-  const { slug } = use(params);
-  const collection = DOOR_COLLECTIONS[slug] || {
-    title: "Door Collection",
-    desc: "Explore genuine heavy-gauge security and interior doors from Anambra Best Door Enterprises.",
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const col = COLLECTIONS[slug];
+
+  if (!col) {
+    return {
+      title: "Door Collection | Anambra Best Door",
+      description: "Explore genuine heavy-gauge security and interior doors from Anambra Best Door, Ogidi Onitsha.",
+    };
+  }
+
+  return {
+    title: { absolute: col.seoTitle },
+    description: col.desc,
+    alternates: {
+      canonical: `${baseUrl}/collections/${slug}`,
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_NG",
+      url: `${baseUrl}/collections/${slug}`,
+      siteName: DEFAULT_SITE_SETTINGS.companyName,
+      title: col.seoTitle,
+      description: col.desc,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: col.seoTitle,
+      description: col.desc,
+    },
+  };
+}
+
+export default async function CollectionPage({ params }: PageProps) {
+  const { slug } = await params;
+  const collection = COLLECTIONS[slug] || {
+    title: "Architectural Door & Sanitary Collection",
+    seoTitle: "Door Collection | Anambra Best Door",
+    desc: "Explore verified heavy-gauge security doors, luxury interior wooden doors, and sanitary fittings in our Ogidi depot.",
+    categoryKey: undefined,
   };
 
   const filtered = DOOR_PRODUCTS.filter((p) => {
@@ -59,48 +138,152 @@ export default function CollectionPage({
     return true;
   });
 
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: collection.title,
+    description: collection.desc,
+    url: `${baseUrl}/collections/${slug}`,
+    provider: {
+      "@type": "LocalBusiness",
+      name: `${DEFAULT_SITE_SETTINGS.companyName} (${DEFAULT_SITE_SETTINGS.parentCompany})`,
+      telephone: DEFAULT_SITE_SETTINGS.phone,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: DEFAULT_SITE_SETTINGS.address,
+        addressLocality: "Ogidi",
+        addressRegion: "Anambra State",
+        addressCountry: "NG",
+      },
+    },
+  };
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: collection.title,
+    itemListElement: filtered.slice(0, 20).map((product, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      name: product.name,
+      url: `${baseUrl}/products/${product.slug}`,
+    })),
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${baseUrl}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Catalogue",
+        item: `${baseUrl}/shop`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: collection.title,
+        item: `${baseUrl}/collections/${slug}`,
+      },
+    ],
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex items-center space-x-2 text-xs text-slate-500">
-          <Link href="/shop" className="hover:text-[#003296] flex items-center space-x-1 font-semibold">
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>All Products</span>
-          </Link>
-          <span>/</span>
-          <span className="font-bold text-slate-800">{collection.title}</span>
-        </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
 
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 space-y-3">
-          <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-[#003296] text-[11px] font-bold uppercase tracking-wider">
-            Verified Inventory • Maraim Plaza Ogidi
-          </span>
-          <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            {collection.title}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
-            {collection.desc}
-          </p>
-        </div>
-
-        {filtered.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 space-y-3">
-            <p className="text-sm font-bold text-slate-800">No doors currently listed under this category.</p>
-            <Link
-              href="/shop"
-              className="inline-block py-2.5 px-5 bg-[#003296] text-white text-xs font-bold rounded-xl"
-            >
-              Browse Full Catalogue
+      <div className="min-h-screen bg-slate-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Breadcrumb Navigation */}
+          <nav aria-label="Breadcrumb" className="flex items-center space-x-2 text-xs text-slate-500">
+            <Link href="/shop" className="hover:text-[#003296] flex items-center space-x-1 font-semibold">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Full Catalogue</span>
             </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-            {filtered.map((door) => (
-              <ProductCard key={door.id} product={door} />
-            ))}
-          </div>
-        )}
+            <span>/</span>
+            <span className="font-bold text-slate-800">{collection.title}</span>
+          </nav>
+
+          {/* Hero Header Box */}
+          <header className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200/90 shadow-xs space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-blue-50 text-[#003296] text-[11px] font-bold uppercase tracking-wider">
+                <Warehouse className="w-3 h-3" />
+                <span>Ogidi Building Materials Depot</span>
+              </span>
+              <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold">
+                <Truck className="w-3 h-3" />
+                <span>Direct Site Waybill</span>
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight">
+              {collection.title}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 max-w-3xl leading-relaxed">
+              {collection.desc}
+            </p>
+
+            {/* Commercial Highlight for HDF and key doors */}
+            {collection.commercialHighlight && (
+              <div className="mt-6 pt-6 border-t border-slate-100 bg-slate-50/70 -mx-6 -mb-6 sm:-mx-10 sm:-mb-10 p-6 sm:p-8 rounded-b-3xl">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3">
+                  {collection.commercialHighlight.heading}
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-600">
+                  {collection.commercialHighlight.points.map((pt, i) => (
+                    <div key={i} className="flex items-start space-x-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#003296] shrink-0 mt-0.5" />
+                      <span>{pt}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </header>
+
+          {/* Products Grid */}
+          {filtered.length === 0 ? (
+            <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 space-y-3">
+              <p className="text-sm font-bold text-slate-800">
+                No products currently listed under this category.
+              </p>
+              <Link
+                href="/shop"
+                className="inline-block py-2.5 px-5 bg-[#003296] text-white text-xs font-bold rounded-xl"
+              >
+                Browse Full Catalogue
+              </Link>
+            </div>
+          ) : (
+            <section aria-label="Products in this collection">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+                {filtered.map((door) => (
+                  <ProductCard key={door.id} product={door} />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

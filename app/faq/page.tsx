@@ -13,27 +13,32 @@ export default function FAQPage() {
     {
       id: "faq-1",
       question: "What steel gauge are your Turkish security entrance doors?",
-      answer: "Our Turkish armoured security doors are constructed with genuine 1.5mm to 2.0mm electro-galvanized cold-rolled steel plates with internal vertical and horizontal steel stiffeners and high-density rockwool insulation. We welcome clients to inspect leaf weight and steel gauge physically at our Maraim Plaza depot.",
+      answer:
+        "Our Turkish armoured security doors are constructed with genuine 1.5mm to 2.0mm electro-galvanized cold-rolled steel plates with internal vertical and horizontal steel stiffeners and high-density rockwool insulation. We welcome clients to inspect leaf weight and steel gauge physically at our Maraim Plaza depot.",
     },
     {
       id: "faq-2",
       question: "Can I inspect the doors in person before placing an order?",
-      answer: "Yes, absolutely. Our store and depot is located at No 16/17, Maraim Plaza Building Material Ogidi, Anambra State. You can visit Monday through Saturday from 8:00 AM to 5:30 PM to examine doors, lock mechanisms, and finishes.",
+      answer:
+        "Yes, absolutely. Our store and depot is located at No 16/17, Maraim Plaza Building Material Ogidi, Anambra State. You can visit Monday through Saturday from 8:00 AM to 5:30 PM to examine doors, lock mechanisms, and finishes.",
     },
     {
       id: "faq-3",
       question: "How does nationwide waybill delivery work?",
-      answer: "Once your order is confirmed with our sales desk on WhatsApp, your doors are thoroughly inspected, protective bubble-wrapped, corner-guarded, and crated. We dispatch via verified heavy-haul haulage services from Onitsha to major depots in Lagos, Abuja, Port Harcourt, Asaba, Enugu, and all Nigerian states.",
+      answer:
+        "Once your order is confirmed with our sales desk on WhatsApp, your doors are thoroughly inspected, protective bubble-wrapped, corner-guarded, and crated. We dispatch via verified heavy-haul haulage services from Onitsha to major depots in Lagos, Abuja, Port Harcourt, Asaba, Enugu, and all Nigerian states.",
     },
     {
       id: "faq-4",
       question: "Are your bathroom doors genuinely 100% waterproof?",
-      answer: "Yes. Unlike ordinary flush doors that swell and peel in moist bathrooms, our WPC (Wood-Plastic Composite) bathroom doors are monolithic polymer blends completely immune to water, steam, humidity, and termites.",
+      answer:
+        "Yes. Unlike ordinary flush doors that swell and peel in moist bathrooms, our WPC (Wood-Plastic Composite) bathroom doors are monolithic polymer blends completely immune to water, steam, humidity, and termites.",
     },
     {
       id: "faq-5",
       question: "How do your biometric smart locks operate during power outages?",
-      answer: "Our smart digital locks run on 4 standard AA alkaline batteries with a standby lifespan of 10 to 12 months. When batteries run low, the lock sounds an audible alert. In an emergency, you can power it via an external USB-C port or use the included physical laser-cut mechanical override keys.",
+      answer:
+        "Our smart digital locks run on 4 standard AA alkaline batteries with a standby lifespan of 10 to 12 months. When batteries run low, the lock sounds an audible alert. In an emergency, you can power it via an external USB-C port or use the included physical laser-cut mechanical override keys.",
     },
     {
       id: "faq-6",
@@ -42,8 +47,27 @@ export default function FAQPage() {
     },
   ];
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: doorFaqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
+      {/* FAQ Schema for Google Rich Accordion */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <div className="bg-[#0A192F] text-white py-16 px-4 text-center border-b border-slate-800">
         <div className="max-w-2xl mx-auto space-y-2">
           <span className="text-[11px] font-bold uppercase tracking-wider text-blue-400 block">
@@ -65,6 +89,7 @@ export default function FAQPage() {
             className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-xs"
           >
             <button
+              type="button"
               onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
               className="w-full p-5 text-left flex items-center justify-between font-bold text-xs sm:text-sm text-slate-900 hover:bg-slate-50 transition-colors"
             >
@@ -89,7 +114,9 @@ export default function FAQPage() {
             Our sales team is available on WhatsApp to review your dimensions, confirm stock, and provide quotes.
           </p>
           <a
-            href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I have a question regarding door dimensions and waybill delivery.")}`}
+            href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
+              "Hello CFrank Enterprise, I have a question regarding door dimensions and waybill delivery."
+            )}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center space-x-1.5 py-2.5 px-5 bg-[#25D366] text-white text-xs font-bold rounded-xl shadow-xs"

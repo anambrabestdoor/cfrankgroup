@@ -66,6 +66,7 @@ export default function AdminPage() {
   const [formPrice, setFormPrice] = useState<number>(185000);
   const [formOriginalPrice, setFormOriginalPrice] = useState<number>(210000);
   const [formPriceOnRequest, setFormPriceOnRequest] = useState(false);
+  const [formPriceMode, setFormPriceMode] = useState<"show_price" | "price_on_request" | "blank">("show_price");
   const [formImage, setFormImage] = useState("/products/bullet-proof-door.jpeg");
   const [formBadge, setFormBadge] = useState("In Stock");
   const [formStock, setFormStock] = useState<number>(10);
@@ -173,6 +174,7 @@ export default function AdminPage() {
     setFormPrice(185000);
     setFormOriginalPrice(210000);
     setFormPriceOnRequest(false);
+    setFormPriceMode("show_price");
     setFormImage("/products/interior-luxury-foreign-hdf-door.jpeg");
     setFormBadge("In Stock");
     setFormStock(15);
@@ -202,7 +204,10 @@ export default function AdminPage() {
     setFormSubcategory(prod.subcategory || "");
     setFormPrice(prod.price || 0);
     setFormOriginalPrice(prod.originalPrice || 0);
-    setFormPriceOnRequest(prod.priceOnRequest || false);
+    const initialPriceMode: "show_price" | "price_on_request" | "blank" =
+      prod.priceMode || (prod.priceOnRequest ? "price_on_request" : (!prod.price || prod.price === 0 ? "blank" : "show_price"));
+    setFormPriceMode(initialPriceMode);
+    setFormPriceOnRequest(initialPriceMode === "price_on_request");
     setFormImage(prod.image);
     setFormBadge(prod.badge || "");
     setFormStock(prod.stock);
@@ -254,9 +259,10 @@ export default function AdminPage() {
       subcategory: formSubcategory,
       category: formCategory,
       categoryLabel,
-      price: formPriceOnRequest ? 0 : Number(formPrice),
-      originalPrice: formPriceOnRequest ? 0 : (Number(formOriginalPrice) || Number(formPrice)),
-      priceOnRequest: formPriceOnRequest,
+      price: formPriceMode === "show_price" ? Number(formPrice) : 0,
+      originalPrice: formPriceMode === "show_price" ? (Number(formOriginalPrice) || Number(formPrice)) : 0,
+      priceOnRequest: formPriceMode === "price_on_request",
+      priceMode: formPriceMode,
       image: formImage || "/products/bullet-proof-door.jpeg",
       gallery: [formImage || "/products/bullet-proof-door.jpeg"],
       badge: formBadge,
@@ -937,58 +943,108 @@ export default function AdminPage() {
                     Pricing & Inventory
                   </h3>
 
-                  {/* Price on Request Explicit Option */}
-                  <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-200/80 space-y-1">
-                    <label className="flex items-center space-x-2.5 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formPriceOnRequest}
-                        onChange={(e) => setFormPriceOnRequest(e.target.checked)}
-                        className="w-4 h-4 text-[#003296] rounded border-slate-300 focus:ring-[#003296]"
-                      />
-                      <span className="text-xs font-bold text-slate-900">
-                        Price on Request (Quote Option)
-                      </span>
+                  {/* Price Display Settings: Fixed Price vs Price on Request vs Blank */}
+                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block">
+                      Price Display Setting
                     </label>
-                    <p className="text-[11px] text-slate-500 pl-6.5 leading-snug">
-                      When checked, numeric price is hidden on store and customers click "Inquire on WhatsApp" for live depot quotation.
-                    </p>
-                  </div>
 
-                  {!formPriceOnRequest && (
-                    <div className="space-y-3">
-                      <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
-                          Selling Price (₦)
-                        </label>
+                    <div className="space-y-2 text-xs">
+                      <label className="flex items-start space-x-2.5 cursor-pointer">
                         <input
-                          type="number"
-                          value={formPrice || ""}
-                          onChange={(e) => setFormPrice(Number(e.target.value) || 0)}
-                          placeholder="e.g. 185000"
-                          className="w-full px-3 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl"
+                          type="radio"
+                          name="priceMode"
+                          value="show_price"
+                          checked={formPriceMode === "show_price"}
+                          onChange={() => {
+                            setFormPriceMode("show_price");
+                            setFormPriceOnRequest(false);
+                          }}
+                          className="mt-0.5 w-4 h-4 text-[#003296] border-slate-300 focus:ring-[#003296]"
                         />
-                      </div>
+                        <div>
+                          <span className="font-bold text-slate-900 block">Show Fixed Price (₦)</span>
+                          <span className="text-[11px] text-slate-500 block">Display regular amount and direct buy order buttons</span>
+                        </div>
+                      </label>
 
-                      <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
-                          Original / Regular Price (₦)
-                        </label>
+                      <label className="flex items-start space-x-2.5 cursor-pointer">
                         <input
-                          type="number"
-                          value={formOriginalPrice || ""}
-                          onChange={(e) => setFormOriginalPrice(Number(e.target.value) || 0)}
-                          placeholder="e.g. 210000"
-                          className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                          type="radio"
+                          name="priceMode"
+                          value="price_on_request"
+                          checked={formPriceMode === "price_on_request"}
+                          onChange={() => {
+                            setFormPriceMode("price_on_request");
+                            setFormPriceOnRequest(true);
+                          }}
+                          className="mt-0.5 w-4 h-4 text-[#003296] border-slate-300 focus:ring-[#003296]"
                         />
-                        {discountPercent > 0 && (
-                          <span className="text-[10px] text-emerald-600 font-bold mt-1 block">
-                            Displays as {discountPercent}% discount
-                          </span>
-                        )}
-                      </div>
+                        <div>
+                          <span className="font-bold text-slate-900 block">Price on Request</span>
+                          <span className="text-[11px] text-slate-500 block">Displays &ldquo;Price on Request&rdquo; with WhatsApp quote button</span>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start space-x-2.5 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="priceMode"
+                          value="blank"
+                          checked={formPriceMode === "blank"}
+                          onChange={() => {
+                            setFormPriceMode("blank");
+                            setFormPriceOnRequest(false);
+                          }}
+                          className="mt-0.5 w-4 h-4 text-[#003296] border-slate-300 focus:ring-[#003296]"
+                        />
+                        <div>
+                          <span className="font-bold text-slate-900 block">Leave Blank / Direct Inquiry</span>
+                          <span className="text-[11px] text-slate-500 block">No price displayed on cards; directs customer to inquire directly</span>
+                        </div>
+                      </label>
                     </div>
-                  )}
+
+                    {formPriceMode === "show_price" && (
+                      <div className="pt-3 border-t border-slate-200/80 space-y-3">
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            Selling Price (₦)
+                          </label>
+                          <input
+                            type="number"
+                            value={formPrice || ""}
+                            onChange={(e) => setFormPrice(Number(e.target.value) || 0)}
+                            placeholder="e.g. 185000"
+                            className="w-full px-3 py-2 text-sm font-bold bg-white border border-slate-200 rounded-xl"
+                          />
+                          {formPrice === 0 && (
+                            <p className="text-[11px] text-amber-600 mt-1">
+                              Price is ₦0. If you do not want ₦0 to show, choose &ldquo;Price on Request&rdquo; or &ldquo;Leave Blank&rdquo; above.
+                            </p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            Original / Regular Price (₦)
+                          </label>
+                          <input
+                            type="number"
+                            value={formOriginalPrice || ""}
+                            onChange={(e) => setFormOriginalPrice(Number(e.target.value) || 0)}
+                            placeholder="e.g. 210000"
+                            className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl"
+                          />
+                          {discountPercent > 0 && (
+                            <span className="text-[10px] text-emerald-600 font-bold mt-1 block">
+                              Displays as {discountPercent}% discount
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   <div>
                     <label className="text-xs font-bold text-slate-700 block mb-1">
@@ -1236,7 +1292,15 @@ export default function AdminPage() {
                           </span>
                         </td>
                         <td className="py-3 px-4 font-extrabold text-[#003296]">
-                          ₦{prod.price.toLocaleString()}
+                          {prod.priceMode === "blank" ? (
+                            <span className="text-xs text-slate-400 font-medium">Blank (Inquire)</span>
+                          ) : prod.priceMode === "price_on_request" || prod.priceOnRequest ? (
+                            <span className="text-xs font-bold text-blue-700">On Request</span>
+                          ) : prod.price > 0 ? (
+                            `₦${prod.price.toLocaleString()}`
+                          ) : (
+                            <span className="text-xs text-slate-400 font-medium">—</span>
+                          )}
                         </td>
                         <td className="py-3 px-4">
                           <span

@@ -9,6 +9,7 @@ export interface DoorProduct {
   price?: number;
   originalPrice?: number;
   priceOnRequest: boolean;
+  priceMode?: "show_price" | "price_on_request" | "blank";
   image: string;
   gallery: string[];
   badge?: string;

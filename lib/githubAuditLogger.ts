@@ -22,7 +22,7 @@ const AUDIT_LOG_PATH = path.join(process.cwd(), "logs", "admin-audit.jsonl");
  * Sanitize sensitive data before logging
  */
 function sanitizeForLogging(obj: Record<string, any>): Record<string, any> {
-    const sensitiveKeys = ["password", "token", "secret", "jwt", "authorization", "apiKey", "firebaseKey"];
+    const sensitiveKeys = ["password", "token", "secret", "jwt", "authorization", "apiKey"];
     const sanitized: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(obj)) {
