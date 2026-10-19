@@ -34,7 +34,7 @@ export default function FrankieWidget() {
       id: "welcome",
       role: "assistant",
       content:
-        "Hello, I'm Frankie. Looking for foreign HDF room doors, Turkish security doors, or sanitary fittings? Ask me about sizes, current stock, and pricing.",
+        "Hello! I'm Frankie, What would you like to buy today? I can help you search our catalog and Whether you're building a new home, duplex, or hotel, ask me for door recommendations, pricing, sizes.",
       timestamp: new Date().toISOString(),
       suggested_actions: [
         {
@@ -43,7 +43,7 @@ export default function FrankieWidget() {
           payload: "Which doors do you recommend for a new duplex?",
         },
         {
-          label: "What HDF room doors are in stock?",
+          label: "HDF room doors in stock",
           action_type: "prompt",
           payload: "What HDF room doors do you have in stock?",
         },
@@ -53,9 +53,9 @@ export default function FrankieWidget() {
           payload: "Tell me about Turkish security door gauges and sizes.",
         },
         {
-          label: "Who owns CFrank Enterprise?",
+          label: "Waterproof bathroom doors",
           action_type: "prompt",
-          payload: "Who owns CFrank Enterprise and what is your CAC registration?",
+          payload: "What waterproof bathroom doors do you have?",
         },
       ],
     },
@@ -156,7 +156,7 @@ export default function FrankieWidget() {
         id: "welcome",
         role: "assistant",
         content:
-          "Hello, I'm Frankie. Looking for foreign HDF room doors, Turkish security doors, or sanitary fittings? Ask me about sizes, current stock, and pricing.",
+          "Hello! I'm Frankie, What would you like to buy today? I can help you search our catalog and Whether you're building a new home, duplex, or hotel, ask me for door recommendations, pricing, sizes.",
         timestamp: new Date().toISOString(),
         suggested_actions: [
           {
@@ -165,7 +165,7 @@ export default function FrankieWidget() {
             payload: "Which doors do you recommend for a new duplex?",
           },
           {
-            label: "What HDF room doors are in stock?",
+            label: "HDF room doors in stock",
             action_type: "prompt",
             payload: "What HDF room doors do you have in stock?",
           },
@@ -175,9 +175,9 @@ export default function FrankieWidget() {
             payload: "Tell me about Turkish security door gauges and sizes.",
           },
           {
-            label: "Who owns CFrank Enterprise?",
+            label: "Waterproof bathroom doors",
             action_type: "prompt",
-            payload: "Who owns CFrank Enterprise and what is your CAC registration?",
+            payload: "What waterproof bathroom doors do you have?",
           },
         ],
       },
@@ -192,19 +192,19 @@ export default function FrankieWidget() {
     >
       {/* 1. Open Chat Window */}
       {isOpen && (
-        <div className="mb-3 w-[92vw] sm:w-[410px] h-[560px] max-h-[85vh] bg-white rounded-xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-fade-in">
+        <div className="mb-3 w-[92vw] sm:w-[410px] h-[560px] max-h-[85vh] bg-white rounded-xl shadow-lg border border-slate-300 flex flex-col overflow-hidden animate-fade-in">
           {/* Header */}
           <div className="bg-[#0A192F] text-white p-3.5 sm:p-4 flex flex-col gap-2.5 border-b border-slate-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
-                <div className="relative w-8 h-8 rounded-full bg-[#003296] text-white flex items-center justify-center font-black text-sm shadow-sm border border-blue-400/40">
+                <div className="relative w-8 h-8 rounded-full bg-[#003296] text-white flex items-center justify-center font-black text-sm border border-blue-500">
                   <MessageSquare className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-extrabold text-sm text-white leading-tight">Frankie</span>
                     {/* Green pulsing dot showing active state */}
-                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-[10px] text-emerald-300 font-semibold">
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-500 text-[10px] text-emerald-300 font-semibold">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
@@ -220,7 +220,7 @@ export default function FrankieWidget() {
                   type="button"
                   onClick={handleResetChat}
                   title="Reset Conversation"
-                  className="w-7 h-7 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                  className="w-7 h-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                 </button>
@@ -228,7 +228,7 @@ export default function FrankieWidget() {
                   type="button"
                   onClick={() => setIsOpen(false)}
                   title="Close Assistant"
-                  className="w-7 h-7 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                  className="w-7 h-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -236,15 +236,15 @@ export default function FrankieWidget() {
             </div>
 
             {/* Quick Handover Bar: WhatsApp + Call Admin */}
-            <div className="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+            <div className="flex items-center gap-2 pt-2 border-t border-slate-800">
               <a
                 href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                  "Hello CFrank Enterprise, I was chatting with Frankie on your site and would like to speak directly with the depot admin regarding door orders."
+                  "Hello CFrank Enterprise, I was chatting with Frankie on your site and would like to speak directly with the sales desk regarding door orders."
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Chat directly on WhatsApp"
-                className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-[11px] font-bold rounded-lg shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-[11px] font-bold rounded-lg transition-colors cursor-pointer"
               >
                 <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M17.472 14.382c-.301-.15-1.778-.877-2.054-.977-.275-.101-.476-.15-.677.15-.2.301-.777.978-.952 1.179-.176.2-.351.226-.652.075-.3-.151-1.27-.468-2.42-1.493-.895-.798-1.5-1.784-1.676-2.085-.175-.301-.019-.464.132-.614.136-.135.301-.351.452-.527.15-.175.2-.301.3-.501.1-.2.05-.376-.025-.526-.075-.151-.677-1.632-.927-2.234-.244-.586-.492-.507-.677-.516l-.577-.01c-.2 0-.526.075-.802.376-.276.301-1.053 1.028-1.053 2.508s1.078 2.909 1.229 3.11c.15.2 2.122 3.24 5.14 4.544.718.31 1.279.496 1.716.635.722.23 1.38.197 1.9.12.579-.087 1.778-.727 2.029-1.429.25-.702.25-1.304.175-1.43-.075-.125-.276-.2-.577-.35zM12.04 2C6.516 2 2.028 6.488 2.028 12.012c0 1.764.46 3.487 1.334 5.006L2 22.028l5.14-1.348a9.98 9.98 0 0 0 4.9 1.28c5.524 0 10.012-4.488 10.012-10.012A10.01 10.01 0 0 0 12.04 2zm0 18.293c-1.554 0-3.078-.418-4.409-1.209l-.316-.188-3.275.859.874-3.193-.206-.328a8.27 8.27 0 0 1-1.268-4.422c0-4.57 3.719-8.289 8.289-8.289 2.215 0 4.297.863 5.863 2.43 1.566 1.566 2.429 3.648 2.429 5.863 0 4.57-3.719 8.289-8.289 8.289z" />
@@ -255,7 +255,7 @@ export default function FrankieWidget() {
               <a
                 href={`tel:${settings.phone}`}
                 title={`Call Admin: ${settings.phoneDisplay}`}
-                className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold rounded-lg border border-white/20 transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer"
+                className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 bg-slate-800 hover:bg-slate-700 text-white text-[11px] font-bold rounded-lg border border-slate-700 transition-colors cursor-pointer"
               >
                 <Phone className="w-3.5 h-3.5 text-blue-300 shrink-0" />
                 <span>Call Admin</span>
@@ -264,7 +264,7 @@ export default function FrankieWidget() {
           </div>
 
           {/* Messages Body */}
-          <div className="flex-1 p-3.5 sm:p-4 overflow-y-auto space-y-3 bg-slate-50/70">
+          <div className="flex-1 p-3.5 sm:p-4 overflow-y-auto space-y-3 bg-slate-50">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -360,22 +360,19 @@ export default function FrankieWidget() {
         </div>
       )}
 
-      {/* 2. Closed Floating Trigger Button */}
+      {/* 2. Closed Floating Trigger Button (Icon Only) */}
       {!isOpen && (
         <button
           type="button"
           onClick={() => setIsOpen(true)}
           aria-label="Chat with Frankie"
-          className="group relative flex items-center gap-2.5 py-3 px-4 rounded-full bg-[#003296] hover:bg-[#002266] text-white shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer border border-blue-400/40"
+          className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#003296] hover:bg-[#002266] text-white shadow-lg transition-transform hover:scale-105 active:scale-95 cursor-pointer border border-blue-500"
         >
-          <div className="relative flex items-center justify-center">
-            <MessageSquare className="w-5 h-5 text-white" />
-            <span className="absolute -top-1.5 -right-1.5 flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400 border-2 border-[#003296]"></span>
-            </span>
-          </div>
-          <span className="text-xs font-bold tracking-tight">Chat with Frankie</span>
+          <MessageSquare className="w-6 h-6 text-white" />
+          <span className="absolute top-1 right-1 flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400 border-2 border-[#003296]"></span>
+          </span>
         </button>
       )}
     </div>
