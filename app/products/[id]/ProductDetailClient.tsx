@@ -163,7 +163,7 @@ export default function ProductDetailClient({
                 <div className="flex items-baseline space-x-2">
                   {product.priceMode === "blank" ? (
                     <span className="text-xl sm:text-2xl font-extrabold text-[#003296]">
-                      Inquire for Pricing
+                      Chat on WhatsApp for Price
                     </span>
                   ) : product.priceMode === "price_on_request" || product.priceOnRequest ? (
                     <span className="text-2xl sm:text-3xl font-extrabold text-[#003296]">
@@ -182,7 +182,7 @@ export default function ProductDetailClient({
                     </>
                   ) : (
                     <span className="text-xl sm:text-2xl font-extrabold text-[#003296]">
-                      Inquire for Pricing
+                      Chat on WhatsApp for Price
                     </span>
                   )}
                 </div>
@@ -277,7 +277,7 @@ export default function ProductDetailClient({
                 className="w-full py-3.5 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95 cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>Inquire on WhatsApp</span>
+                <span>Chat on WhatsApp</span>
               </button>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">

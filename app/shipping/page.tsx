@@ -84,7 +84,7 @@ export default function ShippingPage() {
           <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
             <span className="text-xs text-slate-500">Need haulage quote for bulk building project?</span>
             <a
-              href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like to inquire about haulage delivery rates for my project location.")}`}
+              href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I want to chat about delivery rates for my project location.")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="py-2.5 px-4 bg-[#25D366] text-white font-bold text-xs rounded-xl flex items-center space-x-2"

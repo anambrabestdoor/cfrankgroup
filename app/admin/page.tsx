@@ -999,8 +999,8 @@ export default function AdminPage() {
                           className="mt-0.5 w-4 h-4 text-[#003296] border-slate-300 focus:ring-[#003296]"
                         />
                         <div>
-                          <span className="font-bold text-slate-900 block">Leave Blank / Direct Inquiry</span>
-                          <span className="text-[11px] text-slate-500 block">No price displayed on cards; directs customer to inquire directly</span>
+                          <span className="font-bold text-slate-900 block">Leave Blank / Chat for Price</span>
+                          <span className="text-[11px] text-slate-500 block">No price displayed on cards; directs customer to chat on WhatsApp</span>
                         </div>
                       </label>
                     </div>
@@ -1293,7 +1293,7 @@ export default function AdminPage() {
                         </td>
                         <td className="py-3 px-4 font-extrabold text-[#003296]">
                           {prod.priceMode === "blank" ? (
-                            <span className="text-xs text-slate-400 font-medium">Blank (Inquire)</span>
+                            <span className="text-xs text-slate-400 font-medium">Blank (Chat)</span>
                           ) : prod.priceMode === "price_on_request" || prod.priceOnRequest ? (
                             <span className="text-xs font-bold text-blue-700">On Request</span>
                           ) : prod.price > 0 ? (

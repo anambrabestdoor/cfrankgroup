@@ -251,14 +251,14 @@ export default function MobileMenuDrawer() {
 
         <a
           href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-            "Hello CFrank Enterprise, I am contacting you to order or inquire about doors and sanitary wares."
+            "Hello CFrank Enterprise, I want to chat about ordering doors and sanitary wares."
           )}`}
           target="_blank"
           rel="noopener noreferrer"
           className="w-full py-3.5 px-6 bg-[#003296] hover:bg-[#002266] text-white font-bold rounded-full flex items-center justify-center space-x-2 shadow-sm transition-all text-xs sm:text-sm active:scale-95 cursor-pointer"
         >
           <MessageSquare className="w-4 h-4" />
-          <span>WhatsApp Order</span>
+          <span>Chat on WhatsApp</span>
         </a>
       </div>
     </div>

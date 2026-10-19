@@ -26,29 +26,32 @@ export default function Hero() {
   const showcaseData = {
     hdf: {
       tag: "Interior Room Door",
-      title: "Luxury Foreign HDF Pre-Hung Door",
-      specs: "Complete set with matching frame casing, architrave & mortise lock",
-      badge: "High-Density Core • Anti-Warp",
+      title: "Foreign HDF Room Door",
+      specs: "Complete set with matching frame, architrave, hinges, and lock handle.",
+      badge: "In Stock at Ogidi",
       image: "/WhatsApp Image 2026-10-19 at 7.46.19 AM.jpeg",
       href: "/collections/hdf-doors",
-      alt: "Foreign Luxury HDF Wooden Door with complete pre-hung frames and architraves by Anambra Best Door",
+      buttonText: "See All Room Doors",
+      alt: "Foreign Luxury HDF Wooden Door with complete frame and lock displayed at Anambra Best Door",
     },
     security: {
-      tag: "Perimeter Security Entrance",
-      title: "Carved Heavy-Gauge Armoured Door",
-      specs: "Reinforced steel leaf with rockwool insulation & central multi-deadbolt",
-      badge: "Armoured Steel • Laser Keys",
+      tag: "Main Entrance Door",
+      title: "Heavy-Gauge Turkish Security Door",
+      specs: "Armoured steel with multi-point deadlock and master laser keys.",
+      badge: "In Stock at Ogidi",
       image: "/WhatsApp Image 2026-10-19 at 7.46.18 AM.jpeg",
       href: "/collections/security-doors",
-      alt: "Heavy-Gauge Turkish Steel Security Armoured Door displayed at Anambra Best Door depot, Ogidi",
+      buttonText: "See All Security Doors",
+      alt: "Heavy-Gauge Turkish Steel Security Door displayed at Anambra Best Door depot, Ogidi",
     },
     sanitary: {
-      tag: "Executive Sanitary Ware",
-      title: "Executive Luxury Water Closet",
-      specs: "Ceramic high-gloss siphon jet dual-flush toilet suite with soft-close seat",
-      badge: "Dual-Flush • Glazed Ceramic",
+      tag: "Bathroom & Toilet",
+      title: "Executive Luxury Water Closet (WC)",
+      specs: "Quality ceramic toilet set with dual-flush cistern and soft-closing seat cover.",
+      badge: "In Stock at Ogidi",
       image: "/products/Excutive Gøld wc.jpeg",
       href: "/collections/sanitary-fittings",
+      buttonText: "See All Sanitary Wares",
       alt: "Executive Luxury Water Closet by Anambra Best Door and CFrank Enterprise",
     },
   };
@@ -107,14 +110,14 @@ export default function Hero() {
 
               <a
                 href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                  "Hello CFrank Enterprise, I would like to inquire about your door and sanitary inventory, current prices, and waybill delivery."
+                  "Hello CFrank Enterprise, I want to chat about your doors and sanitary wares, current prices, and waybill delivery."
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="py-3.5 px-6 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-all active:scale-98 cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>INQUIRE ON WHATSAPP</span>
+                <span>CHAT ON WHATSAPP</span>
               </a>
 
               {/* Watch Video Button */}
@@ -122,10 +125,10 @@ export default function Hero() {
                 type="button"
                 onClick={() => setVideoModalOpen(true)}
                 className="py-3.5 px-4 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-xl flex items-center justify-center space-x-1.5 border border-slate-200 shadow-xs transition-colors cursor-pointer"
-                title="Watch offloading video at Maraim Plaza"
+                title="Watch warehouse offloading video at Maraim Plaza"
               >
                 <Play className="w-3.5 h-3.5 text-[#003296] fill-current" />
-                <span>Watch Depot Offloading</span>
+                <span>Watch Warehouse Video</span>
               </button>
             </div>
 
@@ -168,8 +171,8 @@ export default function Hero() {
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  <Layers className="w-3 h-3" />
-                  <span>HDF Doors</span>
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>Room Doors</span>
                 </button>
 
                 <button
@@ -181,8 +184,8 @@ export default function Hero() {
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  <Lock className="w-3 h-3" />
-                  <span>Security</span>
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Security Doors</span>
                 </button>
 
                 <button
@@ -194,53 +197,63 @@ export default function Hero() {
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  <Bath className="w-3 h-3" />
-                  <span>Sanitary</span>
+                  <Bath className="w-3.5 h-3.5" />
+                  <span>Sanitary Wares</span>
                 </button>
               </div>
 
               {/* Physical Product Showcase Image */}
-              <div className="relative aspect-[3/4] sm:aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
+              <Link
+                href={currentShowcase.href}
+                className="group block relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200"
+              >
                 <Image
                   src={currentShowcase.image}
                   alt={currentShowcase.alt}
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 40vw"
-                  className="object-cover object-center transition-all duration-300"
+                  className="object-cover object-center group-hover:scale-102 transition-transform duration-300"
                 />
 
                 {/* Badge Overlay */}
                 <div className="absolute top-3 right-3 px-2.5 py-1 bg-slate-950/85 backdrop-blur-md text-white text-[10px] font-bold rounded-lg uppercase tracking-wider shadow-sm">
                   {currentShowcase.badge}
                 </div>
+              </Link>
 
-                {/* Bottom Overlay with Model Title & Specs */}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/60 to-transparent p-4 text-white space-y-1">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-blue-300 block">
+              {/* Clear Details & Direct Category Link */}
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#003296]">
                     {currentShowcase.tag}
                   </span>
-                  <h3 className="text-sm sm:text-base font-bold leading-tight line-clamp-1">
+                  <span className="text-[11px] text-slate-500 font-medium">
+                    In stock at Maraim Plaza, Ogidi
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-slate-950 leading-snug">
                     {currentShowcase.title}
                   </h3>
-                  <p className="text-[11px] text-slate-300 line-clamp-1">
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                     {currentShowcase.specs}
                   </p>
                 </div>
-              </div>
 
-              {/* Link below Showcase */}
-              <div className="flex items-center justify-between px-1 pt-1">
-                <span className="text-[11px] font-bold text-slate-500">
-                  Physical Stock at Maraim Plaza
-                </span>
-                <Link
-                  href={currentShowcase.href}
-                  className="text-xs font-bold text-[#003296] hover:underline inline-flex items-center space-x-1"
-                >
-                  <span>Explore Range</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                <div className="pt-2 border-t border-slate-200 flex items-center justify-between gap-2">
+                  <span className="text-xs text-slate-500">
+                    See all designs & prices:
+                  </span>
+                  <Link
+                    href={currentShowcase.href}
+                    className="py-2 px-3.5 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl inline-flex items-center space-x-1.5 transition-colors cursor-pointer shrink-0"
+                  >
+                    <span>{currentShowcase.buttonText}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

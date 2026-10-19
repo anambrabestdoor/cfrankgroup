@@ -44,13 +44,13 @@ export default function AboutPage() {
             </p>
             <div className="pt-2">
               <a
-                href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(`Hello ${settings.parentCompany}, I would like to inquire about your door inventory at ${settings.marketLocation}.`)}`}
+                href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(`Hello ${settings.parentCompany}, I want to chat about your doors and sanitary inventory at ${settings.marketLocation}.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="py-2.5 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-bold rounded-xl inline-flex items-center space-x-1.5 shadow-sm transition-transform active:scale-95"
               >
                 <MessageSquare className="w-3.5 h-3.5" />
-                <span>Chat with Sales Desk</span>
+                <span>Chat on WhatsApp</span>
               </a>
             </div>
           </div>

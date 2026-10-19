@@ -291,14 +291,14 @@ export default function Header() {
             {/* WhatsApp Direct Order Pill (Desktop & Tablet — Duevy Style) */}
             <a
               href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                "Hello CFrank Enterprise, I am contacting you from your website to inquire about your door and sanitary products catalog."
+                "Hello CFrank Enterprise, I want to chat about ordering doors and sanitary wares."
               )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center space-x-2 py-2.5 px-5 bg-[#003296] hover:bg-[#002266] text-white font-bold text-xs rounded-full shadow-sm transition-all active:scale-95"
             >
               <MessageSquare className="w-3.5 h-3.5" />
-              <span>WhatsApp Order</span>
+              <span>Chat on WhatsApp</span>
             </a>
 
             {/* Duevy-Style 2-Line Minimalist Circular Menu Toggle (=) — strictly mobile/tablet only */}

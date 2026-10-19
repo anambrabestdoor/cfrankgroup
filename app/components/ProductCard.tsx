@@ -80,7 +80,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div>
             {product.priceMode === "blank" ? (
               <span className="text-xs font-semibold text-slate-500 block">
-                Inquire on WhatsApp
+                Chat on WhatsApp
               </span>
             ) : product.priceMode === "price_on_request" || product.priceOnRequest ? (
               <span className="text-xs font-bold text-[#003296] block">
@@ -99,7 +99,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               </div>
             ) : (
               <span className="text-xs font-semibold text-slate-500 block">
-                Inquire on WhatsApp
+                Chat on WhatsApp
               </span>
             )}
             <span className="text-[10px] text-slate-400 block mt-0.5">
@@ -110,8 +110,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className="flex items-center space-x-1">
             <button
               onClick={handleQuickWhatsApp}
-              title="Order on WhatsApp"
-              aria-label="Order on WhatsApp"
+              title="Chat on WhatsApp"
+              aria-label="Chat on WhatsApp"
               className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white flex items-center justify-center transition-colors"
             >
               <MessageSquare className="w-3.5 h-3.5" />
