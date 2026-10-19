@@ -38,7 +38,6 @@ OWNERSHIP & VERIFIED BUSINESS FACTS (GROUND TRUTH WHEN EXPLICITLY ASKED):
 - Physical Depot Address: No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State, Nigeria
 - Contact Phone: +234 707 007 0305
 - WhatsApp Order Line: 2347070070305 (direct link available in chat)
-- Official Sales Email: anambrabestdoor@gmail.com
 - Working Hours: Monday - Saturday: 8:00 AM - 5:30 PM (Sunday closed)
 
 CRITICAL RULES ON IDENTITY & BUSINESS FACTS:
@@ -121,9 +120,9 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   ) {
     return {
       message:
-        "CFrank Enterprise is owned and operated by sole proprietor Chidera Frank Okonkwo.\n\nKey Business Credentials:\n• Operating Brand: Anambra Best Door Enterprises\n• Parent Corporate Entity: CFrank Enterprise\n• Sole Proprietor: Chidera Frank Okonkwo\n• CAC Registration: BN 9943925 (Registered under CAMA Act, Active status)\n• Physical Depot: No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State\n• Direct Contact Line: +234 707 007 0305\n\nSite engineers, contractors, and homeowners can visit our Ogidi depot in person or verify our CAC certificate directly on the site.",
+        "CFrank Enterprise is the parent operating entity of Anambra Best Door.\n\n• Operating Brand: Anambra Best Door Enterprises\n• Parent Corporate Entity: CFrank Enterprise\n• CAC Registration: BN 9943925\n• Direct Contact Line: +234 707 007 0305\n\nYou can chat directly with our sales desk on WhatsApp or call our line for trade inquiries.",
       suggested_actions: [
-        { label: "Call Proprietor / Admin", action_type: "call", payload: callUrl },
+        { label: "Call Sales Desk", action_type: "call", payload: callUrl },
         { label: "Chat on WhatsApp", action_type: "link", payload: waUrl },
         { label: "About Us & CAC Details", action_type: "link", payload: "/about" },
       ],
@@ -255,9 +254,9 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   if (q.includes("location") || q.includes("where") || q.includes("depot") || q.includes("address") || q.includes("ogidi") || q.includes("onitsha") || q.includes("visit") || q.includes("shop")) {
     return {
       message:
-        "You can inspect doors in person at our physical depot:\n\n• Address: No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State.\n• Hours: Monday - Saturday: 8:00 AM - 5:30 PM\n• Proprietor: Chidera Frank Okonkwo (CFrank Enterprise, CAC BN 9943925)\n\nContractors, site engineers, and homeowners are always welcome to inspect lock mechanisms, woodgrain finishes, and steel gauges before dispatch.",
+        "You can inspect doors in person at our depot:\n\n• Address: No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State.\n• Hours: Monday - Saturday: 8:00 AM - 5:30 PM\n\nContractors, site engineers, and homeowners are always welcome to inspect lock mechanisms, woodgrain finishes, and steel gauges before dispatch.",
       suggested_actions: [
-        { label: "Call Depot Admin", action_type: "call", payload: callUrl },
+        { label: "Call Sales Desk", action_type: "call", payload: callUrl },
         { label: "WhatsApp Location Pin", action_type: "link", payload: waUrl },
       ],
     };
@@ -279,7 +278,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   if (q.includes("cac") || q.includes("registration") || q.includes("scam") || q.includes("real") || q.includes("legit")) {
     return {
       message:
-        "Anambra Best Door is 100% registered and verified with the Corporate Affairs Commission (CAC):\n\n• Corporate Entity: CFrank Enterprise\n• Sole Proprietor: Chidera Frank Okonkwo\n• Registration Number: BN 9943925\n• Status: Active\n• Physical Depot: No. 16/17 Maraim Plaza, Ogidi, Anambra State\n\nYou can click 'Verify CAC' in our site footer or about page to inspect the official CAC certificate extracts.",
+        "Anambra Best Door is 100% registered and verified with the Corporate Affairs Commission (CAC):\n\n• Corporate Entity: CFrank Enterprise\n• Registration Number: BN 9943925\n• Status: Active\n\nYou can click 'Verify CAC' in our site footer or about page to inspect the official CAC certificate extracts.",
       suggested_actions: [
         { label: "About Us & CAC Details", action_type: "link", payload: "/about" },
         { label: "Chat on WhatsApp", action_type: "link", payload: waUrl },

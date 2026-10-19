@@ -55,7 +55,7 @@ export default function BlogPage() {
             Depot Trade Notes & Builder Guides
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Practical buying guides, door installation tips, and sanitary ware specifications from our depot team at Maraim Plaza, Ogidi.
+            Practical buying guides, door installation tips, and sanitary ware specifications from our technical sales desk.
           </p>
         </div>
       </div>

@@ -61,11 +61,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (savedSettings) {
         setSettings((prev) => ({ ...prev, ...JSON.parse(savedSettings) }));
       }
-      const savedProducts = localStorage.getItem("abd_products");
-      if (savedProducts) {
-        const parsed = JSON.parse(savedProducts);
-        if (Array.isArray(parsed)) {
-          setProducts(parsed.filter((p): p is DoorProduct => Boolean(p && typeof p === "object" && p.id)));
+      const catalogVersion = localStorage.getItem("abd_catalog_version");
+      if (catalogVersion !== "2026-10-blank-prices") {
+        // Upgrade stale legacy cache to blank prices schema
+        localStorage.removeItem("abd_products");
+        localStorage.setItem("abd_catalog_version", "2026-10-blank-prices");
+        setProducts(DOOR_PRODUCTS);
+      } else {
+        const savedProducts = localStorage.getItem("abd_products");
+        if (savedProducts) {
+          const parsed = JSON.parse(savedProducts);
+          if (Array.isArray(parsed)) {
+            setProducts(parsed.filter((p): p is DoorProduct => Boolean(p && typeof p === "object" && p.id)));
+          }
         }
       }
     } catch {

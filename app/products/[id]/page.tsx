@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = product.seoTitle || `${product.name} - Price & Specs | Anambra Best Door`;
   const description =
     product.seoDescription ||
-    `${product.name}. Direct import from CFrank Enterprise at Maraim Plaza, Ogidi, Onitsha. Available in standard 3ft x 7ft and custom openings. Nationwide delivery.`;
+    `${product.name}. Direct supply from CFrank Enterprise. Available in standard 3ft x 7ft and custom openings. Nationwide delivery.`;
 
   const ogImageUrl = product.image.startsWith("http")
     ? product.image

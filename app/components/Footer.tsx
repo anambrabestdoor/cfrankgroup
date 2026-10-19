@@ -28,7 +28,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-sm">
-              Anambra Best Door (operated by CFrank Enterprise) supplies Turkish steel security doors, interior luxury HDF room doors, waterproof bathroom doors, and commercial sanitary fittings directly from Maraim Plaza, Building Material International Market, Ogidi, to builders and residential estates nationwide.
+              Anambra Best Door (operated by CFrank Enterprise) supplies Turkish steel security doors, interior luxury HDF room doors, waterproof bathroom doors, and commercial sanitary fittings to builders, contractors, and homeowners nationwide.
             </p>
 
             {/* CAC Trust Badge */}
@@ -221,8 +221,6 @@ export default function Footer() {
             </Link>
             <span>•</span>
             <span>Deliveries Arranged Across Nigeria</span>
-            <span>•</span>
-            <span>Maraim Plaza, Ogidi</span>
           </div>
         </div>
       </div>

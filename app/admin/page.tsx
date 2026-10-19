@@ -33,6 +33,7 @@ import {
   TrendingUp,
   X,
   Copy,
+  RotateCcw,
 } from "lucide-react";
 
 export default function AdminPage() {
@@ -147,7 +148,7 @@ export default function AdminPage() {
       }
     }
 
-    setLoginError("Invalid credentials. Use official admin email: anambrabestdoor@gmail.com");
+    setLoginError("Invalid credentials. Please verify your email and password.");
   };
 
   const handleLogout = () => {
@@ -266,8 +267,8 @@ export default function AdminPage() {
       subcategory: formSubcategory,
       category: formCategory,
       categoryLabel,
-      price: formPriceMode === "show_price" ? Number(formPrice) : 0,
-      originalPrice: formPriceMode === "show_price" ? (Number(formOriginalPrice) || Number(formPrice)) : 0,
+      price: formPriceMode === "show_price" && Number(formPrice) > 0 ? Number(formPrice) : undefined,
+      originalPrice: formPriceMode === "show_price" && Number(formOriginalPrice) > 0 ? Number(formOriginalPrice) : undefined,
       priceOnRequest: formPriceMode === "price_on_request",
       priceMode: formPriceMode,
       image: formImage || "/products/bullet-proof-door.jpeg",
@@ -307,6 +308,17 @@ export default function AdminPage() {
       setProductsList(updated);
       setProducts(updated);
       showToast("Product deleted.");
+    }
+  };
+
+  // Reset catalog to initial inventory defaults
+  const handleResetCatalog = () => {
+    if (confirm("Reset catalog back to initial factory inventory with blank prices? Any custom added doors will be cleared.")) {
+      setProductsList(DOOR_PRODUCTS);
+      setProducts(DOOR_PRODUCTS);
+      localStorage.removeItem("abd_products");
+      localStorage.setItem("abd_catalog_version", "2026-10-blank-prices");
+      showToast("Catalogue reset to initial state!");
     }
   };
 
@@ -413,7 +425,7 @@ export default function AdminPage() {
             Anambra Best Door Admin
           </h2>
           <p className="mt-1 text-center text-xs text-slate-400">
-            CFrank Enterprise • Maraim Plaza Ogidi • CAC BN 9943925
+            Staff Portal
           </p>
         </div>
 
@@ -441,7 +453,7 @@ export default function AdminPage() {
                     required
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="anambrabestdoor@gmail.com"
+                    placeholder="admin@example.com"
                     className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-[#003296]"
                   />
                 </div>
@@ -525,7 +537,7 @@ export default function AdminPage() {
               </div>
 
               <p className="text-xs text-slate-600 leading-relaxed">
-                For administrative compliance under CAC BN 9943925, password resets are verified directly with the proprietor (<strong>{settings.proprietor}</strong>).
+                Password resets are verified directly with the administrator.
               </p>
 
               {forgotStatus ? (
@@ -543,7 +555,7 @@ export default function AdminPage() {
                       required
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
-                      placeholder="anambrabestdoor@gmail.com"
+                      placeholder="admin@example.com"
                       className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-[#003296]"
                     />
                   </div>
@@ -560,14 +572,14 @@ export default function AdminPage() {
               <div className="pt-3 border-t border-slate-100">
                 <a
                   href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                    "Hello " + settings.proprietor + ", I am requesting an administrative password reset for the Anambra Best Door portal."
+                    "Hello, I am requesting an administrative password reset for the Anambra Best Door portal."
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold rounded-xl flex items-center justify-center space-x-2"
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Verify with Proprietor on WhatsApp</span>
+                  <span>Verify on WhatsApp</span>
                 </a>
               </div>
             </div>
@@ -594,7 +606,7 @@ export default function AdminPage() {
                 Anambra Best Door Admin
               </h1>
               <p className="text-[11px] text-slate-500">
-                CFrank Enterprise • {settings.cacNumber} • {settings.proprietor}
+                Store Management Portal
               </p>
             </div>
           </div>
@@ -926,7 +938,7 @@ export default function AdminPage() {
                         https://anambrabestdoor.ng/products/{formSlug || "model"}
                       </p>
                       <p className="text-[11px] text-slate-600 line-clamp-2">
-                        {seoDescription || formShortDesc || "Direct importer of heavy-gauge security doors at Maraim Plaza Ogidi."}
+                        {seoDescription || formShortDesc || "Direct supplier of heavy-gauge security doors."}
                       </p>
                     </div>
 
@@ -1176,12 +1188,18 @@ export default function AdminPage() {
                   </h3>
 
                   <div className="relative w-full h-48 bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
-                    <Image
-                      src={formImage}
-                      alt={formName || "Product photo"}
-                      fill
-                      className="object-cover"
-                    />
+                    {formImage ? (
+                      <Image
+                        src={formImage.startsWith("/") || formImage.startsWith("http") ? formImage : `/${formImage}`}
+                        alt={formName || "Product photo"}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">
+                        No image path provided
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -1233,13 +1251,24 @@ export default function AdminPage() {
                 </p>
               </div>
 
-              <button
-                onClick={handleNewProduct}
-                className="py-2.5 px-4 bg-[#003296] hover:bg-[#092b7c] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 self-start sm:self-auto"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Door Model</span>
-              </button>
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={handleResetCatalog}
+                  className="py-2.5 px-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition-colors cursor-pointer"
+                  title="Reset catalog back to initial state with blank prices"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Reset to Defaults</span>
+                </button>
+                <button
+                  onClick={handleNewProduct}
+                  className="py-2.5 px-4 bg-[#003296] hover:bg-[#092b7c] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Door Model</span>
+                </button>
+              </div>
             </div>
 
             {/* Filter Bar */}
@@ -1398,7 +1427,13 @@ export default function AdminPage() {
                   </div>
 
                   <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
-                    <span className="font-bold text-[#003296]">₦{prod.price.toLocaleString()}</span>
+                    <span className="font-bold text-[#003296]">
+                      {prod.price && prod.price > 0
+                        ? `₦${prod.price.toLocaleString()}`
+                        : prod.priceMode === "price_on_request" || prod.priceOnRequest
+                        ? "On Request"
+                        : "Blank (Chat)"}
+                    </span>
                     <button
                       onClick={() => handleToggleSoldOut(prod.id)}
                       className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${

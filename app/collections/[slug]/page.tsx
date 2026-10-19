@@ -35,8 +35,8 @@ const COLLECTIONS: Record<string, CollectionMeta> = {
   },
   "security-doors": {
     title: "Heavy-Gauge Turkish Steel Security Doors",
-    seoTitle: "Turkish Armoured Security Doors | Ogidi Onitsha Depot | Anambra Best Door",
-    desc: "Reinforced structural steel entrance doors, bullet-resistant cores, multi-point deadbolt perimeter locks, and heavy-duty tamper-proof hinges. Directly imported and inspected at our Maraim Plaza depot.",
+    seoTitle: "Turkish Armoured Security Doors | Anambra Best Door",
+    desc: "Reinforced structural steel entrance doors, bullet-resistant cores, multi-point deadbolt perimeter locks, and heavy-duty tamper-proof hinges. Inspected before dispatch.",
     categoryKey: "security-doors",
     commercialHighlight: {
       heading: "Security Door Quality Assurance",

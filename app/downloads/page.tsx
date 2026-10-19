@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Download Trade Catalogues | Anambra Best Door",
     description:
-      "Official PDF trade catalogues for doors and sanitary fittings stocked at Maraim Plaza, Ogidi, Anambra State.",
+      "Official PDF trade catalogues for doors and sanitary fittings available from Anambra Best Door.",
   },
 };
 
@@ -170,7 +170,7 @@ export default function DownloadsPage() {
               Need a Custom Quote or Wall Opening Sizing Guide?
             </h3>
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-              If your architectural schedule requires non-standard heights or multi-unit project quantities, our sales desk at Maraim Plaza, Ogidi, will calculate your bill of quantities and waybill costs.
+              If your architectural schedule requires non-standard heights or multi-unit project quantities, our sales desk will calculate your bill of quantities and waybill costs.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 shrink-0">

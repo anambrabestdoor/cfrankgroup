@@ -915,7 +915,7 @@ export const DOOR_PRODUCTS: DoorProduct[] = [
     },
     jijiUrl: "https://jiji.ng/shop/anambrabestdoor",
     seoTitle: "Harmony Toilet Set | Luxury Water Closet | Anambra Best Door",
-    seoDescription: "Shop the Harmony Toilet Set at Anambra Best Door. Luxury sanitary wares directly from Maraim Plaza Ogidi depot.",
+    seoDescription: "Shop the Harmony Toilet Set at Anambra Best Door. Luxury sanitary wares with nationwide delivery.",
     focusKeyphrase: "Harmony Toilet Set",
     featured: true,
     active: true,

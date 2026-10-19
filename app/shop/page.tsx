@@ -230,7 +230,7 @@ function ShopContent() {
           <div className="bg-white rounded-xl border border-slate-200 p-12 text-center space-y-4">
             <p className="text-base font-bold text-slate-800">No matching products found</p>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              We may have unlisted variations in stock at our Maraim Plaza depot, Ogidi.
+              We may have unlisted variations in stock at our warehouse.
             </p>
             <div className="pt-2 flex justify-center gap-3">
               <button

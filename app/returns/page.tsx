@@ -35,7 +35,7 @@ export default function ReturnsPage() {
             <div>
               <h4 className="font-bold text-slate-900 mb-1">1. Depot Video & Photo Sign-Off Before Waybill</h4>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Before any door or sanitary set leaves our Maraim Plaza depot, our warehouse supervisor records clear photos and a short video clip of your exact unit (verifying door hand/swing direction, leaf dimensions, finish, keys, handles, and accessories) and sends it directly to your WhatsApp for approval.
+                Before any door or sanitary set leaves our warehouse, our warehouse team records clear photos and a short video clip of your exact unit (verifying door hand/swing direction, leaf dimensions, finish, keys, handles, and accessories) and sends it directly to your WhatsApp for approval.
               </p>
             </div>
 

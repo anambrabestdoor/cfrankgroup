@@ -93,10 +93,6 @@ export default function Hero() {
               Anambra Best Door is a prominent door dealer and manufacturer in Anambra State, Nigeria, powered by C Frank Enterprise. From HDF interior doors to security doors and bathroom doors, Anambra Best Door helps homeowners, builders and contractors find the right fit for their projects.
             </p>
 
-            {/* 3. Location Label */}
-            <p className="text-xs sm:text-sm font-semibold text-slate-500">
-              Physical depot at Maraim Plaza, Ogidi, Anambra State, Nigeria.
-            </p>
 
             {/* 4. Action Buttons */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
@@ -114,7 +110,7 @@ export default function Hero() {
                 type="button"
                 onClick={() => setVideoModalOpen(true)}
                 className="py-3.5 px-5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-xl flex items-center justify-center space-x-2 border border-slate-200 shadow-xs transition-colors cursor-pointer"
-                title="Watch warehouse offloading video at Maraim Plaza"
+                title="Watch warehouse offloading video"
               >
                 <Play className="w-3.5 h-3.5 text-[#003296] fill-current" />
                 <span>Watch Warehouse Video</span>
@@ -214,7 +210,7 @@ export default function Hero() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-3.5 bg-slate-900 text-white">
-              <span className="text-xs font-bold">Depot Offload at Maraim Plaza, Ogidi</span>
+              <span className="text-xs font-bold">Depot Offloading Video</span>
               <button
                 type="button"
                 onClick={() => setVideoModalOpen(false)}

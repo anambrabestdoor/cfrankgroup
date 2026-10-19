@@ -99,9 +99,11 @@ export default function SearchOverlay() {
                   <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
                     {product.name}
                   </h4>
-                  <span className="text-xs font-extrabold text-[#003296]">
-                    ₦{product.price.toLocaleString()}
-                  </span>
+                  {product.price && product.price > 0 ? (
+                    <span className="text-xs font-extrabold text-[#003296]">
+                      ₦{product.price.toLocaleString()}
+                    </span>
+                  ) : null}
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
               </Link>

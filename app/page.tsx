@@ -129,7 +129,7 @@ export default function StorefrontPage() {
               Featured Door & Fitting Arrivals
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 max-w-xl">
-              Foreign HDF interior doors, heavy-gauge security doors, and bathroom fittings in stock at Maraim Plaza, Ogidi.
+              Foreign HDF interior doors, heavy-gauge security doors, and bathroom fittings ready for dispatch.
             </p>
           </div>
           <Link
@@ -287,7 +287,7 @@ export default function StorefrontPage() {
               Doors & Building Materials in Stock
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              Direct supplier inventory stocked at Maraim Plaza Building Material International Market, Ogidi.
+              Direct supplier inventory available for site delivery and nationwide waybill dispatch.
             </p>
           </div>
 
@@ -549,10 +549,10 @@ export default function StorefrontPage() {
                   <Store className="w-5 h-5" />
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-                  Visit Our Ogidi Depot
+                  Depot Inspection
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Inspect doors in person at Maraim Plaza, Building Material International Market, Ogidi, before purchasing.
+                  Inspect door leaves, steel gauges, locks, and wood finishes in person before dispatch.
                 </p>
               </div>
             </div>
@@ -631,7 +631,7 @@ export default function StorefrontPage() {
                 </p>
               </div>
               <div className="pt-2 text-xs text-blue-200">
-                <span>Maraim Plaza No 16/17, Ogidi, Anambra State</span>
+                <span>Anambra State, Nigeria</span>
               </div>
             </div>
           </div>
