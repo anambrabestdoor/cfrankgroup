@@ -335,10 +335,11 @@ export default function AdminPage() {
   // Filtered Products for Table
   const filteredProducts = useMemo(() => {
     return productsList.filter((p) => {
+      if (!p) return false;
       if (selectedCategory !== "all" && p.category !== selectedCategory) return false;
       if (searchQuery.trim() !== "") {
         const q = searchQuery.toLowerCase();
-        return p.name.toLowerCase().includes(q) || p.slug.toLowerCase().includes(q);
+        return (p.name || "").toLowerCase().includes(q) || (p.slug || "").toLowerCase().includes(q);
       }
       return true;
     });

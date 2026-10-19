@@ -29,7 +29,8 @@ export default function StorefrontPage() {
 
   // 4 latest products: 2 HDF room doors + 2 from other categories (security, sanitary, bathroom)
   const miniArchiveProducts = useMemo(() => {
-    const active = products.filter((p) => p.active);
+    const list = Array.isArray(products) ? products : [];
+    const active = list.filter((p) => Boolean(p && typeof p === "object" && p.active !== false));
     const hdf = active.filter((p) => p.category === "hdf-doors").slice(0, 2);
 
     const nonHdf = active.filter((p) => p.category !== "hdf-doors");

@@ -32,7 +32,7 @@ function buildFrankieSystemPrompt(): string {
   const catalogContext = buildCatalogContext();
 
   return `
-You are Frankie, the official AI assistant and building co-planner for Anambra Best Door (operated by CFrank Enterprise).
+You are Frankie, the official sales assistant for Anambra Best Door (operated by CFrank Enterprise).
 
 OWNERSHIP & VERIFIED BUSINESS FACTS (NEVER INVENT FALSE DETAILS):
 - Parent Registered Corporate Entity: CFrank Enterprise
@@ -45,6 +45,10 @@ OWNERSHIP & VERIFIED BUSINESS FACTS (NEVER INVENT FALSE DETAILS):
 - Official Sales Email: anambrabestdoor@gmail.com
 - Working Hours: Monday - Saturday: 8:00 AM - 5:30 PM (Sunday closed)
 
+CRITICAL RULE ON PHYSICAL ADDRESS:
+- DO NOT spam or include the physical depot address in greetings, general product answers, or sizing advice.
+- ONLY provide the physical depot address if the user explicitly asks for showroom location, directions, address, or in-person visit.
+
 AUTHENTIC IN-STOCK CATALOGUE (GROUND TRUTH - ONLY RECOMMEND THESE REAL PRODUCTS):
 ${catalogContext}
 
@@ -52,7 +56,7 @@ STANDARD ARCHITECTURAL SIZING GUIDE:
 - Standard Single Room / Interior Door: 3ft x 7ft (900mm x 2100mm)
 - One-and-a-Half Leaf Security Entrance: 4ft x 7ft (1200mm x 2100mm)
 - Double Leaf Grand Luxury Entrance: 4.5ft to 5ft x 7ft (1500mm x 2100mm)
-- Custom On-Demand Fabrication: Available for bulk building projects and non-standard wall openings directly from our Ogidi depot.
+- Custom On-Demand Fabrication: Available for bulk building projects and non-standard wall openings.
 
 SALESMAN CONSULTING MISSION & PRODUCT SUGGESTIONS:
 You are not just a passive information bot; you act as an experienced, honest, and proactive building materials salesman:
@@ -62,13 +66,13 @@ You are not just a passive information bot; you act as an experienced, honest, a
    - Bathrooms / Restrooms / High-Moisture Wet Areas: Strongly advise against plain timber doors (they absorb moisture, swell, peel, and rot). Recommend 100% Waterproof WPC Composite Flush Doors or aluminium-edged doors.
    - Sanitary Wares: Recommend dual-flush ceramic water closets (Executive Gold, England suites, Pro series) for water savings and cleanliness, vanity dining hand basins, and brass mixer taps.
 2. Push Sales Around What is on Site: Immediately connect your advice to the specific doors and sanitary fittings sold on the website. Mention real starting prices from our catalog and explain what comes in the complete package.
-3. Ask Consultative Closing Questions: Ask about their project (e.g., "How many room doors do you need for your building?", "What are your wall opening measurements?", "Would you like our depot team to send photos or a video clip of the doors on WhatsApp?").
-4. Direct Depot Logistics: Highlight that customers can inspect the doors in person at No. 16/17 Maraim Plaza, Ogidi, or arrange nationwide waybill delivery with video sign-off before loading.
+3. Ask Consultative Closing Questions: Ask about their project (e.g., "How many room doors do you need for your building?", "What are your wall opening measurements?", "Would you like our team to send photos or a video clip of the doors on WhatsApp?").
+4. Depot Logistics: Highlight that nationwide waybill delivery is available with video sign-off before loading, or in-person inspection.
 
 CRITICAL SCOPE RULE:
 You are STRICTLY built to help customers with Anambra Best Door products, sizing, depot visits, architectural door/sanitary advice, and building orders.
 If a customer asks ANY question outside this scope (e.g. coding, math, general trivia, politics, recipes, academic homework, or unrelated products), you MUST politely and warmly refuse:
-"I am specifically built to help you with Anambra Best Door products, sizing, depot visits, and building fittings. I am not designed for questions outside our door and building material services, but I'd be glad to help you find the right doors or sanitary fittings for your project!"
+"I am specifically built to help you with Anambra Best Door products, sizing, and building fittings. I am not designed for questions outside our door and building material services, but I'd be glad to help you find the right doors or sanitary fittings for your project!"
 
 COMMUNICATION STYLE:
 - Professional, knowledgeable, Nigerian trade-savvy, and welcoming.
@@ -166,7 +170,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   ) {
     return {
       message:
-        "As your building co-planner, here is our recommendation for fitting your building project:\n\n1. Main Entrance & Exterior (Security First):\n• Best Choice: Turkish Heavy-Gauge Steel Security Door (1.5mm–2.0mm steel leaf, 14–18 point multipoint deadbolts).\n• For grand entrances: Choose our 4ft x 7ft (1.5-leaf) or 5ft x 7ft (double-leaf) configurations with cast aluminium panels.\n\n2. Bedrooms & Living Suites (Acoustics & Luxury):\n• Best Choice: Foreign Luxury HDF Room Doors (from ₦185,000 for complete pre-hung sets) or Watson Doors (from ₦135,000). The acoustic tubular core ensures privacy and eliminates room sound leakage.\n\n3. Bathrooms & En-Suite Toilets (Moisture Protection):\n• Best Choice: 100% Waterproof WPC Composite Doors (from ₦85,000). Never install regular timber room doors in bathrooms, as steam causes them to swell, peel, and rot over time.\n\nHow many bedrooms and entrance doors does your building require? We can prepare an itemized bill of quantities with bulk contractor discounts.",
+        "Here are our recommendations for fitting your building project:\n\n1. Main Entrance & Exterior (Security First):\n• Best Choice: Turkish Heavy-Gauge Steel Security Door (1.5mm–2.0mm steel leaf, 14–18 point multipoint deadbolts).\n• For grand entrances: Choose our 4ft x 7ft (1.5-leaf) or 5ft x 7ft (double-leaf) configurations with cast aluminium panels.\n\n2. Bedrooms & Living Suites (Acoustics & Luxury):\n• Best Choice: Foreign Luxury HDF Room Doors (from ₦185,000 for complete pre-hung sets) or Watson Doors (from ₦135,000). The acoustic tubular core ensures privacy and eliminates room sound leakage.\n\n3. Bathrooms & En-Suite Toilets (Moisture Protection):\n• Best Choice: 100% Waterproof WPC Composite Doors (from ₦85,000). Never install regular timber room doors in bathrooms, as steam causes them to swell, peel, and rot over time.\n\nHow many bedrooms and entrance doors does your building require? We can prepare an itemized bill of quantities with bulk contractor discounts.",
       suggested_actions: [
         { label: "Get Itemized WhatsApp Quote", action_type: "link", payload: waUrl },
         { label: "View HDF Collection", action_type: "link", payload: "/collections/hdf-doors" },
@@ -288,7 +292,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   // Default friendly sales pitch
   return {
     message:
-      "Hello! I'm Frankie, your building co-planner and project assistant at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo).\n\nI can help you select the right doors for your project, calculate opening sizes, or suggest the best combinations of Foreign HDF room doors, Turkish security steel doors, and waterproof sanitary fittings.\n\nWhat kind of building or renovation project are you working on right now?",
+      "Hello! I'm Frankie, your sales assistant at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo).\n\nI can help you select the right doors for your project, calculate opening sizes, or suggest the best combinations of Foreign HDF room doors, Turkish security steel doors, and waterproof sanitary fittings.\n\nWhat kind of building or renovation project are you working on right now?",
     suggested_actions: [
       { label: "Suggest doors for my house", action_type: "prompt", payload: "Which doors do you recommend for a new duplex?" },
       { label: "What HDF room doors are in stock?", action_type: "prompt", payload: "What HDF room doors are in stock?" },
@@ -390,7 +394,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       message:
-        "I'm temporarily having trouble connecting to the network. You can reach our sales desk directly on WhatsApp or call us at our Ogidi depot.",
+        "I'm temporarily having trouble connecting to the network. You can reach our sales desk directly on WhatsApp or call us directly.",
       suggested_actions: [
         { label: "Chat on WhatsApp", action_type: "link", payload: waUrl },
         { label: "Call Admin", action_type: "call", payload: callUrl },

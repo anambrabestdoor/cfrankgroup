@@ -63,7 +63,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
       const savedProducts = localStorage.getItem("abd_products");
       if (savedProducts) {
-        setProducts(JSON.parse(savedProducts));
+        const parsed = JSON.parse(savedProducts);
+        if (Array.isArray(parsed)) {
+          setProducts(parsed.filter((p): p is DoorProduct => Boolean(p && typeof p === "object" && p.id)));
+        }
       }
     } catch {
       // LocalStorage error or private browsing fallback

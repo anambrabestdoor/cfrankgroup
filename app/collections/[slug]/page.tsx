@@ -131,7 +131,7 @@ export default async function CollectionPage({ params }: PageProps) {
   };
 
   const filtered = DOOR_PRODUCTS.filter((p) => {
-    if (!p.active) return false;
+    if (!p || !p.active) return false;
     if (collection.categoryKey) {
       return p.category === collection.categoryKey;
     }

@@ -34,7 +34,7 @@ function ShopContent() {
 
   const filteredProducts = useMemo(() => {
     return DOOR_PRODUCTS.filter((product) => {
-      if (!product.active) return false;
+      if (!product || !product.active) return false;
 
       // Group filter (Doors vs Sanitary)
       if (selectedGroup !== "all" && product.group && product.group !== selectedGroup) {

@@ -6,7 +6,6 @@ import {
   X,
   Send,
   Phone,
-  Sparkles,
   ExternalLink,
   RotateCcw,
 } from "lucide-react";
@@ -35,7 +34,7 @@ export default function FrankieWidget() {
       id: "welcome",
       role: "assistant",
       content:
-        "Hello! I'm Frankie, your building co-planner and assistant at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo). Whether you're building a new home, duplex, or hotel, ask me for door recommendations, pricing, sizes, or depot inspection at Ogidi.",
+        "Hello, I'm Frankie. Looking for foreign HDF room doors, Turkish security doors, or sanitary fittings? Ask me about sizes, current stock, and pricing.",
       timestamp: new Date().toISOString(),
       suggested_actions: [
         {
@@ -157,7 +156,7 @@ export default function FrankieWidget() {
         id: "welcome",
         role: "assistant",
         content:
-          "Hello! I'm Frankie, your building co-planner and assistant at Anambra Best Door (CFrank Enterprise, owned by Chidera Frank Okonkwo). Whether you're building a new home, duplex, or hotel, ask me for door recommendations, pricing, sizes, or depot inspection at Ogidi.",
+          "Hello, I'm Frankie. Looking for foreign HDF room doors, Turkish security doors, or sanitary fittings? Ask me about sizes, current stock, and pricing.",
         timestamp: new Date().toISOString(),
         suggested_actions: [
           {
@@ -212,13 +211,7 @@ export default function FrankieWidget() {
                       </span>
                       <span>Active</span>
                     </span>
-                    <span className="text-[10px] px-1.5 py-0.5 bg-blue-900/80 text-blue-200 rounded font-bold uppercase tracking-wider">
-                      Co-Planner
-                    </span>
                   </div>
-                  <p className="text-[10px] text-slate-300">
-                    Anambra Best Door • Maraim Plaza Ogidi
-                  </p>
                 </div>
               </div>
 
@@ -313,7 +306,6 @@ export default function FrankieWidget() {
                           <ExternalLink className="w-3 h-3 text-[#003296]" />
                         ) : null}
                         {act.action_type === "call" && <Phone className="w-3 h-3 text-emerald-700" />}
-                        {act.action_type === "prompt" && <Sparkles className="w-3 h-3 text-[#003296]" />}
                         <span>{act.label}</span>
                       </button>
                     ))}
@@ -323,11 +315,13 @@ export default function FrankieWidget() {
             ))}
 
             {loading && (
-              <div className="flex items-center space-x-1.5 p-3 bg-white border border-slate-200 rounded-xl rounded-tl-xs w-fit shadow-xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#003296] animate-bounce"></span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#003296] animate-bounce [animation-delay:0.2s]"></span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#003296] animate-bounce [animation-delay:0.4s]"></span>
-                <span className="text-[11px] text-slate-400 font-medium ml-1">Frankie is typing...</span>
+              <div className="flex items-center gap-2 py-2 px-3.5 bg-white border border-slate-200 rounded-xl rounded-tl-xs w-fit shadow-xs">
+                <span className="text-xs text-slate-500 font-semibold">Typing...</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#003296] animate-dot-1"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#003296] animate-dot-2"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#003296] animate-dot-3"></span>
+                </div>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -360,7 +354,7 @@ export default function FrankieWidget() {
               </button>
             </div>
             <p className="text-[10px] text-slate-400 text-center">
-              Trained on Anambra Best Door products, Ogidi depot stock, and delivery.
+              Instant product information, sizes, and pricing.
             </p>
           </form>
         </div>
@@ -371,7 +365,7 @@ export default function FrankieWidget() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          aria-label="Chat with Frankie - Building Co-Planner"
+          aria-label="Chat with Frankie"
           className="group relative flex items-center gap-2.5 py-3 px-4 rounded-full bg-[#003296] hover:bg-[#002266] text-white shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer border border-blue-400/40"
         >
           <div className="relative flex items-center justify-center">
