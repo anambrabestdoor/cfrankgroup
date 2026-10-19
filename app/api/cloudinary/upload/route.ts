@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadImageToCloudinary, getCloudinary } from '@/lib/cloudinary';
+import { validateImageUpload } from '@/lib/mediaLimits';
 
 export async function POST(req: NextRequest) {
   try {
     const contentType = req.headers.get("content-type") || "";
 
     let fileBase64 = "";
+    let mimeType = "image/png";
+    let sizeBytes = 0;
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await req.formData();
@@ -15,13 +18,31 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "No file was provided in the upload request." }, { status: 400 });
       }
 
+      mimeType = file.type || "image/png";
+      sizeBytes = file.size;
+
+      const validation = validateImageUpload(mimeType, sizeBytes);
+      if (!validation.valid) {
+        return NextResponse.json({ error: validation.error }, { status: 400 });
+      }
+
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const mimeType = file.type || "image/png";
       fileBase64 = `data:${mimeType};base64,${buffer.toString("base64")}`;
     } else {
       const body = await req.json();
       fileBase64 = body.image || body.file || "";
+      if (fileBase64.startsWith("data:")) {
+        const matches = fileBase64.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+        if (matches) {
+          mimeType = matches[1];
+          sizeBytes = Math.round((matches[2].length * 3) / 4);
+        }
+      }
+      const validation = validateImageUpload(mimeType, sizeBytes);
+      if (!validation.valid) {
+        return NextResponse.json({ error: validation.error }, { status: 400 });
+      }
     }
 
     if (!fileBase64) {

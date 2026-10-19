@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { UploadCloud, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
+import { validateImageUpload } from '@/lib/mediaLimits';
 
 interface CloudinaryUploaderProps {
   onUploadSuccess: (url: string) => void;
@@ -22,13 +23,9 @@ export default function CloudinaryUploader({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      setError('Please select a valid image file (PNG, JPG, WEBP, etc.)');
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      setError('Image file size must be less than 10MB');
+    const validation = validateImageUpload(file.type, file.size);
+    if (!validation.valid) {
+      setError(validation.error || 'Invalid file.');
       return;
     }
 
