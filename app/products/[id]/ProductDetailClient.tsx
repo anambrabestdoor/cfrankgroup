@@ -284,7 +284,7 @@ export default function ProductDetailClient({
           {/* Full Long Description */}
           <div className="pt-4 border-t border-slate-100 space-y-2">
             <h3 className="text-sm font-bold text-slate-900">Product Description</h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
               {product.description}
             </p>
           </div>
