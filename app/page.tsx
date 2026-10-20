@@ -65,8 +65,8 @@ export default function StorefrontPage() {
       a: "We supply Turkish steel security entrance doors, foreign HDF luxury interior doors, Watson panel doors, waterproof WPC bathroom doors, digital and mechanical door locks, and bathroom sanitary wares.",
     },
     {
-      q: "Where is your depot located?",
-      a: "Our depot and showroom are at No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State. Customers and site representatives are welcome to visit during business hours.",
+      q: "Where is your warehouse located?",
+      a: "Our warehouse and showroom are at No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State. Customers and site representatives are welcome to visit during business hours.",
     },
     {
       q: "Can I inspect the doors before buying?",
@@ -123,13 +123,13 @@ export default function StorefrontPage() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 sm:mb-8">
           <div className="space-y-1.5">
             <div className="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-blue-50 border border-blue-200/80 text-[11px] font-bold text-[#003296] uppercase tracking-wider">
-              <span>Depot Inventory</span>
+              <span>Store Products</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-              Featured Door & Fitting Arrivals
+              Our Quality Products
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 max-w-xl">
-              Foreign HDF interior doors, heavy-gauge security doors, and bathroom fittings ready for dispatch.
+              Foreign HDF interior doors, heavy-gauge security doors, and bathroom fittings ready for purchase.
             </p>
           </div>
           <Link
@@ -612,7 +612,7 @@ export default function StorefrontPage() {
                   Inspect Before You Buy
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  You or your site representative are welcome to check the doors at our depot before loading and dispatch.
+                  You or your site representative are welcome to check the doors at our warehouse before loading and dispatch.
                 </p>
               </div>
             </div>
@@ -668,9 +668,8 @@ export default function StorefrontPage() {
                     {faq.q}
                   </span>
                   <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-transform ${
-                      isOpen ? "bg-[#003296] text-white rotate-45" : "bg-slate-100 text-slate-600"
-                    }`}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-transform ${isOpen ? "bg-[#003296] text-white rotate-45" : "bg-slate-100 text-slate-600"
+                      }`}
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </div>
