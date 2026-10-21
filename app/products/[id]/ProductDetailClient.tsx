@@ -273,7 +273,9 @@ export default function ProductDetailClient({
                     </div>
                   ) : (
                     <div className="text-sm sm:text-base font-bold text-slate-800">
-                      Contact for Wholesale / Project Price
+                      {product.priceMode === "price_on_request" || product.priceOnRequest
+                        ? "Price on Request"
+                        : "Contact for Price"}
                     </div>
                   )}
                 </div>
