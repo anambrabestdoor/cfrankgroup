@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact & Depot Location | Maraim Plaza Ogidi, Onitsha",
+  title: "Contact & Warehouse Location | Anambra Best Door",
   description:
-    "Visit our physical store and warehouse at No 16/17 Maraim Plaza, Building Material Ogidi, Anambra State. Phone: 0803 521 8890. WhatsApp sales desk and nationwide haulage coordination.",
+    "Visit our physical showroom and warehouse at Maraim Plaza, Building Material International Market, Ogidi. Phone: 0803 521 8890. WhatsApp sales desk and nationwide haulage coordination.",
   alternates: {
     canonical: "/contact",
   },
   openGraph: {
-    title: "Contact Anambra Best Door Depot | Ogidi Onitsha",
+    title: "Contact Anambra Best Door | Warehouse & Showroom",
     description:
-      "Physical showroom directions, WhatsApp sales inquiries, phone numbers, and contractor offloading coordination at Maraim Plaza, Ogidi.",
+      "Showroom directions, WhatsApp sales inquiries, phone numbers, and contractor offloading coordination.",
   },
 };
 

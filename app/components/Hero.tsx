@@ -27,7 +27,7 @@ const heroSlides = [
     image: "/WhatsApp Image 2026-10-19 at 7.46.18 AM.jpeg",
     href: "/shop?category=security-doors",
     buttonText: "Browse Security Doors",
-    alt: "Heavy-Gauge Turkish Steel Security Door displayed at Anambra Best Door depot, Ogidi",
+    alt: "Heavy-Gauge Turkish Steel Security Door displayed at Anambra Best Door warehouse",
   },
   {
     id: "sanitary-wc",
@@ -209,7 +209,7 @@ export default function Hero() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-3.5 bg-slate-900 text-white">
-              <span className="text-xs font-bold">Depot Offloading Video</span>
+              <span className="text-xs font-bold">Warehouse Offloading Video</span>
               <button
                 type="button"
                 onClick={() => setVideoModalOpen(false)}

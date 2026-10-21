@@ -8,9 +8,9 @@ export const metadata: Metadata = {
     canonical: "/blog",
   },
   openGraph: {
-    title: "Depot Trade Notes & Architectural Buying Guides | Anambra Best Door",
+    title: "Trade Notes & Architectural Buying Guides | Anambra Best Door",
     description:
-      "Site measurement advice, steel gauge comparisons, and door durability tips from our depot team at Maraim Plaza, Ogidi, Onitsha.",
+      "Site measurement advice, steel gauge comparisons, and door durability tips from our technical sales desk.",
   },
 };
 

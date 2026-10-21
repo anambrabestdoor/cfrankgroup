@@ -30,22 +30,22 @@ export default function ContactPage() {
             Contact Anambra Best Door
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
-            Visit our store depot or connect directly with our sales desk on WhatsApp for live price quotes, wall measurements, and nationwide delivery schedules.
+            Visit our showroom & warehouse or connect directly with our sales desk on WhatsApp for live price quotes, wall measurements, and nationwide delivery schedules.
           </p>
         </div>
       </div>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          {/* Showroom & Depot Information Column */}
+          {/* Showroom & Warehouse Information Column */}
           <div className="space-y-6">
             <div>
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block mb-1">
-                Physical Depot & Market Hub
+                Physical Warehouse & Showroom
               </span>
 
               <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Our depot is strategically located in the Building Material International Market in Ogidi, providing immediate access to heavy-gauge steel security doors and hardware for clients across the South-East and nationwide.
+                Our warehouse and showroom is located in the Building Material International Market, Ogidi, providing access to heavy-gauge steel security doors and hardware for clients across the South-East and nationwide.
               </p>
             </div>
 
@@ -56,7 +56,7 @@ export default function ContactPage() {
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-bold text-slate-900 block">Store & Depot Address</span>
+                  <span className="font-bold text-slate-900 block">Store & Warehouse Address</span>
                   <p className="text-slate-600 mt-0.5 leading-relaxed">{settings.address}</p>
                 </div>
               </div>

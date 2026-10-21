@@ -15,7 +15,7 @@ export default function AboutPage() {
       <div className="bg-[#0A192F] text-white py-16 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
         <div className="max-w-3xl mx-auto space-y-3">
           <span className="text-[11px] font-bold uppercase tracking-widest text-blue-400 block">
-            Corporate Entity & Physical Depot
+            Corporate Entity & Physical Warehouse
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
             About {settings.parentCompany} & {settings.companyName}
@@ -58,12 +58,12 @@ export default function AboutPage() {
           <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shadow-md">
             <Image
               src="/products/bullet-proof-door.jpeg"
-              alt="Anambra Best Door Inventory Stock at Maraim Plaza Ogidi"
+              alt="Anambra Best Door Product Stock at Maraim Plaza"
               fill
               className="object-cover"
             />
             <div className="absolute bottom-3 left-3 right-3 p-2.5 bg-slate-900/90 backdrop-blur-md rounded-md text-white text-[11px] font-semibold flex items-center justify-between">
-              <span className="truncate max-w-[220px]">Depot: {settings.marketLocation}</span>
+              <span className="truncate max-w-[220px]">Warehouse: {settings.marketLocation}</span>
               <span className="text-blue-300 font-bold shrink-0">In Stock</span>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function AboutPage() {
             </div>
             <h3 className="text-sm font-bold text-slate-900">Physical Market Hub</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Visit our store depot at {settings.marketLocation} to personally inspect leaf finishes, lock cylinders, and frame alignments.
+              Visit our warehouse & showroom at {settings.marketLocation} to personally inspect leaf finishes, lock cylinders, and frame alignments.
             </p>
           </div>
 

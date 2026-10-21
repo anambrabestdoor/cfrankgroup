@@ -1139,7 +1139,7 @@ export default function AdminPage() {
 
                   <div>
                     <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Depot Stock Quantity
+                      Warehouse Stock Quantity
                     </label>
                     <input
                       type="number"
@@ -1404,7 +1404,7 @@ export default function AdminPage() {
           <div className="space-y-6">
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                Depot Inventory Management
+                Warehouse Inventory Management
               </h1>
               <p className="text-xs text-slate-500">
                 Quickly adjust stock quantities and toggle sold-out status for WhatsApp order verification.

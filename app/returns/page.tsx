@@ -13,13 +13,13 @@ export default function ReturnsPage() {
       <div className="bg-[#0A192F] text-white py-14 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
         <div className="max-w-3xl mx-auto space-y-3">
           <span className="text-[11px] font-bold uppercase tracking-widest text-blue-400 block">
-            Quality Assurance & Depot Standards
+            Quality Assurance & Warehouse Standards
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
             Inspection, Exchange & Return Policy
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Transparent quality verification from pre-dispatch depot inspection to on-site delivery for all doors and sanitary fittings.
+            Transparent quality verification from pre-dispatch warehouse inspection to on-site delivery for all doors and sanitary fittings.
           </p>
         </div>
       </div>
@@ -33,7 +33,7 @@ export default function ReturnsPage() {
 
           <div className="space-y-4">
             <div>
-              <h4 className="font-bold text-slate-900 mb-1">1. Depot Video & Photo Sign-Off Before Waybill</h4>
+              <h4 className="font-bold text-slate-900 mb-1">1. Warehouse Video & Photo Sign-Off Before Waybill</h4>
               <p className="text-slate-600 text-xs leading-relaxed">
                 Before any door or sanitary set leaves our warehouse, our warehouse team records clear photos and a short video clip of your exact unit (verifying door hand/swing direction, leaf dimensions, finish, keys, handles, and accessories) and sends it directly to your WhatsApp for approval.
               </p>

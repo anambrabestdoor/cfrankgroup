@@ -20,7 +20,7 @@ interface CollectionMeta {
 const COLLECTIONS: Record<string, CollectionMeta> = {
   "hdf-doors": {
     title: "Luxury Foreign HDF Interior Room Doors",
-    seoTitle: "Foreign HDF Room Doors | Direct Importer Price | Anambra Best Door Ogidi",
+    seoTitle: "Foreign HDF Room Doors | Direct Importer Price | Anambra Best Door",
     desc: "Engineered high-density fibreboard (HDF) interior room doors built for private residences, hotel suites, and multi-unit estate developments across Nigeria. Complete packages available with factory-matched architraves, frames, and mortise locks.",
     categoryKey: "hdf-doors",
     commercialHighlight: {
@@ -56,7 +56,7 @@ const COLLECTIONS: Record<string, CollectionMeta> = {
   },
   "bathroom-doors": {
     title: "100% Waterproof WPC Bathroom Doors",
-    seoTitle: "Waterproof Bathroom Doors WPC | Anti-Swelling Moisture Proof | Onitsha",
+    seoTitle: "Waterproof Bathroom Doors WPC | Anti-Swelling Moisture Proof",
     desc: "Monolithic polymer composite restroom doors 100% immune to water, shower steam, moisture condensation, and termites. Solves the persistent problem of rotting door bases in Nigerian bathrooms.",
     categoryKey: "bathroom-doors",
     commercialHighlight: {
@@ -76,7 +76,7 @@ const COLLECTIONS: Record<string, CollectionMeta> = {
   },
   "sanitary-fittings": {
     title: "Executive Sanitary Wares & Bathroom Fittings",
-    seoTitle: "Sanitary Wares & Water Closets | Ogidi Building Materials Market",
+    seoTitle: "Sanitary Wares & Water Closets | Executive Bathroom Fittings",
     desc: "Heavy ceramic water closets, dual-flush siphon toilets, countertop wash hand basins, and solid brass plumbing fixtures for residential and commercial projects.",
     categoryKey: "sanitary-fittings",
   },
@@ -95,7 +95,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!col) {
     return {
       title: "Door Collection | Anambra Best Door",
-      description: "Explore genuine heavy-gauge security and interior doors from Anambra Best Door, Ogidi Onitsha.",
+      description: "Explore genuine heavy-gauge security and interior doors from Anambra Best Door with nationwide delivery.",
     };
   }
 
@@ -126,7 +126,7 @@ export default async function CollectionPage({ params }: PageProps) {
   const collection = COLLECTIONS[slug] || {
     title: "Architectural Door & Sanitary Collection",
     seoTitle: "Door Collection | Anambra Best Door",
-    desc: "Explore verified heavy-gauge security doors, luxury interior wooden doors, and sanitary fittings in our Ogidi depot.",
+    desc: "Explore verified heavy-gauge security doors, luxury interior wooden doors, and sanitary fittings in our warehouse inventory.",
     categoryKey: undefined,
   };
 
@@ -227,7 +227,7 @@ export default async function CollectionPage({ params }: PageProps) {
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-blue-50 text-[#003296] text-[11px] font-bold uppercase tracking-wider">
                 <Warehouse className="w-3 h-3" />
-                <span>Ogidi Building Materials Depot</span>
+                <span>Direct Warehouse Inventory</span>
               </span>
               <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold">
                 <Truck className="w-3 h-3" />

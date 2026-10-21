@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Frequently Asked Questions | Door Specifications & Waybill Delivery",
   description:
-    "Common trade questions answered: Turkish steel security door gauges, foreign HDF door package contents, WPC waterproof bathroom doors, depot visits at Maraim Plaza Ogidi, and nationwide delivery across Nigeria.",
+    "Common trade questions answered: Turkish steel security door gauges, foreign HDF door package contents, WPC waterproof bathroom doors, warehouse visits, and nationwide delivery across Nigeria.",
   alternates: {
     canonical: "/faq",
   },

@@ -35,16 +35,16 @@ OWNERSHIP & VERIFIED BUSINESS FACTS (GROUND TRUTH WHEN EXPLICITLY ASKED):
 - Sole Proprietor & Owner: Chidera Frank Okonkwo
 - Business Trading Name: Anambra Best Door Enterprises (powered and operated by CFrank Enterprise)
 - CAC Registration Number: BN 9943925 (Registered under Companies and Allied Matters Act, Active status)
-- Physical Depot Address: No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State, Nigeria
+- Physical Warehouse Address: Maraim Plaza, Building Material International Market, Ogidi, Anambra State, Nigeria
 - Contact Phone: +234 707 007 0305
 - WhatsApp Order Line: 2347070070305 (direct link available in chat)
 - Working Hours: Monday - Saturday: 8:00 AM - 5:30 PM (Sunday closed)
 
 CRITICAL RULES ON IDENTITY & BUSINESS FACTS:
 - You are a sales rep, NOT a co-planner or robotic assistant.
-- DO NOT force, recite, or introduce yourself with ownership facts ("owned by Chidera Frank Okonkwo"), CAC numbers, or physical depot addresses in casual conversation or general product questions. Doing so sounds like a bot.
+- DO NOT force, recite, or introduce yourself with ownership facts ("owned by Chidera Frank Okonkwo"), CAC numbers, or physical warehouse addresses in casual conversation or general product questions. Doing so sounds like a bot.
 - ONLY provide ownership details (Chidera Frank Okonkwo / CFrank Enterprise) or CAC registration (BN 9943925) if the customer specifically asks "Who owns this business?", "Who is the owner?", "Who is Frank?", or asks for CAC verification.
-- ONLY provide the physical depot address if the customer specifically asks where you are located, asks for directions, or asks to visit in person.
+- ONLY provide the physical warehouse address if the customer specifically asks where you are located, asks for directions, or asks to visit in person.
 
 AUTHENTIC IN-STOCK CATALOGUE (GROUND TRUTH - ONLY RECOMMEND THESE REAL PRODUCTS):
 ${catalogContext}
@@ -64,10 +64,10 @@ You are not just a passive information bot; you act as an experienced, honest, a
    - Sanitary Wares: Recommend dual-flush ceramic water closets (Executive Gold, England suites, Pro series) for water savings and cleanliness, vanity dining hand basins, and brass mixer taps.
 2. Push Sales Around What is on Site: Immediately connect your advice to the specific doors and sanitary fittings sold on the website. Mention real starting prices from our catalog and explain what comes in the complete package.
 3. Ask Consultative Closing Questions: Ask about their project (e.g., "How many room doors do you need for your building?", "What are your wall opening measurements?", "Would you like our team to send photos or a video clip of the doors on WhatsApp?").
-4. Depot Logistics: Highlight that nationwide waybill delivery is available with video sign-off before loading, or in-person inspection.
+4. Warehouse Logistics: Highlight that nationwide waybill delivery is available with video sign-off before loading, or in-person inspection.
 
 CRITICAL SCOPE RULE:
-You are STRICTLY built to help customers with Anambra Best Door products, sizing, depot visits, architectural door/sanitary advice, and building orders.
+You are STRICTLY built to help customers with Anambra Best Door products, sizing, warehouse visits, architectural door/sanitary advice, and building orders.
 If a customer asks ANY question outside this scope (e.g. coding, math, general trivia, politics, recipes, academic homework, or unrelated products), you MUST politely and warmly refuse:
 "I am specifically built to help you with Anambra Best Door products, sizing, and building fittings. I am not designed for questions outside our door and building material services, but I'd be glad to help you find the right doors or sanitary fittings for your project!"
 
@@ -97,7 +97,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   if (offTopicKeywords.some((kw) => q.includes(kw))) {
     return {
       message:
-        "I am specifically built to help you with Anambra Best Door products, sizing, depot visits, and building fittings. I am not designed for questions outside our door and building material services, but I'd be glad to help you find the right doors or sanitary fittings for your project!",
+        "I am specifically built to help you with Anambra Best Door products, sizing, warehouse visits, and building fittings. I am not designed for questions outside our door and building material services, but I'd be glad to help you find the right doors or sanitary fittings for your project!",
       suggested_actions: [
         { label: "Browse HDF Room Doors", action_type: "prompt", payload: "What HDF room doors do you have in stock?" },
         { label: "Turkish Security Doors", action_type: "prompt", payload: "Tell me about Turkish security door gauges and sizes." },
@@ -207,7 +207,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   if (q.includes("security") || q.includes("steel") || q.includes("turkish") || q.includes("bullet") || q.includes("entrance door")) {
     return {
       message:
-        "Our Turkish Steel Security Doors deliver unmatched perimeter security for residential homes and estates:\n\n• Heavy Gauge Steel: 1.5mm to 2.0mm electro-galvanized steel leaf and reinforced steel frame.\n• Multi-Point Deadbolt Security: 14 to 18 locking deadbolt points securing top, bottom, and sides.\n• Architectural Finishes: Cast aluminium decorative panels, bulletproof models, and weather-sealed sills.\n• Available Sizes: Single leaf (3ft & 4ft x 7ft) and grand double leaf (4.5ft to 5ft x 7ft).\n\nEvery door is available for physical inspection at our Ogidi depot before loading.",
+        "Our Turkish Steel Security Doors deliver unmatched perimeter security for residential homes and estates:\n\n• Heavy Gauge Steel: 1.5mm to 2.0mm electro-galvanized steel leaf and reinforced steel frame.\n• Multi-Point Deadbolt Security: 14 to 18 locking deadbolt points securing top, bottom, and sides.\n• Architectural Finishes: Cast aluminium decorative panels, bulletproof models, and weather-sealed sills.\n• Available Sizes: Single leaf (3ft & 4ft x 7ft) and grand double leaf (4.5ft to 5ft x 7ft).\n\nEvery door is available for physical inspection at our warehouse before loading.",
       suggested_actions: [
         { label: "View Security Doors", action_type: "link", payload: "/collections/security-doors" },
         { label: "Confirm Stock on WhatsApp", action_type: "link", payload: waUrl },
@@ -242,7 +242,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   if (q.includes("size") || q.includes("dimension") || q.includes("height") || q.includes("width") || q.includes("3ft") || q.includes("4ft") || q.includes("measure")) {
     return {
       message:
-        "Here are standard wall opening dimensions we supply:\n\n• 3ft x 7ft (900mm x 2100mm): Standard room & interior HDF doors\n• 4ft x 7ft (1200mm x 2100mm): One-and-a-half leaf entrance security doors & wide bedroom doors\n• 4.5ft to 5ft x 7ft (1500mm x 2100mm): Double leaf grand luxury entrance doors\n\nIf your wall openings are non-standard, CFrank Enterprise provides custom on-demand frame adjustments and contractor fabrication directly at our Ogidi depot.",
+        "Here are standard wall opening dimensions we supply:\n\n• 3ft x 7ft (900mm x 2100mm): Standard room & interior HDF doors\n• 4ft x 7ft (1200mm x 2100mm): One-and-a-half leaf entrance security doors & wide bedroom doors\n• 4.5ft to 5ft x 7ft (1500mm x 2100mm): Double leaf grand luxury entrance doors\n\nIf your wall openings are non-standard, CFrank Enterprise provides custom on-demand frame adjustments and contractor fabrication directly at our warehouse.",
       suggested_actions: [
         { label: "Discuss Wall Opening on WhatsApp", action_type: "link", payload: waUrl },
         { label: "Call Admin", action_type: "call", payload: callUrl },
@@ -250,11 +250,11 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
     };
   }
 
-  // 9. Location & Depot Visit
-  if (q.includes("location") || q.includes("where") || q.includes("depot") || q.includes("address") || q.includes("ogidi") || q.includes("onitsha") || q.includes("visit") || q.includes("shop")) {
+  // 9. Location & Warehouse Visit
+  if (q.includes("location") || q.includes("where") || q.includes("warehouse") || q.includes("depot") || q.includes("address") || q.includes("ogidi") || q.includes("onitsha") || q.includes("visit") || q.includes("shop")) {
     return {
       message:
-        "You can inspect doors in person at our depot:\n\n• Address: No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State.\n• Hours: Monday - Saturday: 8:00 AM - 5:30 PM\n\nContractors, site engineers, and homeowners are always welcome to inspect lock mechanisms, woodgrain finishes, and steel gauges before dispatch.",
+        "You can inspect doors in person at our showroom & warehouse:\n\n• Location: Maraim Plaza, Building Material International Market, Ogidi, Anambra State.\n• Hours: Monday - Saturday: 8:00 AM - 5:30 PM\n\nContractors, site engineers, and homeowners are always welcome to inspect lock mechanisms, woodgrain finishes, and steel gauges before dispatch.",
       suggested_actions: [
         { label: "Call Sales Desk", action_type: "call", payload: callUrl },
         { label: "WhatsApp Location Pin", action_type: "link", payload: waUrl },
@@ -266,7 +266,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   if (q.includes("delivery") || q.includes("waybill") || q.includes("ship") || q.includes("transport") || q.includes("lagos") || q.includes("abuja") || q.includes("ph") || q.includes("asaba")) {
     return {
       message:
-        "We coordinate nationwide waybill delivery directly from our Ogidi depot:\n\n• Southeast / Asaba: Same-day or 24-hour delivery\n• South-South / Port Harcourt / Warri: 24 to 48 hours\n• Lagos / Ibadan / Southwest: 1 to 3 days\n• Abuja / Northern States: 2 to 4 days\n\nEvery order receives WhatsApp photo and video verification before loading. Once loaded, you receive the transport park waybill receipt and driver phone number directly.",
+        "We coordinate nationwide waybill delivery directly from our warehouse:\n\n• Southeast / Asaba: Same-day or 24-hour delivery\n• South-South / Port Harcourt / Warri: 24 to 48 hours\n• Lagos / Ibadan / Southwest: 1 to 3 days\n• Abuja / Northern States: 2 to 4 days\n\nEvery order receives WhatsApp photo and video verification before loading. Once loaded, you receive the transport park waybill receipt and driver phone number directly.",
       suggested_actions: [
         { label: "Confirm Haulage on WhatsApp", action_type: "link", payload: waUrl },
         { label: "Call Admin", action_type: "call", payload: callUrl },

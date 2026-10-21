@@ -123,7 +123,7 @@ export default function FrankieWidget() {
         id: `msg_err_${Date.now()}`,
         role: "assistant",
         content:
-          "I'm temporarily having trouble connecting. You can reach our sales desk directly on WhatsApp or call our Ogidi depot admin.",
+          "I'm temporarily having trouble connecting. You can reach our sales desk directly on WhatsApp or call our sales line directly.",
         timestamp: new Date().toISOString(),
         suggested_actions: [
           { label: "Chat on WhatsApp", action_type: "link", payload: waUrl },

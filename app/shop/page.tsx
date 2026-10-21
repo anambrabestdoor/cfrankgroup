@@ -78,7 +78,7 @@ function ShopContent() {
       <div className="bg-white border-b border-slate-200/80 py-10 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-3xl mx-auto space-y-3">
           <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block">
-            Direct Depot Inventory • Ogidi, Anambra
+            Direct Warehouse Inventory • Nationwide Delivery
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
             Doors & Sanitary Ware Catalogue

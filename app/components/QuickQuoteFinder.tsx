@@ -76,7 +76,7 @@ export default function QuickQuoteFinder() {
   const currentSizeObj = SIZE_OPTIONS.find((s) => s.id === selectedSize);
 
   const handleGetWhatsAppQuote = () => {
-    const text = `Hello Anambra Best Door Enterprises (CFrank Enterprise),\n\nI used the Quick Quote tool on your website and would like a quote for:\n- Door Category: ${currentTypeObj?.label || selectedType}\n- Dimension/Spec: ${currentSizeObj?.label || selectedSize} (${currentSizeObj?.description || ""})\n- Depot Location: ${settings.marketLocation}\n\nPlease let me know available stock models, price breakdown, and delivery terms.`;
+    const text = `Hello Anambra Best Door Enterprises (CFrank Enterprise),\n\nI used the Quick Quote tool on your website and would like a quote for:\n- Door Category: ${currentTypeObj?.label || selectedType}\n- Dimension/Spec: ${currentSizeObj?.label || selectedSize} (${currentSizeObj?.description || ""})\n- Warehouse: ${settings.marketLocation}\n\nPlease let me know available stock models, price breakdown, and delivery terms.`;
     const url = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };

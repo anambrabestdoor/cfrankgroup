@@ -52,7 +52,7 @@ export default function BlogPage() {
             Construction & Architecture Advice
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            Depot Trade Notes & Builder Guides
+            Warehouse Trade Notes & Builder Guides
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
             Practical buying guides, door installation tips, and sanitary ware specifications from our technical sales desk.
@@ -98,7 +98,7 @@ export default function BlogPage() {
                     href={`/shop`}
                     className="text-xs font-bold text-[#003296] hover:underline flex items-center space-x-1"
                   >
-                    <span>View Related Depot Products</span>
+                    <span>View Related Products</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>

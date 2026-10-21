@@ -43,13 +43,13 @@ export default function OrderTrackingPage() {
       <div className="bg-[#0A192F] text-white py-14 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
         <div className="max-w-3xl mx-auto space-y-3">
           <span className="text-[11px] font-bold uppercase tracking-widest text-blue-400 block">
-            Depot Logistics & Dispatch Status
+            Warehouse Logistics & Dispatch Status
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
             Waybill & Order Tracking
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Check the processing, loading, or transport dispatch status of your door consignment from our Ogidi depot.
+            Check the processing, loading, or transport dispatch status of your door consignment from our warehouse.
           </p>
         </div>
       </div>
@@ -88,7 +88,7 @@ export default function OrderTrackingPage() {
               disabled={loading || (!orderId && !email)}
               className="w-full py-3.5 bg-[#003296] hover:bg-[#002266] text-white font-bold text-xs sm:text-sm rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              {loading ? "Searching Depot Records..." : <><Search className="w-4 h-4" /><span>Track Dispatch Status</span></>}
+              {loading ? "Searching Warehouse Records..." : <><Search className="w-4 h-4" /><span>Track Dispatch Status</span></>}
             </button>
           </form>
 

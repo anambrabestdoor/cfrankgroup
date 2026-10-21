@@ -40,7 +40,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <Link href={`/products/${product.slug}`} className="block relative w-full aspect-[4/5] bg-slate-100 overflow-hidden">
         <Image
           src={product.image}
-          alt={`${product.name} - ${product.categoryLabel} by CFrank Enterprise, Ogidi Onitsha`}
+          alt={`${product.name} - ${product.categoryLabel} by CFrank Enterprise`}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"

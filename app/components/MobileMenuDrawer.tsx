@@ -192,7 +192,7 @@ export default function MobileMenuDrawer() {
         {/* Social Icons row (Clean & Compact) */}
         <div className="pt-4 border-t border-slate-200/70">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-            Depot Socials & Channels
+            Follow Us On
           </span>
           <div className="flex items-center gap-2">
             <a

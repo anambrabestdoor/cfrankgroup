@@ -16,10 +16,10 @@ export default function ShippingPage() {
             Nationwide Logistics & Waybill
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            Depot Haulage & Site Delivery
+            Warehouse Logistics & Site Delivery
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Direct door and sanitary ware dispatch from our Ogidi depot to building contractors, site engineers, and private homeowners across all 36 states.
+            Direct door and sanitary ware dispatch from our warehouse to building contractors, site engineers, and private homeowners across all 36 states.
           </p>
         </div>
       </div>
@@ -42,9 +42,9 @@ export default function ShippingPage() {
           </div>
           <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-xs space-y-2">
             <MapPin className="w-7 h-7 mx-auto text-[#003296]" />
-            <h3 className="font-bold text-sm text-slate-900">Physical Depot Pickup</h3>
+            <h3 className="font-bold text-sm text-slate-900">Physical Warehouse Pickup</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Your driver or site truck can load directly at {settings.address} with verified loading gate pass.
+              Your driver or site truck can load directly at our warehouse with verified loading gate pass.
             </p>
           </div>
         </div>

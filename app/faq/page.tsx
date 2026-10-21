@@ -14,19 +14,19 @@ export default function FAQPage() {
       id: "faq-1",
       question: "What steel gauge are your Turkish security entrance doors?",
       answer:
-        "Our Turkish armoured security doors are constructed with genuine 1.5mm to 2.0mm electro-galvanized cold-rolled steel plates with internal vertical and horizontal steel stiffeners and high-density rockwool insulation. We welcome clients to inspect leaf weight and steel gauge physically at our Maraim Plaza depot.",
+        "Our Turkish armoured security doors are constructed with genuine 1.5mm to 2.0mm electro-galvanized cold-rolled steel plates with internal vertical and horizontal steel stiffeners and high-density rockwool insulation. We welcome clients to inspect leaf weight and steel gauge physically at our warehouse.",
     },
     {
       id: "faq-2",
       question: "Can I inspect the doors in person before placing an order?",
       answer:
-        "Yes, absolutely. Our store and depot is located at No 16/17, Maraim Plaza Building Material Ogidi, Anambra State. You can visit Monday through Saturday from 8:00 AM to 5:30 PM to examine doors, lock mechanisms, and finishes.",
+        "Yes, absolutely. Our showroom and warehouse is open Monday through Saturday from 8:00 AM to 5:30 PM for clients and site representatives to examine doors, lock mechanisms, and finishes in person.",
     },
     {
       id: "faq-3",
       question: "How does nationwide waybill delivery work?",
       answer:
-        "Once your order is confirmed with our sales desk on WhatsApp, your doors are thoroughly inspected, protective bubble-wrapped, corner-guarded, and crated. We dispatch via verified heavy-haul haulage services from Onitsha to major depots in Lagos, Abuja, Port Harcourt, Asaba, Enugu, and all Nigerian states.",
+        "Once your order is confirmed with our sales desk on WhatsApp, your doors are thoroughly inspected, protective bubble-wrapped, corner-guarded, and crated. We dispatch via verified heavy-haul haulage services from Onitsha to major transport hubs in Lagos, Abuja, Port Harcourt, Asaba, Enugu, and all Nigerian states.",
     },
     {
       id: "faq-4",
@@ -77,7 +77,7 @@ export default function FAQPage() {
             Frequently Asked Questions
           </h1>
           <p className="text-xs text-slate-300">
-            Everything you need to know about our steel security doors, interior room doors, depot visits, and nationwide delivery.
+            Everything you need to know about our steel security doors, interior room doors, warehouse visits, and nationwide delivery.
           </p>
         </div>
       </div>

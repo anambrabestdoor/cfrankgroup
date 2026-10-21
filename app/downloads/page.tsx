@@ -69,7 +69,7 @@ export default function DownloadsPage() {
             Download Trade Catalogues
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Download our complete PDF catalogues for offline reference, architectural planning, and physical depot stock verification.
+            Download our complete PDF catalogues for offline reference, architectural planning, and physical warehouse stock verification.
           </p>
         </div>
       </div>

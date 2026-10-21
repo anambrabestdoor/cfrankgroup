@@ -70,7 +70,7 @@ export default function StorefrontPage() {
     },
     {
       q: "Can I inspect the doors before buying?",
-      a: "Yes. We encourage customers or their site representatives to inspect door finishes, frame sets and locking hardware in person at our Ogidi depot before loading and dispatch.",
+      a: "Yes. We encourage customers or their site representatives to inspect door finishes, frame sets and locking hardware in person at our warehouse before loading and dispatch.",
     },
     {
       q: "What door sizes are available?",
@@ -82,7 +82,7 @@ export default function StorefrontPage() {
     },
     {
       q: "Do you deliver outside Anambra State?",
-      a: "Yes. We coordinate transport and waybill delivery from our Ogidi depot to project sites in Asaba, Enugu, Owerri, Port Harcourt, Lagos, Abuja and other states across Nigeria. Transport costs are agreed separately based on location and order size.",
+      a: "Yes. We coordinate transport and waybill delivery from our warehouse to project sites in Asaba, Enugu, Owerri, Port Harcourt, Lagos, Abuja and other states across Nigeria. Transport costs are agreed separately based on location and order size.",
     },
     {
       q: "How do I get a quote for a building project?",
@@ -168,11 +168,11 @@ export default function StorefrontPage() {
           {/* Card 1: Homeowners & Residential Projects */}
           <div className="bg-white rounded-xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
+              <div className="flex items-center gap-3.5 sm:gap-4">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
                   <Home className="w-5 h-5" />
                 </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 leading-snug">
                   Homeowners & Residential Projects
                 </span>
               </div>
@@ -197,11 +197,11 @@ export default function StorefrontPage() {
           {/* Card 2: Contractors & Property Developers */}
           <div className="bg-white rounded-xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
+              <div className="flex items-center gap-3.5 sm:gap-4">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
                   <HardHat className="w-5 h-5" />
                 </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 leading-snug">
                   Contractors & Property Developers
                 </span>
               </div>
@@ -220,11 +220,11 @@ export default function StorefrontPage() {
           {/* Card 3: Dealers, Retailers & Wholesalers */}
           <div className="bg-white rounded-xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
+              <div className="flex items-center gap-3.5 sm:gap-4">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
                   <Store className="w-5 h-5" />
                 </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 leading-snug">
                   Dealers, Retailers & Wholesalers
                 </span>
               </div>
@@ -542,14 +542,14 @@ export default function StorefrontPage() {
 
           {/* 5 Value Pillars + CAC Entity Card */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {/* 1. Visit Our Ogidi Depot */}
+            {/* 1. Visit Our Warehouse */}
             <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-3">
               <div className="space-y-2.5">
                 <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
                   <Store className="w-5 h-5" />
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-                  Depot Inspection
+                  Warehouse Inspection
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   Inspect door leaves, steel gauges, locks, and wood finishes in person before dispatch.

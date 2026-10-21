@@ -115,7 +115,7 @@ export default function WholesalePage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="border-b border-slate-100 pb-3">
                 <h2 className="text-lg font-bold text-slate-900">Contractor & Distributor Application</h2>
-                <p className="text-xs text-slate-500">Provide your project or store requirements for wholesale depot discounts.</p>
+                <p className="text-xs text-slate-500">Provide your project or store requirements for wholesale volume discounts.</p>
               </div>
 
               {error && (

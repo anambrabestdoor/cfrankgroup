@@ -74,7 +74,7 @@ export default function SearchOverlay() {
           ) : filteredProducts.length === 0 ? (
             <div className="py-8 text-center text-xs text-slate-500">
               <p className="font-semibold text-slate-700">No matching doors found for "{query}"</p>
-              <p className="mt-1 text-slate-400">Contact our Ogidi sales desk on WhatsApp for custom orders.</p>
+              <p className="mt-1 text-slate-400">Contact our sales desk on WhatsApp for custom orders.</p>
             </div>
           ) : (
             filteredProducts.map((product) => (

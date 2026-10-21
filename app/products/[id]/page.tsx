@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!product) {
     return {
       title: "Product Not Found",
-      description: "The requested door or architectural fitting is not listed in our depot inventory.",
+      description: "The requested door or architectural fitting is not listed in our warehouse inventory.",
     };
   }
 
