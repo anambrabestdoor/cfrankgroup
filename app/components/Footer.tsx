@@ -28,7 +28,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-sm">
-              Anambra Best Door (operated by CFrank Enterprise) supplies Turkish steel security doors, interior luxury HDF room doors, waterproof bathroom doors, and commercial sanitary fittings to builders, contractors, and homeowners nationwide.
+              Anambra Best Door (operated by CFrank Enterprise) supplies quality steel security doors, interior luxury HDF room doors, waterproof bathroom doors, and commercial sanitary fittings to builders, contractors, and homeowners nationwide.
             </p>
 
             {/* CAC Trust Badge */}

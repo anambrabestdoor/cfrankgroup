@@ -715,7 +715,7 @@ export default function StorefrontPage() {
               className="w-full sm:w-auto py-3 px-7 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-all active:scale-98 cursor-pointer"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Request a Quote</span>
+              <span>Chat us on Whatsapp</span>
             </a>
           </div>
         </div>

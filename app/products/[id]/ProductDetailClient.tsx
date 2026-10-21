@@ -14,6 +14,9 @@ import {
   Plus,
   Minus,
   ChevronRight,
+  ChevronLeft,
+  Layers,
+  VolumeX,
 } from "lucide-react";
 import { buildWhatsAppOrderUrl } from "@/lib/settings";
 
@@ -28,11 +31,26 @@ export default function ProductDetailClient({
 }: ProductDetailClientProps) {
   const { addToCart, settings } = useApp();
 
-  const [selectedImage, setSelectedImage] = useState<string>(product.image);
+  const galleryImages =
+    product.gallery && product.gallery.length > 0
+      ? product.gallery
+      : [product.image];
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const activeImage = galleryImages[currentImageIndex] || product.image;
+
   const [selectedSize, setSelectedSize] = useState<string>("Standard 3ft x 7ft");
   const [selectedOrientation, setSelectedOrientation] = useState<string>("Right Inward");
   const [quantity, setQuantity] = useState(1);
   const [addedNotice, setAddedNotice] = useState(false);
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+  };
 
   const handleDirectWhatsApp = () => {
     const url = buildWhatsAppOrderUrl({
@@ -56,6 +74,25 @@ export default function ProductDetailClient({
     setAddedNotice(true);
     setTimeout(() => setAddedNotice(false), 2500);
   };
+
+  // Dynamic specification fallbacks
+  const specMaterial =
+    product.specifications?.Material ||
+    (product.category === "security-doors"
+      ? "Armoured Steel"
+      : product.category === "bathroom-doors"
+      ? "Waterproof WPC"
+      : "HDF Wooden Board");
+
+  const specHardware =
+    product.specifications?.["Locking Mechanism"] ||
+    product.specifications?.Hardware ||
+    "Mortise Lockset Included";
+
+  const specAcoustic =
+    product.specifications?.Infill ||
+    product.specifications?.Core ||
+    "Sound Dampening Core";
 
   return (
     <div className="bg-[#F8FAFC] py-6 sm:py-10">
@@ -86,49 +123,81 @@ export default function ProductDetailClient({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start bg-white rounded-xl border border-slate-200/90 p-4 sm:p-8 shadow-xs">
           {/* Gallery / Image Column */}
           <div className="lg:col-span-6 space-y-3">
-            <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
+            <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 group">
               <Image
-                src={selectedImage || product.image}
-                alt={`${product.name} - ${product.categoryLabel} available at Anambra Best Door depot, Ogidi Onitsha`}
+                src={activeImage}
+                alt={`${product.name} - ${product.categoryLabel} available at Anambra Best Door`}
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-center"
+                className="object-cover object-center transition-all duration-300"
               />
               {product.badge && (
                 <div className="absolute top-3 right-3 px-3 py-1 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold rounded-lg uppercase tracking-wider">
                   {product.badge}
                 </div>
               )}
+
+              {/* Gallery Navigation Arrows (if multiple images available) */}
+              {galleryImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      prevImage();
+                    }}
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center transition-colors cursor-pointer"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      nextImage();
+                    }}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center transition-colors cursor-pointer"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </>
+              )}
             </div>
 
-            {/* Gallery Thumbnails */}
-            {product.gallery && product.gallery.length > 1 && (
-              <div className="flex space-x-2 overflow-x-auto pb-1">
-                {product.gallery.map((img, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setSelectedImage(img)}
-                    className={`relative w-16 h-20 rounded-xl overflow-hidden border-2 shrink-0 ${selectedImage === img
-                      ? "border-[#003296]"
-                      : "border-transparent opacity-70 hover:opacity-100"
+            {/* Gallery Thumbnails (only displayed when multiple photos exist) */}
+            {galleryImages.length > 1 && (
+              <div className="flex space-x-2 overflow-x-auto pb-1 pt-1">
+                {galleryImages.map((img, idx) => {
+                  const isSelected = currentImageIndex === idx;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setCurrentImageIndex(idx)}
+                      className={`relative w-16 h-20 rounded-xl overflow-hidden border-2 shrink-0 transition-all cursor-pointer ${
+                        isSelected
+                          ? "border-[#003296] ring-1 ring-[#003296]"
+                          : "border-slate-200 opacity-70 hover:opacity-100"
                       }`}
-                  >
-                    <Image
-                      src={img}
-                      alt={`${product.name} view ${idx + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </button>
-                ))}
+                    >
+                      <Image
+                        src={img}
+                        alt={`${product.name} thumbnail ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
 
           {/* Details & Ordering Column */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-5">
             <div>
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block mb-1">
                 {product.categoryLabel} • CFrank Enterprise
@@ -141,12 +210,57 @@ export default function ProductDetailClient({
               </p>
             </div>
 
-            {/* Price Box */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-wrap items-baseline justify-between gap-2">
-              <div>
-                {product.price && product.price > 0 ? (
-                  <>
-                    <span className="text-xs text-slate-500 font-medium block">Price:</span>
+            {/* Quick Visual Specification Badges */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-0.5">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center space-x-2">
+                <Layers className="w-4 h-4 text-[#003296] shrink-0" />
+                <div className="min-w-0">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Material</span>
+                  <span className="text-xs font-bold text-slate-800 truncate block">
+                    {specMaterial}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center space-x-2">
+                <Lock className="w-4 h-4 text-[#003296] shrink-0" />
+                <div className="min-w-0">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Hardware</span>
+                  <span className="text-xs font-bold text-slate-800 truncate block">
+                    {specHardware}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center space-x-2">
+                <VolumeX className="w-4 h-4 text-[#003296] shrink-0" />
+                <div className="min-w-0">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Acoustic</span>
+                  <span className="text-xs font-bold text-slate-800 truncate block">
+                    {specAcoustic}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center space-x-2">
+                <Truck className="w-4 h-4 text-[#003296] shrink-0" />
+                <div className="min-w-0">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Delivery</span>
+                  <span className="text-xs font-bold text-slate-800 truncate block">
+                    Nationwide Waybill
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Price & Quantity Box */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-3">
+              <div className="flex flex-wrap items-baseline justify-between gap-3">
+                <div>
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-0.5">
+                    Price:
+                  </span>
+                  {product.price && product.price > 0 ? (
                     <div className="flex items-baseline space-x-2">
                       <span className="text-2xl sm:text-3xl font-extrabold text-[#003296]">
                         ₦{product.price.toLocaleString()}
@@ -157,107 +271,120 @@ export default function ProductDetailClient({
                         </span>
                       )}
                     </div>
-                  </>
-                ) : null}
-              </div>
-              <div className="text-right">
-                <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
-                  <Check className="w-3 h-3" />
-                  <span>
-                    {product.stockStatus === "in_stock" ? "In Stock" : "Available to Order"}
+                  ) : (
+                    <div className="text-sm sm:text-base font-bold text-slate-800">
+                      Contact for Wholesale / Project Price
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-right flex items-center gap-2">
+                  <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
+                    <Check className="w-3 h-3" />
+                    <span>
+                      {product.stockStatus === "in_stock" ? "In Stock" : "Available to Order"}
+                    </span>
                   </span>
-                </span>
+                </div>
+              </div>
+
+              {/* Quantity Stepper integrated directly in Price Box */}
+              <div className="pt-3 border-t border-slate-200/70 flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-700">Order Quantity:</span>
+                <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="px-3 text-xs font-bold text-slate-900 min-w-8 text-center">{quantity}</span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                    aria-label="Increase quantity"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Dimension Selection */}
+            {/* Standardized Dimension Pill Buttons */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-900 block">
                 Select Door Dimension / Opening Size:
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {["Standard 3ft x 7ft", "4ft x 7ft (1.5 Leaf)", "4.5ft x 7ft (Double)", "Custom Opening"].map(
-                  (s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => setSelectedSize(s)}
-                      className={`py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all ${selectedSize === s
-                        ? "border-[#003296] bg-blue-50/60 text-[#003296] ring-1 ring-[#003296]"
-                        : "border-slate-200 text-slate-700 bg-white hover:border-slate-300"
+                  (s) => {
+                    const isSelected = selectedSize === s;
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => setSelectedSize(s)}
+                        className={`h-11 px-3 text-xs font-bold rounded-xl border flex items-center justify-center text-center transition-colors cursor-pointer ${
+                          isSelected
+                            ? "border-[#003296] bg-[#003296] text-white shadow-xs"
+                            : "border-slate-200 text-slate-700 bg-white hover:border-slate-300 hover:bg-slate-50"
                         }`}
-                    >
-                      {s}
-                    </button>
-                  )
+                      >
+                        {s}
+                      </button>
+                    );
+                  }
                 )}
               </div>
             </div>
 
-            {/* Orientation Selection */}
+            {/* Standardized Opening Orientation Pill Buttons */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-900 block">
                 Opening Orientation:
               </label>
               <div className="grid grid-cols-2 gap-2">
-                {["Right Inward", "Left Inward", "Right Outward", "Left Outward"].map((o) => (
-                  <button
-                    key={o}
-                    type="button"
-                    onClick={() => setSelectedOrientation(o)}
-                    className={`py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all ${selectedOrientation === o
-                      ? "border-[#003296] bg-blue-50/60 text-[#003296] ring-1 ring-[#003296]"
-                      : "border-slate-200 text-slate-700 bg-white hover:border-slate-300"
+                {["Right Inward", "Left Inward", "Right Outward", "Left Outward"].map((o) => {
+                  const isSelected = selectedOrientation === o;
+                  return (
+                    <button
+                      key={o}
+                      type="button"
+                      onClick={() => setSelectedOrientation(o)}
+                      className={`h-11 px-3 text-xs font-bold rounded-xl border flex items-center justify-center text-center transition-colors cursor-pointer ${
+                        isSelected
+                          ? "border-[#003296] bg-[#003296] text-white shadow-xs"
+                          : "border-slate-200 text-slate-700 bg-white hover:border-slate-300 hover:bg-slate-50"
                       }`}
-                  >
-                    {o}
-                  </button>
-                ))}
+                    >
+                      {o}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Quantity Selector */}
-            <div className="flex items-center space-x-3 pt-1">
-              <span className="text-xs font-bold text-slate-700">Quantity:</span>
-              <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
-                <button
-                  type="button"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-200"
-                  aria-label="Decrease quantity"
-                >
-                  <Minus className="w-3.5 h-3.5" />
-                </button>
-                <span className="px-4 text-xs font-bold text-slate-900">{quantity}</span>
-                <button
-                  type="button"
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-200"
-                  aria-label="Increase quantity"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Main Action Buttons */}
-            <div className="space-y-2.5 pt-2">
+            {/* Primary Action Buttons (Directly below option selectors) */}
+            <div className="space-y-2.5 pt-1">
               <button
                 type="button"
                 onClick={handleDirectWhatsApp}
-                className="w-full py-3.5 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95 cursor-pointer"
+                className="w-full py-3.5 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-98 cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>Chat on WhatsApp</span>
+                <span>Order via WhatsApp</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="w-full py-3.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold rounded-xl flex items-center justify-center space-x-2 transition-colors cursor-pointer"
+                className="w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold rounded-xl flex items-center justify-center space-x-2 transition-colors cursor-pointer"
               >
                 <ShoppingCart className="w-3.5 h-3.5 text-slate-700" />
-                <span>{addedNotice ? "Added to Cart!" : "Add to Cart"}</span>
+                <span>{addedNotice ? "Added to Quote / Cart!" : "Add to Quote / Cart"}</span>
               </button>
             </div>
           </div>

@@ -90,7 +90,7 @@ export default function Hero() {
 
             {/* 2. Trade Copy */}
             <p className="text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed font-normal max-w-xl">
-              Anambra Best Door is a prominent door dealer and manufacturer in Anambra State, Nigeria, powered by C Frank Enterprise. From HDF interior doors to security doors and bathroom doors, Anambra Best Door helps homeowners, builders and contractors find the right fit for their projects.
+              Anambra Best Door is a prominent door dealer and manufacturer in Anambra State, Nigeria, powered by C Frank Enterprise. From HDF interior doors to security doors and bathroom doors, we helps homeowners, builders and contractors find the right fit for their projects.
             </p>
 
 
@@ -170,9 +170,8 @@ export default function Hero() {
                       key={s.id}
                       type="button"
                       onClick={() => setCurrentSlide(idx)}
-                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                        currentSlide === idx ? "w-4 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
-                      }`}
+                      className={`h-1.5 rounded-full transition-all cursor-pointer ${currentSlide === idx ? "w-4 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
+                        }`}
                       aria-label={`Go to slide ${idx + 1}`}
                     />
                   ))}
