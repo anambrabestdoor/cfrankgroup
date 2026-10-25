@@ -331,9 +331,9 @@ async function callGemini(apiKey: string, model: string, userMessage: string, hi
     },
   ];
 
-  // 4-second timeout so Frankie never hangs or causes serverless timeouts
+  // 9-second timeout so Frankie has ample time to complete generation without stalling
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 4000);
+  const timeoutId = setTimeout(() => controller.abort(), 9000);
 
   try {
     const res = await fetch(url, {
@@ -353,7 +353,8 @@ async function callGemini(apiKey: string, model: string, userMessage: string, hi
     });
 
     if (!res.ok) {
-      throw new Error(`Gemini status ${res.status}`);
+      const errText = await res.text().catch(() => "");
+      throw new Error(`Gemini status ${res.status}: ${errText.slice(0, 200)}`);
     }
 
     const data = await res.json();
@@ -374,13 +375,13 @@ export async function POST(req: NextRequest) {
     }
 
     const geminiKey = process.env.GEMINI_API_KEY;
-    const primaryModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
-    const fallbackModels = (process.env.GEMINI_FALLBACK_MODELS || "gemini-2.0-flash,gemini-1.5-pro")
+    const primaryModel = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+    const fallbackModels = (process.env.GEMINI_FALLBACK_MODELS || "gemini-flash-lite-latest,gemini-3.8-flash,gemini-flash-latest")
       .split(",")
       .map((m) => m.trim())
       .filter(Boolean);
 
-    const modelsToTry = [primaryModel, ...fallbackModels];
+    const modelsToTry = Array.from(new Set([primaryModel, ...fallbackModels]));
 
     if (geminiKey && geminiKey.trim() !== "") {
       for (const model of modelsToTry) {
