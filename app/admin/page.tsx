@@ -70,6 +70,7 @@ export default function AdminPage() {
   // Form Fields for Products
   const [formName, setFormName] = useState("");
   const [formSlug, setFormSlug] = useState("");
+  const [isSlugCustomized, setIsSlugCustomized] = useState(false);
   const [formCategory, setFormCategory] = useState<DoorProduct["category"]>("security-doors");
   const [formGroup, setFormGroup] = useState<string>("doors");
   const [formSubcategory, setFormSubcategory] = useState<string>("Foreign HDF Luxury Doors");
@@ -232,6 +233,7 @@ export default function AdminPage() {
     setEditingId(null);
     setFormName("");
     setFormSlug("");
+    setIsSlugCustomized(false);
     setFormCategory("hdf-doors");
     setFormGroup("doors");
     setFormSubcategory("Foreign HDF Luxury Doors");
@@ -265,6 +267,7 @@ export default function AdminPage() {
     setEditingId(prod.id);
     setFormName(prod.name);
     setFormSlug(prod.slug);
+    setIsSlugCustomized(true);
     setFormCategory(prod.category);
     setFormGroup(prod.group || (prod.category === "sanitary-fittings" ? "sanitary" : "doors"));
     setFormSubcategory(prod.subcategory || "");
@@ -290,15 +293,19 @@ export default function AdminPage() {
     setSeoDescription(prod.seoDescription || "");
   };
 
-  // Auto-generate slug and default SEO from title if empty
-  const handleTitleChange = (val: string) => {
-    setFormName(val);
-    const generatedSlug = val
+  // Helper to create clean URL slug from text
+  const slugify = (text: string) =>
+    text
       .toLowerCase()
+      .trim()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)+/g, "");
-    if (!editingId || !formSlug) {
-      setFormSlug(generatedSlug);
+
+  // Auto-generate slug and default SEO from title unless manually customized
+  const handleTitleChange = (val: string) => {
+    setFormName(val);
+    if (!isSlugCustomized) {
+      setFormSlug(slugify(val));
     }
     if (!seoTitle) {
       setSeoTitle(`${val} | Anambra Best Door`);
@@ -318,11 +325,12 @@ export default function AdminPage() {
 
     const catObj = CATEGORIES.find((c) => c.id === formCategory);
     const categoryLabel = catObj ? catObj.name : "Doors";
+    const cleanSlug = slugify(formSlug) || slugify(formName) || `door-${Date.now()}`;
 
     const newProd: DoorProduct = {
       id: editingId || `door-${Date.now()}`,
-      slug: formSlug || formName.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      name: formName,
+      slug: cleanSlug,
+      name: formName.trim(),
       group: formGroup,
       subcategory: formSubcategory,
       category: formCategory,
@@ -1133,15 +1141,46 @@ export default function AdminPage() {
                   </div>
 
                   {/* Permalink Editor */}
-                  <div className="flex items-center space-x-2 text-xs text-slate-500">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 pt-1">
                     <span className="font-semibold text-slate-400">Permalink:</span>
-                    <span className="text-slate-400 font-mono">/products/</span>
-                    <input
-                      type="text"
-                      value={formSlug}
-                      onChange={(e) => setFormSlug(e.target.value)}
-                      className="px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-xs font-mono text-slate-800"
-                    />
+                    <div className="flex items-center">
+                      <span className="text-slate-400 font-mono">/products/</span>
+                      <input
+                        type="text"
+                        value={formSlug}
+                        onChange={(e) => {
+                          const rawVal = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+                          setFormSlug(rawVal);
+                          if (!rawVal.trim()) {
+                            setIsSlugCustomized(false);
+                            setFormSlug(slugify(formName));
+                          } else {
+                            setIsSlugCustomized(true);
+                          }
+                        }}
+                        placeholder="auto-generated-from-title"
+                        className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-mono text-slate-800 focus:bg-white focus:outline-none focus:border-[#003296]"
+                      />
+                    </div>
+
+                    {isSlugCustomized ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsSlugCustomized(false);
+                          setFormSlug(slugify(formName));
+                        }}
+                        className="text-[11px] text-[#003296] hover:underline flex items-center space-x-1 font-semibold"
+                        title="Reset permalink to auto-generate from title"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        <span>Auto-derive from title</span>
+                      </button>
+                    ) : (
+                      <span className="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-medium border border-emerald-200/60">
+                        Auto-syncing with title
+                      </span>
+                    )}
                   </div>
                 </div>
 
