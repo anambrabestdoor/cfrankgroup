@@ -12,13 +12,17 @@ function ShopContent() {
   const searchParams = useSearchParams();
   const urlCategory = searchParams.get("category");
   const urlSub = searchParams.get("sub");
+  const urlQuery = searchParams.get("q") || searchParams.get("search");
 
   const [selectedGroup, setSelectedGroup] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>(urlQuery || "");
   const [sortBy, setSortBy] = useState<string>("featured");
 
   useEffect(() => {
+    if (urlQuery) {
+      setSearchQuery(urlQuery);
+    }
     if (urlCategory) {
       if (urlCategory === "doors") {
         setSelectedGroup("doors");
@@ -31,7 +35,7 @@ function ShopContent() {
         setSelectedCategory(urlCategory);
       }
     }
-  }, [urlCategory]);
+  }, [urlCategory, urlQuery]);
 
   const filteredProducts = useMemo(() => {
     const activeList = products && products.length > 0 ? products : DOOR_PRODUCTS;
