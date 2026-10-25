@@ -86,6 +86,10 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="iBRJRBa4MEc-8HGKT_j8rtYi8twd964563fAsFqdQs8" />
+        <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png?v=2" />
+        <link rel="apple-touch-icon" href="/apple-icon.png?v=2" />
         <JsonLd />
       </head>
       <body className="antialiased text-slate-900 bg-white font-sans min-h-screen flex flex-col justify-between" suppressHydrationWarning>
