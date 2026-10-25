@@ -18,9 +18,9 @@ export interface DevAccount {
 
 export const DEV_ACCOUNTS: DevAccount[] = [
   {
-    email: process.env.DEV_ADMIN_EMAIL || "anambrabestdoor@gmail.com",
-    password: process.env.DEV_ADMIN_PASSWORD || "admin123",
-    name: "Chidera Frank Okonkwo",
+    email: process.env.DEV_ADMIN_EMAIL || process.env.ADMIN_EMAIL || "",
+    password: process.env.DEV_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || "",
+    name: "Administrator",
     role: "admin",
     joinDate: "2026-10-16",
     newsletterSubscribed: true,

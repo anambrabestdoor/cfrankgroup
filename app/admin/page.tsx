@@ -48,6 +48,8 @@ export default function AdminPage() {
 
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
+  const [isSubmittingLogin, setIsSubmittingLogin] = useState<boolean>(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -128,10 +130,25 @@ export default function AdminPage() {
   const [siteSettingsForm, setSiteSettingsForm] = useState<SiteSettings>(settings);
 
   useEffect(() => {
-    const authStored = localStorage.getItem("abd_admin_auth");
-    if (authStored === "true") {
-      setIsAuthenticated(true);
-    }
+    const verifySession = async () => {
+      try {
+        const res = await fetch("/api/admin/auth/check");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated) {
+            setIsAuthenticated(true);
+            return;
+          }
+        }
+        setIsAuthenticated(false);
+      } catch {
+        setIsAuthenticated(false);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    verifySession();
   }, []);
 
   useEffect(() => {
@@ -143,11 +160,11 @@ export default function AdminPage() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
 
-    const email = loginEmail.trim().toLowerCase();
+    const email = loginEmail.trim();
     if (!email) {
       setLoginError("Please enter your admin email address.");
       return;
@@ -157,28 +174,40 @@ export default function AdminPage() {
       return;
     }
 
-    // Official CAC email anambrabestdoor@gmail.com or admin credentials
-    if (
-      email === "anambrabestdoor@gmail.com" ||
-      email === "admin@anambrabestdoor.com" ||
-      email === "admin" ||
-      email.includes("@")
-    ) {
-      if (loginPassword.length >= 4) {
-        setIsAuthenticated(true);
-        localStorage.setItem("abd_admin_auth", "true");
-        showToast("Signed in as Administrator");
-        return;
-      } else {
-        setLoginError("Password must be at least 4 characters.");
+    setIsSubmittingLogin(true);
+    try {
+      const res = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password: loginPassword,
+          rememberMe: true,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setLoginError(data.error || "Invalid credentials. Please verify your email and password.");
         return;
       }
-    }
 
-    setLoginError("Invalid credentials. Please verify your email and password.");
+      setIsAuthenticated(true);
+      setLoginPassword("");
+      showToast("Signed in securely as Administrator");
+    } catch {
+      setLoginError("Network connection error. Please try again.");
+    } finally {
+      setIsSubmittingLogin(false);
+    }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/auth/logout", { method: "POST" });
+    } catch {
+      // Ignore network errors on logout
+    }
     setIsAuthenticated(false);
     localStorage.removeItem("abd_admin_auth");
     showToast("Signed out successfully.");
@@ -740,6 +769,20 @@ export default function AdminPage() {
   // =========================================================================
   // VIEW: UNTOUCHED ADMIN LOGIN (STRICTLY EMAIL, PASSWORD, FORGOTTEN PASSWORD)
   // =========================================================================
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
+        <div className="w-14 h-14 bg-[#003296] text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-4 shadow-lg border border-blue-400/20 animate-pulse">
+          ABD
+        </div>
+        <div className="flex items-center space-x-2.5 text-xs font-semibold text-slate-300">
+          <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+          <span>Verifying administrator session...</span>
+        </div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -779,7 +822,7 @@ export default function AdminPage() {
                     required
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="admin@example.com"
+                    placeholder="name@domain.com"
                     className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-[#003296]"
                   />
                 </div>
@@ -794,7 +837,7 @@ export default function AdminPage() {
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
-                    className="text-xs font-semibold text-[#003296] hover:underline"
+                    className="text-xs font-semibold text-[#003296] hover:underline cursor-pointer"
                   >
                     Forgotten Password?
                   </button>
@@ -814,7 +857,7 @@ export default function AdminPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -824,10 +867,20 @@ export default function AdminPage() {
               {/* Sign In Button */}
               <button
                 type="submit"
-                className="w-full py-3 px-4 bg-[#003296] hover:bg-[#092b7c] text-white text-sm font-bold rounded-xl shadow-md transition-transform active:scale-95 flex items-center justify-center space-x-2"
+                disabled={isSubmittingLogin}
+                className="w-full py-3 px-4 bg-[#003296] hover:bg-[#092b7c] disabled:bg-slate-400 text-white text-sm font-bold rounded-xl shadow-md transition-transform active:scale-95 flex items-center justify-center space-x-2 cursor-pointer"
               >
-                <KeyRound className="w-4 h-4" />
-                <span>Sign In to Admin Portal</span>
+                {isSubmittingLogin ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Verifying Credentials...</span>
+                  </>
+                ) : (
+                  <>
+                    <KeyRound className="w-4 h-4" />
+                    <span>Sign In to Admin Portal</span>
+                  </>
+                )}
               </button>
             </form>
 
@@ -881,7 +934,7 @@ export default function AdminPage() {
                       required
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
-                      placeholder="admin@example.com"
+                      placeholder="name@domain.com"
                       className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-[#003296]"
                     />
                   </div>
