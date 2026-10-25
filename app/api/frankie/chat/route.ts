@@ -66,15 +66,26 @@ You are not just a passive information bot; you act as an experienced, honest, a
 3. Ask Consultative Closing Questions: Ask about their project (e.g., "How many room doors do you need for your building?", "What are your wall opening measurements?", "Would you like our team to send photos or a video clip of the doors on WhatsApp?").
 4. Warehouse Logistics: Highlight that nationwide waybill delivery is available with video sign-off before loading, or in-person inspection.
 
-CRITICAL SCOPE RULE:
-You are STRICTLY built to help customers with Anambra Best Door products, sizing, warehouse visits, architectural door/sanitary advice, and building orders.
-If a customer asks ANY question outside this scope (e.g. coding, math, general trivia, politics, recipes, academic homework, or unrelated products), you MUST politely and warmly refuse:
-"I am specifically built to help you with Anambra Best Door products, sizing, and building fittings. I am not designed for questions outside our door and building material services, but I'd be glad to help you find the right doors or sanitary fittings for your project!"
+CRITICAL DOMAIN & SCOPE RULE:
+You are an experienced Nigerian building materials and door trade consultant & sales rep for Anambra Best Door (CFrank Enterprise).
+You ONLY assist with:
+1. Doors: Turkish heavy-gauge security doors, bulletproof doors, foreign luxury HDF room doors, Watson doors, waterproof composite bathroom doors, cast aluminium doors, biometric smart locks, jambs, architraves, hinges, and handles.
+2. Sanitary Wares: dual-flush water closets (Executive Gold, England suites, Pro series), dining wash hand basins, luxury vanity units, shower towers, and brass mixer taps.
+3. Roofing & Ceiling: stone-coated roof tiles, roofing sheets, roof framing specs, and woodwork.
+4. Building & Construction: paints, screeding, structural dimensions, wall opening sizes, contractor bills of quantities, site logistics, and architectural fittings.
+5. Store Logistics: warehouse inspection visits in Ogidi, Onitsha, nationwide waybill haulage, pricing, and orders.
+6. If asked who created you, your developer/creator is Ashiekaa Elijah by name. He is a pro software engineer and to see more about him users can check https://kator.vercel.app
+STRICT REJECTION OF NON-BUILDING INQUIRIES (NATURAL & HUMAN, NEVER ROBOTIC):
+If a user asks ANY question outside building, construction, doors, sanitary wares, roofing, or site fittings (e.g. computer coding, math, essays, politics, cryptocurrency, football/sports, recipes, general trivia, movies, or general knowledge):
+- NEVER use robotic phrases like "I am an AI", "I am a language model", "I am programmed to", or "I am specifically built to".
+- Politely, warmly, and firmly decline like a real Nigerian trade shop manager who knows his specialty:
+  "Ah, that one is outside my trade! Here at Anambra Best Door, I only handle building construction, quality doors, roofing, and sanitary fittings for your site. Tell me about your building project or what fittings you need, and let me get you the best price and specs!"
+- Always redirect back to doors, sanitary wares, or roofing supplies.
 
 COMMUNICATION STYLE:
 - Professional, knowledgeable, Nigerian trade-savvy, and welcoming.
 - No corporate jargon, no generic AI slogans like "elevate your space" or "curated for you".
-- No em dashes (—). Use regular hyphens (-) or commas.
+- No em dashes (-). Use regular hyphens (-) or commas.
 - Keep answers structured, clear, and actionable.
 `.trim();
 }
@@ -87,17 +98,18 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   const waUrl = `https://wa.me/${DEFAULT_SITE_SETTINGS.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like to inquire about door orders and current stock.")}`;
   const callUrl = `tel:${DEFAULT_SITE_SETTINGS.phone}`;
 
-  // 1. Off-topic detection
+  // 1. Off-topic detection (strictly building, construction, doors, sanitary, roofing only)
   const offTopicKeywords = [
     "who is president", "president of", "capital of", "write code", "python", "javascript",
     "react", "solve this", "math", "recipe", "cook", "how to bake", "tell me a joke",
-    "write an essay", "poem", "football", "premier league", "crypto", "bitcoin",
-    "weather in", "translate", "homework", "exam"
+    "write an essay", "poem", "football", "premier league", "champions league", "crypto",
+    "bitcoin", "weather in", "translate", "homework", "exam", "assignment", "movie",
+    "song", "lyrics", "sing me"
   ];
   if (offTopicKeywords.some((kw) => q.includes(kw))) {
     return {
       message:
-        "I am specifically built to help you with Anambra Best Door products, sizing, warehouse visits, and building fittings. I am not designed for questions outside our door and building material services, but I'd be glad to help you find the right doors or sanitary fittings for your project!",
+        "Ah, that one is outside my trade! At Anambra Best Door, I strictly handle building construction, quality doors, roofing materials, and sanitary fittings for your site. Tell me about your building project or what doors and fittings you need, and let's get you sorted!",
       suggested_actions: [
         { label: "Browse HDF Room Doors", action_type: "prompt", payload: "What HDF room doors do you have in stock?" },
         { label: "Turkish Security Doors", action_type: "prompt", payload: "Tell me about Turkish security door gauges and sizes." },

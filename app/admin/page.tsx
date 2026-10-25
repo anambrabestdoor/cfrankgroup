@@ -127,14 +127,6 @@ export default function AdminPage() {
   // Settings Form State
   const [siteSettingsForm, setSiteSettingsForm] = useState<SiteSettings>(settings);
 
-  // Cloud Sync Notification Banner
-  const [cloudSyncBanner, setCloudSyncBanner] = useState<{
-    visible: boolean;
-    type: "success" | "warning" | "info";
-    title: string;
-    message: string;
-  } | null>(null);
-
   useEffect(() => {
     const authStored = localStorage.getItem("abd_admin_auth");
     if (authStored === "true") {
@@ -145,32 +137,6 @@ export default function AdminPage() {
   useEffect(() => {
     setSiteSettingsForm(settings);
   }, [settings]);
-
-  // Automated background sync when admin is signed in
-  useEffect(() => {
-    if (!isAuthenticated) return;
-
-    const checkAndAutoSync = async () => {
-      try {
-        const cloudRes = await fetch("/api/admin/cloudinary-sync");
-        const cloudData = await cloudRes.json();
-
-        if (cloudData.configured) {
-          // Cloudinary keys active
-          setCloudSyncBanner({
-            visible: true,
-            type: "success",
-            title: "Cloudinary Cloud Active",
-            message: `All 36 catalog photos are synchronized and served from Cloudinary CDN ('${cloudData.cloudName}').`,
-          });
-        }
-      } catch (err) {
-        console.warn("Auto sync check error:", err);
-      }
-    };
-
-    checkAndAutoSync();
-  }, [isAuthenticated]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -1055,46 +1021,6 @@ export default function AdminPage() {
       )}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Automated Cloud & Database Sync Notice Banner */}
-        {cloudSyncBanner && cloudSyncBanner.visible && (
-          <div
-            className={`mb-6 p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in ${
-              cloudSyncBanner.type === "success"
-                ? "bg-emerald-50/90 border-emerald-200 text-emerald-900"
-                : cloudSyncBanner.type === "warning"
-                ? "bg-amber-50/90 border-amber-200 text-amber-900"
-                : "bg-blue-50/90 border-blue-200 text-blue-900"
-            }`}
-          >
-            <div className="flex items-start sm:items-center space-x-3">
-              <Database className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0 text-[#003296]" />
-              <div>
-                <p className="text-xs font-bold">{cloudSyncBanner.title}</p>
-                <p className="text-[11px] opacity-80 mt-0.5">{cloudSyncBanner.message}</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2 shrink-0">
-              <a
-                href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                  `Anambra Best Door Admin Notice:\n${cloudSyncBanner.title}\n${cloudSyncBanner.message}`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-2.5 py-1 text-[11px] font-bold bg-white/95 hover:bg-white text-slate-800 border border-slate-200 rounded-lg shadow-2xs flex items-center space-x-1"
-              >
-                <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
-                <span>WhatsApp Log</span>
-              </a>
-              <button
-                type="button"
-                onClick={() => setCloudSyncBanner({ ...cloudSyncBanner, visible: false })}
-                className="p-1 hover:bg-black/5 rounded-md cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5 text-slate-500" />
-              </button>
-            </div>
-          </div>
-        )}
         {/* ========================================================================= */}
         {/* VIEW 1: WORDPRESS-STYLE PRODUCT CREATION & EDITING SCREEN                */}
         {/* ========================================================================= */}
@@ -2467,102 +2393,6 @@ export default function AdminPage() {
                   />
                 </div>
 
-                {/* Cloudinary & Supabase Sync Action Cards */}
-                <div className="sm:col-span-2 pt-6 border-t border-slate-200 space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <Database className="w-5 h-5 text-[#003296]" />
-                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-                      Cloud Storage & Database Sync
-                    </h3>
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    Push your product catalog and photos to Cloudinary CDN and Supabase database.
-                  </p>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                    {/* Cloudinary Sync Card */}
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                      <div className="flex items-center space-x-2">
-                        <UploadCloud className="w-4 h-4 text-[#003296]" />
-                        <h4 className="text-xs font-bold text-slate-800">Cloudinary Photo Push</h4>
-                      </div>
-                      <p className="text-[11px] text-slate-600">
-                        Uploads all local product photos to Cloudinary CDN so images load quickly for buyers.
-                      </p>
-
-                      <button
-                        type="button"
-                        onClick={handleSyncCloudinary}
-                        disabled={cloudinarySyncStatus.loading}
-                        className="w-full py-2.5 px-3 bg-[#003296] hover:bg-[#092b7c] disabled:bg-slate-300 text-white text-xs font-bold rounded-lg flex items-center justify-center space-x-2 transition cursor-pointer"
-                      >
-                        {cloudinarySyncStatus.loading ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            <span>Uploading Photos...</span>
-                          </>
-                        ) : (
-                          <>
-                            <RefreshCw className="w-4 h-4" />
-                            <span>Test & Push All Photos to Cloudinary</span>
-                          </>
-                        )}
-                      </button>
-
-                      {cloudinarySyncStatus.message && (
-                        <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-[11px]">
-                          {cloudinarySyncStatus.message}
-                        </div>
-                      )}
-                      {cloudinarySyncStatus.error && (
-                        <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-[11px]">
-                          {cloudinarySyncStatus.error}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Supabase Database Sync Card */}
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                      <div className="flex items-center space-x-2">
-                        <Database className="w-4 h-4 text-[#003296]" />
-                        <h4 className="text-xs font-bold text-slate-800">Supabase Database Push</h4>
-                      </div>
-                      <p className="text-[11px] text-slate-600">
-                        Pushes all items, categories, and site settings directly into your Supabase database.
-                      </p>
-
-                      <button
-                        type="button"
-                        onClick={handleSyncSupabase}
-                        disabled={supabaseSyncStatus.loading}
-                        className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white text-xs font-bold rounded-lg flex items-center justify-center space-x-2 transition cursor-pointer"
-                      >
-                        {supabaseSyncStatus.loading ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            <span>Uploading Data...</span>
-                          </>
-                        ) : (
-                          <>
-                            <RefreshCw className="w-4 h-4" />
-                            <span>Test & Push Products to Supabase</span>
-                          </>
-                        )}
-                      </button>
-
-                      {supabaseSyncStatus.message && (
-                        <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-[11px]">
-                          {supabaseSyncStatus.message}
-                        </div>
-                      )}
-                      {supabaseSyncStatus.error && (
-                        <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-[11px]">
-                          {supabaseSyncStatus.error}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex justify-end">
