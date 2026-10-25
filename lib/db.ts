@@ -89,6 +89,7 @@ export interface Settings {
   parentCompany?: string;
   proprietor?: string;
   address?: string;
+  secondAddress?: string;
   marketLocation?: string;
   phone?: string;
   phoneDisplay?: string;

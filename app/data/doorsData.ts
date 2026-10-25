@@ -2,9 +2,21 @@ export interface DoorProduct {
   id: string;
   slug: string;
   name: string;
-  group?: "doors" | "sanitary";
+  group?: "doors" | "sanitary" | "building-materials" | "properties" | "careers" | string;
   subcategory?: string;
-  category: "security-doors" | "interior-doors" | "bathroom-doors" | "hdf-doors" | "luxury-doors" | "sanitary-fittings";
+  category:
+    | "security-doors"
+    | "interior-doors"
+    | "bathroom-doors"
+    | "hdf-doors"
+    | "luxury-doors"
+    | "sanitary-fittings"
+    | "paint"
+    | "roof-tiles"
+    | "bathrooms"
+    | "real-estate"
+    | "careers"
+    | string;
   categoryLabel: string;
   price?: number;
   originalPrice?: number;
@@ -12,6 +24,8 @@ export interface DoorProduct {
   priceMode?: "show_price" | "price_on_request" | "blank";
   image: string;
   gallery: string[];
+  video?: string;
+  videos?: string[];
   badge?: string;
   stockStatus: "in_stock" | "low_stock" | "out_of_stock" | "made_to_order";
   stock: number;
@@ -35,6 +49,11 @@ export const CATEGORIES = [
   { id: "sanitary-fittings", name: "Sanitary & Bathroom Fittings" },
   { id: "bathroom-doors", name: "Waterproof Bathroom Doors" },
   { id: "luxury-doors", name: "Luxury & Cast Doors" },
+  { id: "paint", name: "Paints & Wall Finishes" },
+  { id: "roof-tiles", name: "Roof Tiles & Roofing" },
+  { id: "bathrooms", name: "Bathrooms & Sanitary Wares" },
+  { id: "real-estate", name: "Real Estate & Properties" },
+  { id: "careers", name: "Careers & Job Openings" },
 ];
 
 export const CATEGORY_GROUPS = [
@@ -58,6 +77,23 @@ export const CATEGORY_GROUPS = [
       { id: "showers", name: "Showers & Enclosures", filterCategory: "sanitary-fittings" },
       { id: "sinks-taps", name: "Kitchen Sinks & Brassware", filterCategory: "sanitary-fittings" },
     ]
+  },
+  {
+    id: "building-materials",
+    title: "Building & Finishing Materials",
+    subcategories: [
+      { id: "paints", name: "Paints & Wall Coatings", filterCategory: "paint" },
+      { id: "roofing", name: "Stone-Coated Roof Tiles", filterCategory: "roof-tiles" },
+      { id: "bathrooms-suite", name: "Complete Bathroom Suites", filterCategory: "bathrooms" },
+    ]
+  },
+  {
+    id: "properties",
+    title: "Real Estate & Services",
+    subcategories: [
+      { id: "real-estate-listings", name: "Properties & Lands", filterCategory: "real-estate" },
+      { id: "job-openings", name: "Careers & Open Positions", filterCategory: "careers" },
+    ]
   }
 ];
 
@@ -76,7 +112,12 @@ export const DOOR_PRODUCTS: DoorProduct[] = [
     priceMode: "blank",
     priceOnRequest: false,
     image: "/products/interior-luxury-foreign-hdf-door.jpeg",
-    gallery: ["/products/interior-luxury-foreign-hdf-door.jpeg"],
+    gallery: [
+      "/products/interior-luxury-foreign-hdf-door.jpeg",
+      "/products/hdf-wooden-door-with-complete-fittings.jpeg",
+      "/products/hdf-construction-on-demand.jpeg"
+    ],
+    video: "https://res.cloudinary.com/xsmuyjy5/video/upload/v1792953541/anambra_best_door/videos/hero_warehouse_offloading.mp4",
     badge: "Best Seller",
     stockStatus: "in_stock",
     stock: 25,
@@ -239,7 +280,12 @@ export const DOOR_PRODUCTS: DoorProduct[] = [
     priceMode: "blank",
     priceOnRequest: false,
     image: "/products/bullet-proof-door.jpeg",
-    gallery: ["/products/bullet-proof-door.jpeg"],
+    gallery: [
+      "/products/bullet-proof-door.jpeg",
+      "/products/israeli-door.jpeg",
+      "/products/italian-copper.jpeg"
+    ],
+    video: "https://res.cloudinary.com/xsmuyjy5/video/upload/v1792953541/anambra_best_door/videos/hero_warehouse_offloading.mp4",
     badge: "Maximum Security",
     stockStatus: "in_stock",
     stock: 12,

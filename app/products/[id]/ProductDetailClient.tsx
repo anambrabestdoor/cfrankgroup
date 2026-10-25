@@ -17,6 +17,8 @@ import {
   ChevronLeft,
   Layers,
   VolumeX,
+  Play,
+  Package,
 } from "lucide-react";
 import { buildWhatsAppOrderUrl } from "@/lib/settings";
 
@@ -25,31 +27,82 @@ interface ProductDetailClientProps {
   relatedProducts: DoorProduct[];
 }
 
+interface MediaItem {
+  type: "image" | "video";
+  url: string;
+}
+
+const isVideoUrl = (url: string) => {
+  if (!url) return false;
+  return (
+    /\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(url) ||
+    url.includes("/video/upload/") ||
+    url.includes("resource_type=video")
+  );
+};
+
 export default function ProductDetailClient({
   product,
   relatedProducts,
 }: ProductDetailClientProps) {
   const { addToCart, settings } = useApp();
 
-  const galleryImages =
-    product.gallery && product.gallery.length > 0
-      ? product.gallery
-      : [product.image];
+  // Combine product image, gallery array, and video(s)
+  const rawMediaList: MediaItem[] = [];
+  if (product.image) {
+    rawMediaList.push({
+      type: isVideoUrl(product.image) ? "video" : "image",
+      url: product.image,
+    });
+  }
+  if (product.gallery && Array.isArray(product.gallery)) {
+    product.gallery.forEach((url) => {
+      if (url && !rawMediaList.some((m) => m.url === url)) {
+        rawMediaList.push({
+          type: isVideoUrl(url) ? "video" : "image",
+          url,
+        });
+      }
+    });
+  }
+  if (product.video && !rawMediaList.some((m) => m.url === product.video)) {
+    rawMediaList.push({
+      type: "video",
+      url: product.video,
+    });
+  }
+  if (product.videos && Array.isArray(product.videos)) {
+    product.videos.forEach((vUrl) => {
+      if (vUrl && !rawMediaList.some((m) => m.url === vUrl)) {
+        rawMediaList.push({
+          type: "video",
+          url: vUrl,
+        });
+      }
+    });
+  }
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const activeImage = galleryImages[currentImageIndex] || product.image;
+  const mediaList: MediaItem[] =
+    rawMediaList.length > 0
+      ? rawMediaList
+      : product.image
+      ? [{ type: "image", url: product.image }]
+      : [];
+
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const activeMedia: MediaItem | undefined = mediaList[currentMediaIndex] || mediaList[0];
 
   const [selectedSize, setSelectedSize] = useState<string>("Standard 3ft x 7ft");
   const [selectedOrientation, setSelectedOrientation] = useState<string>("Right Inward");
   const [quantity, setQuantity] = useState(1);
   const [addedNotice, setAddedNotice] = useState(false);
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length);
+  const nextMedia = () => {
+    setCurrentMediaIndex((prev) => (prev + 1) % mediaList.length);
   };
 
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+  const prevMedia = () => {
+    setCurrentMediaIndex((prev) => (prev - 1 + mediaList.length) % mediaList.length);
   };
 
   const handleDirectWhatsApp = () => {
@@ -121,34 +174,56 @@ export default function ProductDetailClient({
 
         {/* Product Details Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start bg-white rounded-xl border border-slate-200/90 p-4 sm:p-8 shadow-xs">
-          {/* Gallery / Image Column */}
+          {/* Gallery / Image / Video Column */}
           <div className="lg:col-span-6 space-y-3">
-            <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 group">
-              <Image
-                src={activeImage}
-                alt={`${product.name} - ${product.categoryLabel} available at Anambra Best Door`}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-center transition-all duration-300"
-              />
+            <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 group flex items-center justify-center">
+              {activeMedia ? (
+                activeMedia.type === "video" ? (
+                  <div className="relative w-full h-full bg-black flex items-center justify-center">
+                    <video
+                      key={activeMedia.url}
+                      src={activeMedia.url}
+                      controls
+                      autoPlay
+                      playsInline
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                ) : (
+                  <Image
+                    src={activeMedia.url}
+                    alt={`${product.name} - ${product.categoryLabel} available at Anambra Best Door`}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover object-center transition-all duration-300"
+                  />
+                )
+              ) : (
+                <div className="flex flex-col items-center justify-center p-8 text-center text-slate-400">
+                  <Package className="w-12 h-12 text-slate-300 mb-2 stroke-1" />
+                  <span className="text-xs font-semibold text-slate-600">Product Photo Coming Soon</span>
+                  <span className="text-[11px] text-slate-400 mt-0.5">Contact sales desk for depot photos</span>
+                </div>
+              )}
+
               {product.badge && (
-                <div className="absolute top-3 right-3 px-3 py-1 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold rounded-lg uppercase tracking-wider">
+                <div className="absolute top-3 right-3 px-3 py-1 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold rounded-lg uppercase tracking-wider pointer-events-none z-10">
                   {product.badge}
                 </div>
               )}
 
-              {/* Gallery Navigation Arrows (if multiple images available) */}
-              {galleryImages.length > 1 && (
+              {/* Gallery Navigation Arrows (if multiple media available) */}
+              {mediaList.length > 1 && (
                 <>
                   <button
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      prevImage();
+                      prevMedia();
                     }}
-                    className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center transition-colors cursor-pointer"
-                    aria-label="Previous image"
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition-colors cursor-pointer z-10"
+                    aria-label="Previous item"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -156,10 +231,10 @@ export default function ProductDetailClient({
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      nextImage();
+                      nextMedia();
                     }}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center transition-colors cursor-pointer"
-                    aria-label="Next image"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition-colors cursor-pointer z-10"
+                    aria-label="Next item"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -167,28 +242,38 @@ export default function ProductDetailClient({
               )}
             </div>
 
-            {/* Gallery Thumbnails (only displayed when multiple photos exist) */}
-            {galleryImages.length > 1 && (
+            {/* Gallery Thumbnails (only displayed when multiple media exist) */}
+            {mediaList.length > 1 && (
               <div className="flex space-x-2 overflow-x-auto pb-1 pt-1">
-                {galleryImages.map((img, idx) => {
-                  const isSelected = currentImageIndex === idx;
+                {mediaList.map((item, idx) => {
+                  const isSelected = currentMediaIndex === idx;
                   return (
                     <button
                       key={idx}
                       type="button"
-                      onClick={() => setCurrentImageIndex(idx)}
-                      className={`relative w-16 h-20 rounded-xl overflow-hidden border-2 shrink-0 transition-all cursor-pointer ${
+                      onClick={() => setCurrentMediaIndex(idx)}
+                      className={`relative w-16 h-20 rounded-xl overflow-hidden border-2 shrink-0 transition-all cursor-pointer bg-slate-900 ${
                         isSelected
                           ? "border-[#003296] ring-1 ring-[#003296]"
                           : "border-slate-200 opacity-70 hover:opacity-100"
                       }`}
+                      aria-label={`View ${item.type} ${idx + 1}`}
                     >
-                      <Image
-                        src={img}
-                        alt={`${product.name} thumbnail ${idx + 1}`}
-                        fill
-                        className="object-cover"
-                      />
+                      {item.type === "video" ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-950 text-white p-1">
+                          <Play className="w-5 h-5 fill-white text-white drop-shadow mb-0.5" />
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-slate-300">
+                            Video
+                          </span>
+                        </div>
+                      ) : (
+                        <Image
+                          src={item.url}
+                          alt={`${product.name} thumbnail ${idx + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      )}
                     </button>
                   );
                 })}

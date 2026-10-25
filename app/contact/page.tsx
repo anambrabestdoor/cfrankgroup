@@ -50,16 +50,29 @@ export default function ContactPage() {
             </div>
 
             <div className="space-y-3 text-xs">
-              {/* Showroom Address */}
+              {/* Main Showroom Address */}
               <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-start space-x-3.5">
                 <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-bold text-slate-900 block">Store & Warehouse Address</span>
+                  <span className="font-bold text-slate-900 block">Main Store & Warehouse</span>
                   <p className="text-slate-600 mt-0.5 leading-relaxed">{settings.address}</p>
                 </div>
               </div>
+
+              {/* Second Store / Branch Address */}
+              {settings.secondAddress && (
+                <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-start space-x-3.5">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
+                    <Store className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-slate-900 block">Branch / Second Location</span>
+                    <p className="text-slate-600 mt-0.5 leading-relaxed">{settings.secondAddress}</p>
+                  </div>
+                </div>
+              )}
 
               {/* Direct Phone Line */}
               <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-start space-x-3.5">

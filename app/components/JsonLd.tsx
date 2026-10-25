@@ -87,8 +87,7 @@ export default function JsonLd() {
       DEFAULT_SITE_SETTINGS.instagramUrl,
       DEFAULT_SITE_SETTINGS.facebookUrl,
       DEFAULT_SITE_SETTINGS.jijiShopUrl,
-      DEFAULT_SITE_SETTINGS.githubUrl,
-    ],
+    ].filter(Boolean),
   };
 
   const websiteSchema = {

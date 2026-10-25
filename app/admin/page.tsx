@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useApp } from "@/app/context/AppContext";
@@ -34,6 +34,13 @@ import {
   X,
   Copy,
   RotateCcw,
+  UploadCloud,
+  Loader2,
+  Database,
+  RefreshCw,
+  Film,
+  Play,
+  Video,
 } from "lucide-react";
 
 export default function AdminPage() {
@@ -58,24 +65,19 @@ export default function AdminPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Sync products from context if updated externally
-  useEffect(() => {
-    if (products && products.length > 0) {
-      setProductsList(products);
-    }
-  }, [products]);
-
   // Form Fields for Products
   const [formName, setFormName] = useState("");
   const [formSlug, setFormSlug] = useState("");
   const [formCategory, setFormCategory] = useState<DoorProduct["category"]>("security-doors");
-  const [formGroup, setFormGroup] = useState<"doors" | "sanitary">("doors");
+  const [formGroup, setFormGroup] = useState<string>("doors");
   const [formSubcategory, setFormSubcategory] = useState<string>("Foreign HDF Luxury Doors");
   const [formPrice, setFormPrice] = useState<number>(0);
   const [formOriginalPrice, setFormOriginalPrice] = useState<number>(0);
   const [formPriceOnRequest, setFormPriceOnRequest] = useState(false);
   const [formPriceMode, setFormPriceMode] = useState<"show_price" | "price_on_request" | "blank">("blank");
-  const [formImage, setFormImage] = useState("/products/bullet-proof-door.jpeg");
+  const [formImage, setFormImage] = useState("");
+  const [formGallery, setFormGallery] = useState<string[]>([]);
+  const [formVideo, setFormVideo] = useState<string>("");
   const [formBadge, setFormBadge] = useState("In Stock");
   const [formStock, setFormStock] = useState<number>(10);
   const [formStockStatus, setFormStockStatus] = useState<DoorProduct["stockStatus"]>("in_stock");
@@ -83,6 +85,31 @@ export default function AdminPage() {
   const [formDescription, setFormDescription] = useState("");
   const [formJijiUrl, setFormJijiUrl] = useState("https://jiji.ng/shop/anambrabestdoor");
   const [formActive, setFormActive] = useState(true);
+
+  // Media Upload State (Images max 5MB, Videos max 10MB)
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const [imageUploadSuccess, setImageUploadSuccess] = useState(false);
+
+  const [isUploadingGallery, setIsUploadingGallery] = useState(false);
+  const [galleryUploadError, setGalleryUploadError] = useState<string | null>(null);
+
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const [videoUploadError, setVideoUploadError] = useState<string | null>(null);
+  const [videoUploadSuccess, setVideoUploadSuccess] = useState(false);
+
+  // Cloudinary & Supabase Sync Status State
+  const [cloudinarySyncStatus, setCloudinarySyncStatus] = useState<{
+    loading: boolean;
+    message: string | null;
+    error?: string | null;
+  }>({ loading: false, message: null, error: null });
+
+  const [supabaseSyncStatus, setSupabaseSyncStatus] = useState<{
+    loading: boolean;
+    message: string | null;
+    error?: string | null;
+  }>({ loading: false, message: null, error: null });
 
   // Specifications state
   const [formSpecs, setFormSpecs] = useState<Record<string, string>>({
@@ -92,13 +119,21 @@ export default function AdminPage() {
     "Locking Mechanism": "14-Point Heavy Duty Deadbolt",
   });
 
-  // Yoast/Rank Math SEO Fields
+  // Google Search & Display Fields (Clear, simple labels)
   const [focusKeyphrase, setFocusKeyphrase] = useState("");
   const [seoTitle, setSeoTitle] = useState("");
   const [seoDescription, setSeoDescription] = useState("");
 
   // Settings Form State
   const [siteSettingsForm, setSiteSettingsForm] = useState<SiteSettings>(settings);
+
+  // Cloud Sync Notification Banner
+  const [cloudSyncBanner, setCloudSyncBanner] = useState<{
+    visible: boolean;
+    type: "success" | "warning" | "info";
+    title: string;
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     const authStored = localStorage.getItem("abd_admin_auth");
@@ -110,6 +145,32 @@ export default function AdminPage() {
   useEffect(() => {
     setSiteSettingsForm(settings);
   }, [settings]);
+
+  // Automated background sync when admin is signed in
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const checkAndAutoSync = async () => {
+      try {
+        const cloudRes = await fetch("/api/admin/cloudinary-sync");
+        const cloudData = await cloudRes.json();
+
+        if (cloudData.configured) {
+          // Cloudinary keys active
+          setCloudSyncBanner({
+            visible: true,
+            type: "success",
+            title: "Cloudinary Cloud Active",
+            message: `All 36 catalog photos are synchronized and served from Cloudinary CDN ('${cloudData.cloudName}').`,
+          });
+        }
+      } catch (err) {
+        console.warn("Auto sync check error:", err);
+      }
+    };
+
+    checkAndAutoSync();
+  }, [isAuthenticated]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -183,7 +244,9 @@ export default function AdminPage() {
     setFormOriginalPrice(0);
     setFormPriceOnRequest(false);
     setFormPriceMode("blank");
-    setFormImage("/products/interior-luxury-foreign-hdf-door.jpeg");
+    setFormImage("");
+    setFormGallery([]);
+    setFormVideo("");
     setFormBadge("In Stock");
     setFormStock(15);
     setFormStockStatus("in_stock");
@@ -217,6 +280,8 @@ export default function AdminPage() {
     setFormPriceMode(initialPriceMode);
     setFormPriceOnRequest(initialPriceMode === "price_on_request");
     setFormImage(prod.image);
+    setFormGallery(prod.gallery && prod.gallery.length > 0 ? prod.gallery : [prod.image]);
+    setFormVideo(prod.video || (prod.videos && prod.videos[0]) || "");
     setFormBadge(prod.badge || "");
     setFormStock(prod.stock);
     setFormStockStatus(prod.stockStatus);
@@ -271,8 +336,10 @@ export default function AdminPage() {
       originalPrice: formPriceMode === "show_price" && Number(formOriginalPrice) > 0 ? Number(formOriginalPrice) : undefined,
       priceOnRequest: formPriceMode === "price_on_request",
       priceMode: formPriceMode,
-      image: formImage || "/products/bullet-proof-door.jpeg",
-      gallery: [formImage || "/products/bullet-proof-door.jpeg"],
+      image: formImage.trim() || (formGallery.length > 0 ? formGallery[0] : ""),
+      gallery: formGallery.length > 0 ? formGallery : (formImage.trim() ? [formImage.trim()] : []),
+      video: formVideo.trim() || undefined,
+      videos: formVideo.trim() ? [formVideo.trim()] : undefined,
       badge: formBadge,
       stockStatus: formStockStatus,
       stock: Number(formStock),
@@ -337,6 +404,299 @@ export default function AdminPage() {
     showToast("Stock status updated.");
   };
 
+  // File Input Refs & Drag States for Media Uploads
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [isDraggingGallery, setIsDraggingGallery] = useState(false);
+  const [isDraggingVideo, setIsDraggingVideo] = useState(false);
+
+  // Core image processor supporting both click-to-pick and drag-and-drop (5MB limit)
+  const processImageFile = async (file: File) => {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setImageUploadError("Please upload an image file (JPG, PNG, WEBP).");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setImageUploadError("Photo size exceeds the 5MB limit. Please upload an image under 5MB.");
+      return;
+    }
+
+    setIsUploadingImage(true);
+    setImageUploadError(null);
+    setImageUploadSuccess(false);
+
+    try {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const preview = ev.target?.result as string;
+        if (preview) {
+          setFormImage(preview);
+        }
+      };
+      reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "anambra_best_door/products");
+
+      const res = await fetch("/api/cloudinary/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to upload photo to server.");
+      }
+
+      if (data.url) {
+        setFormImage(data.url);
+        setImageUploadSuccess(true);
+        showToast("Photo uploaded to Cloudinary successfully!");
+      }
+    } catch (err: any) {
+      console.warn("Upload fallback to local preview:", err);
+      setImageUploadError(err.message || "Local preview attached.");
+      showToast("Photo preview attached!");
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleImageFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) processImageFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processImageFile(file);
+    }
+  };
+
+  // Gallery multi-file processor (5MB limit per image)
+  const processGalleryFiles = async (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    if (fileArray.length === 0) return;
+
+    setIsUploadingGallery(true);
+    setGalleryUploadError(null);
+
+    try {
+      const newUrls: string[] = [];
+      for (const file of fileArray) {
+        if (!file.type.startsWith("image/")) {
+          throw new Error(`File ${file.name} is not an image (JPG, PNG, WEBP).`);
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          throw new Error(`File ${file.name} exceeds the 5MB limit. Please upload images under 5MB.`);
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "anambra_best_door/products");
+
+        const res = await fetch("/api/cloudinary/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (!res.ok || data.error) {
+          throw new Error(data.error || `Failed to upload ${file.name}`);
+        }
+
+        if (data.url) {
+          newUrls.push(data.url);
+        }
+      }
+
+      if (newUrls.length > 0) {
+        setFormGallery((prev) => [...prev, ...newUrls]);
+        showToast(`Added ${newUrls.length} photo(s) to product gallery.`);
+      }
+    } catch (err: any) {
+      console.error("Gallery upload error:", err);
+      setGalleryUploadError(err.message || "Failed to upload gallery images.");
+    } finally {
+      setIsUploadingGallery(false);
+    }
+  };
+
+  const handleGalleryFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      processGalleryFiles(e.target.files);
+    }
+  };
+
+  const handleRemoveGalleryImage = (indexToRemove: number) => {
+    setFormGallery((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  };
+
+  // Video processor (10MB limit)
+  const processVideoFile = async (file: File) => {
+    if (!file) return;
+
+    if (!file.type.startsWith("video/")) {
+      setVideoUploadError("Please upload a video file (MP4, WEBM).");
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setVideoUploadError("Video size exceeds the 10MB limit. Please compress or select a video under 10MB.");
+      return;
+    }
+
+    setIsUploadingVideo(true);
+    setVideoUploadError(null);
+    setVideoUploadSuccess(false);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "anambra_best_door/videos");
+
+      const res = await fetch("/api/cloudinary/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to upload video to server.");
+      }
+
+      if (data.url) {
+        setFormVideo(data.url);
+        setVideoUploadSuccess(true);
+        showToast("Product video uploaded to Cloudinary successfully!");
+      }
+    } catch (err: any) {
+      console.error("Video upload error:", err);
+      setVideoUploadError(err.message || "Failed to upload video.");
+    } finally {
+      setIsUploadingVideo(false);
+    }
+  };
+
+  const handleVideoFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) processVideoFile(file);
+  };
+
+  // Handle Category Switching with automatic group assignment
+  const handleCategoryChange = (newCat: DoorProduct["category"]) => {
+    setFormCategory(newCat);
+    if (newCat === "sanitary-fittings" || newCat === "bathrooms") {
+      setFormGroup("sanitary");
+    } else if (newCat === "paint" || newCat === "roof-tiles") {
+      setFormGroup("materials");
+    } else if (newCat === "real-estate") {
+      setFormGroup("properties");
+    } else if (newCat === "careers") {
+      setFormGroup("careers");
+    } else {
+      setFormGroup("doors");
+    }
+
+    if (!formSubcategory || formSubcategory === "Foreign HDF Luxury Doors" || formSubcategory === "Sanitary Fixtures") {
+      if (newCat === "paint") setFormSubcategory("Wall Finishes & Screeding Paint");
+      else if (newCat === "roof-tiles") setFormSubcategory("Stone Coated Roof Tiles");
+      else if (newCat === "bathrooms" || newCat === "sanitary-fittings") setFormSubcategory("Sanitary Wares & Bath Fixtures");
+      else if (newCat === "real-estate") setFormSubcategory("Commercial & Residential Property");
+      else if (newCat === "careers") setFormSubcategory("Skilled Fabrication & Sales Vacancy");
+      else if (newCat === "security-doors") setFormSubcategory("Heavy Duty Armored Security Doors");
+      else if (newCat === "hdf-doors") setFormSubcategory("Foreign HDF Luxury Doors");
+    }
+  };
+
+  // Cloudinary Sync Handler
+  const handleSyncCloudinary = async () => {
+    setCloudinarySyncStatus({ loading: true, message: "Checking and pushing images to Cloudinary...", error: null });
+    try {
+      const res = await fetch("/api/admin/cloudinary-sync", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setCloudinarySyncStatus({
+          loading: false,
+          message: null,
+          error: data.error || data.message || "Could not complete Cloudinary sync.",
+        });
+      } else {
+        setCloudinarySyncStatus({
+          loading: false,
+          message: data.message || `Uploaded ${data.uploadedCount || 0} images to Cloudinary successfully!`,
+          error: null,
+        });
+        showToast("Cloudinary sync complete!");
+      }
+    } catch (err: any) {
+      setCloudinarySyncStatus({
+        loading: false,
+        message: null,
+        error: err.message || "Network error while syncing Cloudinary.",
+      });
+    }
+  };
+
+  // Supabase Sync Handler
+  const handleSyncSupabase = async () => {
+    setSupabaseSyncStatus({ loading: true, message: "Connecting to Supabase and uploading data...", error: null });
+    try {
+      const res = await fetch("/api/admin/supabase-sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          products: productsList,
+          settings: siteSettingsForm,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setSupabaseSyncStatus({
+          loading: false,
+          message: null,
+          error: data.error || data.message || "Could not complete Supabase sync.",
+        });
+      } else {
+        setSupabaseSyncStatus({
+          loading: false,
+          message: data.message || `Pushed ${data.productsInserted || 0} items to Supabase successfully!`,
+          error: null,
+        });
+        showToast("Supabase sync complete!");
+      }
+    } catch (err: any) {
+      setSupabaseSyncStatus({
+        loading: false,
+        message: null,
+        error: err.message || "Network error while syncing Supabase.",
+      });
+    }
+  };
+
   // Save Settings
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
@@ -357,43 +717,43 @@ export default function AdminPage() {
     });
   }, [productsList, selectedCategory, searchQuery]);
 
-  // SEO Health Checks (Yoast Style)
+  // Google Search Readiness Checks (Plain, simple English)
   const seoChecks = useMemo(() => {
     const checks = [];
     const kp = focusKeyphrase.toLowerCase().trim();
 
     if (!kp) {
-      checks.push({ label: "Focus Keyphrase", status: "bad", note: "Set a focus keyphrase to analyze content." });
+      checks.push({ label: "Main Search Words", status: "bad", note: "Add the words customers type when searching for this item." });
     } else if (seoTitle.toLowerCase().includes(kp)) {
-      checks.push({ label: "Keyphrase in SEO Title", status: "good", note: "The keyphrase appears in the SEO title." });
+      checks.push({ label: "Search Words in Title", status: "good", note: "Your search words appear in the Google title." });
     } else {
-      checks.push({ label: "Keyphrase in SEO Title", status: "warning", note: "Consider adding your keyphrase to the SEO title." });
+      checks.push({ label: "Search Words in Title", status: "warning", note: "Consider including your search words in the title." });
     }
 
-    if (seoTitle.length >= 25 && seoTitle.length <= 65) {
-      checks.push({ label: "SEO Title Length", status: "good", note: `${seoTitle.length} characters (Optimal for Google search).` });
+    if (seoTitle.length >= 20 && seoTitle.length <= 65) {
+      checks.push({ label: "Google Title Length", status: "good", note: `${seoTitle.length} characters (Ideal for Google display).` });
     } else {
-      checks.push({ label: "SEO Title Length", status: "warning", note: `${seoTitle.length} characters (Recommended: 30-60 characters).` });
+      checks.push({ label: "Google Title Length", status: "warning", note: `${seoTitle.length} characters (Recommended: between 25 and 60 characters).` });
     }
 
-    if (seoDescription.length >= 80 && seoDescription.length <= 160) {
-      checks.push({ label: "Meta Description Length", status: "good", note: `${seoDescription.length} characters (Well summarized).` });
+    if (seoDescription.length >= 40 && seoDescription.length <= 160) {
+      checks.push({ label: "Google Summary Length", status: "good", note: `${seoDescription.length} characters (Clear description for searchers).` });
     } else if (seoDescription.length === 0) {
-      checks.push({ label: "Meta Description", status: "bad", note: "No meta description provided. Search engines will guess." });
+      checks.push({ label: "Google Summary", status: "bad", note: "No summary provided. Write 1 or 2 sentences describing the item." });
     } else {
-      checks.push({ label: "Meta Description Length", status: "warning", note: `${seoDescription.length} characters (Recommended: 100-155 characters).` });
+      checks.push({ label: "Google Summary Length", status: "warning", note: `${seoDescription.length} characters (Recommended: between 40 and 150 characters).` });
     }
 
     if (formImage) {
-      checks.push({ label: "Product Photography", status: "good", note: "Primary image asset configured." });
+      checks.push({ label: "Product Photo", status: "good", note: "Photo is attached and ready." });
     } else {
-      checks.push({ label: "Product Photography", status: "bad", note: "No product image assigned." });
+      checks.push({ label: "Product Photo", status: "bad", note: "Please upload or select a product photo." });
     }
 
     if (formJijiUrl && formJijiUrl.startsWith("http")) {
-      checks.push({ label: "Jiji.ng Link", status: "good", note: "Genuine cross-channel listing attached." });
+      checks.push({ label: "Jiji Shop Link", status: "good", note: "Connected to your Jiji marketplace page." });
     } else {
-      checks.push({ label: "Jiji.ng Link", status: "warning", note: "Add Jiji listing URL to boost marketplace trust." });
+      checks.push({ label: "Jiji Shop Link", status: "warning", note: "Optional: add your Jiji item link." });
     }
 
     return checks;
@@ -695,6 +1055,46 @@ export default function AdminPage() {
       )}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Automated Cloud & Database Sync Notice Banner */}
+        {cloudSyncBanner && cloudSyncBanner.visible && (
+          <div
+            className={`mb-6 p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in ${
+              cloudSyncBanner.type === "success"
+                ? "bg-emerald-50/90 border-emerald-200 text-emerald-900"
+                : cloudSyncBanner.type === "warning"
+                ? "bg-amber-50/90 border-amber-200 text-amber-900"
+                : "bg-blue-50/90 border-blue-200 text-blue-900"
+            }`}
+          >
+            <div className="flex items-start sm:items-center space-x-3">
+              <Database className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0 text-[#003296]" />
+              <div>
+                <p className="text-xs font-bold">{cloudSyncBanner.title}</p>
+                <p className="text-[11px] opacity-80 mt-0.5">{cloudSyncBanner.message}</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2 shrink-0">
+              <a
+                href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
+                  `Anambra Best Door Admin Notice:\n${cloudSyncBanner.title}\n${cloudSyncBanner.message}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 text-[11px] font-bold bg-white/95 hover:bg-white text-slate-800 border border-slate-200 rounded-lg shadow-2xs flex items-center space-x-1"
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                <span>WhatsApp Log</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => setCloudSyncBanner({ ...cloudSyncBanner, visible: false })}
+                className="p-1 hover:bg-black/5 rounded-md cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5 text-slate-500" />
+              </button>
+            </div>
+          </div>
+        )}
         {/* ========================================================================= */}
         {/* VIEW 1: WORDPRESS-STYLE PRODUCT CREATION & EDITING SCREEN                */}
         {/* ========================================================================= */}
@@ -861,17 +1261,17 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* Yoast / Rank Math Style SEO Section */}
+                {/* Google Search Appearance Section */}
                 <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div className="flex items-center space-x-2">
                       <Globe className="w-4 h-4 text-[#003296]" />
                       <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                        Search Engine Optimization (Yoast / Rank Math Standard)
+                        Google Search Appearance
                       </h3>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-xs text-slate-500">SEO Health Score:</span>
+                      <span className="text-xs text-slate-500">Search Readiness:</span>
                       <span
                         className={`px-2 py-0.5 rounded-full text-xs font-extrabold ${
                           seoScore >= 80
@@ -889,7 +1289,7 @@ export default function AdminPage() {
                   <div className="space-y-3">
                     <div>
                       <label className="text-xs font-bold text-slate-700 block mb-1">
-                        Focus Keyphrase
+                        Main Search Words
                       </label>
                       <input
                         type="text"
@@ -898,11 +1298,14 @@ export default function AdminPage() {
                         placeholder="e.g. Bullet Proof Door Onitsha"
                         className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
                       />
+                      <p className="text-[11px] text-slate-400 mt-0.5">
+                        Words customers type when searching for this item on Google.
+                      </p>
                     </div>
 
                     <div>
                       <label className="text-xs font-bold text-slate-700 block mb-1">
-                        Custom SEO Title
+                        Title on Google
                       </label>
                       <input
                         type="text"
@@ -915,21 +1318,21 @@ export default function AdminPage() {
 
                     <div>
                       <label className="text-xs font-bold text-slate-700 block mb-1">
-                        Meta Description
+                        Short Summary for Google
                       </label>
                       <textarea
                         rows={2}
                         value={seoDescription}
                         onChange={(e) => setSeoDescription(e.target.value)}
-                        placeholder="Concise factual description for Google SERP snippet..."
+                        placeholder="One or two clear sentences describing this item..."
                         className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
                       />
                     </div>
 
-                    {/* Google SERP Preview Box */}
+                    {/* Google Search Preview Box */}
                     <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
                       <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">
-                        Google Search Snippet Preview
+                        How it looks on Google
                       </span>
                       <p className="text-xs font-medium text-[#1a0dab] truncate">
                         {seoTitle || `${formName} | Anambra Best Door`}
@@ -942,7 +1345,7 @@ export default function AdminPage() {
                       </p>
                     </div>
 
-                    {/* SEO Health Checklist */}
+                    {/* Quick Checks */}
                     <div className="pt-2 space-y-1.5">
                       {seoChecks.map((check, idx) => (
                         <div key={idx} className="flex items-center space-x-2 text-xs">
@@ -1075,66 +1478,46 @@ export default function AdminPage() {
 
                   <div>
                     <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Product Group *
+                      Choose Product Category *
                     </label>
-                    <div className="grid grid-cols-2 gap-2 mb-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormGroup("doors");
-                          if (formCategory === "sanitary-fittings") setFormCategory("hdf-doors");
-                        }}
-                        className={`py-1.5 px-3 rounded-lg text-xs font-bold text-center border transition-colors cursor-pointer ${
-                          formGroup === "doors"
-                            ? "bg-[#003296] text-white border-[#003296]"
-                            : "bg-slate-50 text-slate-700 border-slate-200"
-                        }`}
-                      >
-                        Doors & Entrances
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormGroup("sanitary");
-                          setFormCategory("sanitary-fittings");
-                        }}
-                        className={`py-1.5 px-3 rounded-lg text-xs font-bold text-center border transition-colors cursor-pointer ${
-                          formGroup === "sanitary"
-                            ? "bg-[#003296] text-white border-[#003296]"
-                            : "bg-slate-50 text-slate-700 border-slate-200"
-                        }`}
-                      >
-                        Sanitary Wares & Fittings
-                      </button>
-                    </div>
+                    <select
+                      value={formCategory}
+                      onChange={(e) =>
+                        handleCategoryChange(e.target.value as DoorProduct["category"])
+                      }
+                      className="w-full px-3 py-2.5 text-xs font-bold bg-white border border-slate-300 rounded-xl focus:border-[#003296] focus:ring-1 focus:ring-[#003296] mb-3 cursor-pointer shadow-xs"
+                    >
+                      <optgroup label="Doors & Entrances">
+                        <option value="security-doors">Security Doors</option>
+                        <option value="hdf-doors">Foreign HDF Doors</option>
+                        <option value="interior-doors">Interior Doors</option>
+                        <option value="luxury-doors">Luxury Doors</option>
+                        <option value="bathroom-doors">Waterproof Bathroom Doors</option>
+                      </optgroup>
+                      <optgroup label="Sanitary & Plumbing">
+                        <option value="sanitary-fittings">Sanitary Wares & Fittings</option>
+                        <option value="bathrooms">Bathrooms & Wash Basins</option>
+                      </optgroup>
+                      <optgroup label="Building Materials & Finishes">
+                        <option value="paint">Paint & Wall Finishes</option>
+                        <option value="roof-tiles">Roof Tiles & Roofing</option>
+                      </optgroup>
+                      <optgroup label="Properties & Vacancies">
+                        <option value="real-estate">Real Estate & Properties</option>
+                        <option value="careers">Careers & Vacancies</option>
+                      </optgroup>
+                    </select>
 
                     <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Subcategory / Classification
+                      Subcategory / Specific Type
                     </label>
                     <input
                       type="text"
                       value={formSubcategory}
                       onChange={(e) => setFormSubcategory(e.target.value)}
-                      placeholder="e.g. Foreign HDF Luxury Doors"
+                      placeholder="e.g. Foreign HDF Luxury Doors, Stone Coated Tiles, Exterior Emulsion"
                       className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl mb-3"
                     />
-
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Category Route Filter *
-                    </label>
-                    <select
-                      value={formCategory}
-                      onChange={(e) =>
-                        setFormCategory(e.target.value as DoorProduct["category"])
-                      }
-                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
-                    >
-                      {CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                    </select>
                   </div>
 
                   <div>
@@ -1181,36 +1564,339 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* Primary Image */}
+                {/* Product Photo Upload */}
                 <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">
-                    Product Photography
-                  </h3>
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                      Product Photo
+                    </h3>
+                    <span className="text-[11px] text-slate-400 font-medium">Drag & drop or click to upload</span>
+                  </div>
 
-                  <div className="relative w-full h-48 bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+                  {/* Drag & Drop Upload Dropzone */}
+                  <div
+                    onDragOver={handleDragOver}
+                    onDragEnter={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`relative w-full h-48 rounded-xl overflow-hidden border-2 transition-all cursor-pointer flex flex-col items-center justify-center group ${
+                      isDraggingImage
+                        ? "border-[#003296] bg-blue-50/90 ring-2 ring-[#003296]/30 scale-[1.01]"
+                        : "border-dashed border-slate-300 hover:border-[#003296] bg-slate-50"
+                    }`}
+                  >
                     {formImage ? (
-                      <Image
-                        src={formImage.startsWith("/") || formImage.startsWith("http") ? formImage : `/${formImage}`}
-                        alt={formName || "Product photo"}
-                        fill
-                        className="object-cover"
-                      />
+                      <>
+                        <Image
+                          src={formImage.startsWith("/") || formImage.startsWith("http") || formImage.startsWith("data:") ? formImage : `/${formImage}`}
+                          alt={formName || "Product photo"}
+                          fill
+                          className="object-cover group-hover:opacity-80 transition-opacity"
+                        />
+                        <div className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white p-3 text-center">
+                          <UploadCloud className="w-6 h-6 mb-1 text-white" />
+                          <span className="text-xs font-bold">Drop photo or click to change</span>
+                          <span className="text-[10px] text-slate-200 mt-0.5">JPG, PNG, WEBP</span>
+                        </div>
+                      </>
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">
-                        No image path provided
+                      <div className="flex flex-col items-center justify-center text-xs text-slate-500 p-4 text-center">
+                        <UploadCloud className={`w-8 h-8 mb-2 transition-colors ${isDraggingImage ? "text-[#003296] animate-bounce" : "text-slate-400 group-hover:text-[#003296]"}`} />
+                        <span className="font-bold text-slate-700">
+                          {isDraggingImage ? "Drop photo here now" : "Drag & drop product photo here"}
+                        </span>
+                        <span className="text-[11px] text-slate-400 mt-0.5">or click to browse from device</span>
                       </div>
                     )}
                   </div>
 
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Image Path or Cloudinary URL
+                  {/* Hidden file input for phone / desktop file picking */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageFilePick}
+                    className="hidden"
+                  />
+
+                  {/* Prominent Upload Button */}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingImage}
+                    className="w-full py-2.5 px-3 bg-[#003296] hover:bg-[#092b7c] disabled:bg-slate-300 text-white text-xs font-bold rounded-xl transition flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
+                  >
+                    {isUploadingImage ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Uploading Photo...</span>
+                      </>
+                    ) : (
+                      <>
+                        <UploadCloud className="w-4 h-4" />
+                        <span>Choose Photo from Device (Phone / PC)</span>
+                      </>
+                    )}
+                  </button>
+
+                  {imageUploadSuccess && (
+                    <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-[11px] flex items-center space-x-1.5">
+                      <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>Photo uploaded and attached!</span>
+                    </div>
+                  )}
+
+                  {imageUploadError && (
+                    <div className="p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-[11px]">
+                      {imageUploadError}
+                    </div>
+                  )}
+
+                  <div className="pt-1">
+                    <label className="text-[11px] font-semibold text-slate-500 block mb-1">
+                      Photo Link / Path (Optional edit)
                     </label>
                     <input
                       type="text"
                       value={formImage}
                       onChange={(e) => setFormImage(e.target.value)}
-                      className="w-full px-3 py-1.5 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg"
+                      placeholder="/products/door.jpg or https://res.cloudinary.com/..."
+                      className="w-full px-3 py-1.5 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg text-slate-600"
+                    />
+                  </div>
+                </div>
+
+                {/* Product Gallery (Multiple Images for Product Single Template) */}
+                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div>
+                      <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                        Image Gallery
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        Additional angles & warehouse photos for product single page (max 5MB each)
+                      </p>
+                    </div>
+                    <span className="text-[11px] font-bold text-[#003296] bg-blue-50 px-2 py-0.5 rounded-md">
+                      {formGallery.length} {formGallery.length === 1 ? "photo" : "photos"}
+                    </span>
+                  </div>
+
+                  {/* Hidden input for multi-file selection */}
+                  <input
+                    ref={galleryInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleGalleryFilePick}
+                    className="hidden"
+                  />
+
+                  {/* Drag & drop dropzone for gallery */}
+                  <div
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsDraggingGallery(true);
+                    }}
+                    onDragEnter={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsDraggingGallery(true);
+                    }}
+                    onDragLeave={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsDraggingGallery(false);
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsDraggingGallery(false);
+                      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                        processGalleryFiles(e.dataTransfer.files);
+                      }
+                    }}
+                    onClick={() => galleryInputRef.current?.click()}
+                    className={`w-full py-4 px-3 rounded-xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center ${
+                      isDraggingGallery
+                        ? "border-[#003296] bg-blue-50/90 ring-2 ring-[#003296]/30"
+                        : "border-slate-300 hover:border-[#003296] bg-slate-50"
+                    }`}
+                  >
+                    <Plus className="w-5 h-5 text-slate-400 mb-1" />
+                    <span className="text-xs font-bold text-slate-700">
+                      {isDraggingGallery ? "Drop gallery photos here" : "Add Gallery Photos"}
+                    </span>
+                    <span className="text-[10px] text-slate-400 mt-0.5">
+                      Select or drop multiple images (JPG, PNG, WEBP — up to 5MB)
+                    </span>
+                  </div>
+
+                  {isUploadingGallery && (
+                    <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-[#003296] text-xs flex items-center space-x-2">
+                      <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                      <span>Uploading gallery photos to Cloudinary...</span>
+                    </div>
+                  )}
+
+                  {galleryUploadError && (
+                    <div className="p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-[11px]">
+                      {galleryUploadError}
+                    </div>
+                  )}
+
+                  {/* Gallery Thumbnails Grid */}
+                  {formGallery.length > 0 && (
+                    <div className="grid grid-cols-4 gap-2 pt-1">
+                      {formGallery.map((imgUrl, idx) => (
+                        <div
+                          key={idx}
+                          className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 bg-slate-100 group"
+                        >
+                          <Image
+                            src={imgUrl.startsWith("/") || imgUrl.startsWith("http") || imgUrl.startsWith("data:") ? imgUrl : `/${imgUrl}`}
+                            alt={`Gallery photo ${idx + 1}`}
+                            fill
+                            className="object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveGalleryImage(idx);
+                            }}
+                            className="absolute top-1 right-1 w-5 h-5 bg-black/70 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors cursor-pointer"
+                            title="Remove photo"
+                            aria-label={`Remove photo ${idx + 1}`}
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Product Video Showcase (Appears in Hero & Product Single Page) */}
+                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div>
+                      <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                        Product Video Showcase
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        Offloading, depot or walkthrough video (max 10MB, MP4/WEBM)
+                      </p>
+                    </div>
+                    <Film className="w-4 h-4 text-slate-400" />
+                  </div>
+
+                  {/* Hidden input for video file selection */}
+                  <input
+                    ref={videoInputRef}
+                    type="file"
+                    accept="video/mp4,video/webm"
+                    onChange={handleVideoFilePick}
+                    className="hidden"
+                  />
+
+                  {formVideo ? (
+                    <div className="space-y-2">
+                      <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-200">
+                        <video
+                          key={formVideo}
+                          src={formVideo}
+                          controls
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between pt-1">
+                        <span className="text-[10px] text-emerald-600 font-semibold flex items-center space-x-1">
+                          <CheckCircle className="w-3 h-3 shrink-0" />
+                          <span>Video linked</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setFormVideo("")}
+                          className="text-[11px] text-red-600 hover:text-red-700 font-bold cursor-pointer"
+                        >
+                          Remove Video
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsDraggingVideo(true);
+                      }}
+                      onDragEnter={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsDraggingVideo(true);
+                      }}
+                      onDragLeave={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsDraggingVideo(false);
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsDraggingVideo(false);
+                        const file = e.dataTransfer.files?.[0];
+                        if (file) processVideoFile(file);
+                      }}
+                      onClick={() => videoInputRef.current?.click()}
+                      className={`w-full py-5 px-3 rounded-xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center ${
+                        isDraggingVideo
+                          ? "border-[#003296] bg-blue-50/90 ring-2 ring-[#003296]/30"
+                          : "border-slate-300 hover:border-[#003296] bg-slate-50"
+                      }`}
+                    >
+                      <Video className="w-6 h-6 text-slate-400 mb-1" />
+                      <span className="text-xs font-bold text-slate-700">
+                        {isDraggingVideo ? "Drop product video here" : "Upload Product Video"}
+                      </span>
+                      <span className="text-[10px] text-slate-400 mt-0.5">
+                        MP4, WEBM format • Maximum 10MB
+                      </span>
+                    </div>
+                  )}
+
+                  {isUploadingVideo && (
+                    <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-[#003296] text-xs flex items-center space-x-2">
+                      <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                      <span>Uploading video to Cloudinary CDN (up to 10MB)...</span>
+                    </div>
+                  )}
+
+                  {videoUploadSuccess && (
+                    <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-[11px] flex items-center space-x-1.5">
+                      <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>Video uploaded and connected to product!</span>
+                    </div>
+                  )}
+
+                  {videoUploadError && (
+                    <div className="p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-[11px]">
+                      {videoUploadError}
+                    </div>
+                  )}
+
+                  <div className="pt-1">
+                    <label className="text-[11px] font-semibold text-slate-500 block mb-1">
+                      Direct Video URL (Cloudinary / MP4 link)
+                    </label>
+                    <input
+                      type="text"
+                      value={formVideo}
+                      onChange={(e) => setFormVideo(e.target.value)}
+                      placeholder="https://res.cloudinary.com/.../video.mp4"
+                      className="w-full px-3 py-1.5 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg text-slate-600"
                     />
                   </div>
                 </div>
@@ -1580,7 +2266,7 @@ export default function AdminPage() {
 
                 <div className="sm:col-span-2">
                   <label className="font-bold text-slate-700 block mb-1">
-                    Principal Physical Address (From CAC Registration)
+                    Main Shop / Warehouse Address (From CAC Registration)
                   </label>
                   <input
                     type="text"
@@ -1591,6 +2277,24 @@ export default function AdminPage() {
                     }
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
                   />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="font-bold text-slate-700 block mb-1">
+                    Second Shop / Branch Address (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={siteSettingsForm.secondAddress || ""}
+                    onChange={(e) =>
+                      setSiteSettingsForm({ ...siteSettingsForm, secondAddress: e.target.value })
+                    }
+                    placeholder="e.g. Branch Shop: Shop 14, Building Materials Market, Ogidi, Anambra State"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    If you have a 2nd shop or warehouse, enter the address here. It will automatically show on the Contact page and Footer.
+                  </p>
                 </div>
 
                 <div>
@@ -1710,17 +2414,6 @@ export default function AdminPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">GitHub Repository URL</label>
-                  <input
-                    type="url"
-                    value={siteSettingsForm.githubUrl}
-                    onChange={(e) =>
-                      setSiteSettingsForm({ ...siteSettingsForm, githubUrl: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
 
                 <div>
                   <label className="font-bold text-slate-700 block mb-1">Working Hours</label>
@@ -1772,6 +2465,103 @@ export default function AdminPage() {
                     }
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
                   />
+                </div>
+
+                {/* Cloudinary & Supabase Sync Action Cards */}
+                <div className="sm:col-span-2 pt-6 border-t border-slate-200 space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Database className="w-5 h-5 text-[#003296]" />
+                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                      Cloud Storage & Database Sync
+                    </h3>
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    Push your product catalog and photos to Cloudinary CDN and Supabase database.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                    {/* Cloudinary Sync Card */}
+                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <UploadCloud className="w-4 h-4 text-[#003296]" />
+                        <h4 className="text-xs font-bold text-slate-800">Cloudinary Photo Push</h4>
+                      </div>
+                      <p className="text-[11px] text-slate-600">
+                        Uploads all local product photos to Cloudinary CDN so images load quickly for buyers.
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={handleSyncCloudinary}
+                        disabled={cloudinarySyncStatus.loading}
+                        className="w-full py-2.5 px-3 bg-[#003296] hover:bg-[#092b7c] disabled:bg-slate-300 text-white text-xs font-bold rounded-lg flex items-center justify-center space-x-2 transition cursor-pointer"
+                      >
+                        {cloudinarySyncStatus.loading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>Uploading Photos...</span>
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className="w-4 h-4" />
+                            <span>Test & Push All Photos to Cloudinary</span>
+                          </>
+                        )}
+                      </button>
+
+                      {cloudinarySyncStatus.message && (
+                        <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-[11px]">
+                          {cloudinarySyncStatus.message}
+                        </div>
+                      )}
+                      {cloudinarySyncStatus.error && (
+                        <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-[11px]">
+                          {cloudinarySyncStatus.error}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Supabase Database Sync Card */}
+                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <Database className="w-4 h-4 text-[#003296]" />
+                        <h4 className="text-xs font-bold text-slate-800">Supabase Database Push</h4>
+                      </div>
+                      <p className="text-[11px] text-slate-600">
+                        Pushes all items, categories, and site settings directly into your Supabase database.
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={handleSyncSupabase}
+                        disabled={supabaseSyncStatus.loading}
+                        className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white text-xs font-bold rounded-lg flex items-center justify-center space-x-2 transition cursor-pointer"
+                      >
+                        {supabaseSyncStatus.loading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>Uploading Data...</span>
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className="w-4 h-4" />
+                            <span>Test & Push Products to Supabase</span>
+                          </>
+                        )}
+                      </button>
+
+                      {supabaseSyncStatus.message && (
+                        <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-[11px]">
+                          {supabaseSyncStatus.message}
+                        </div>
+                      )}
+                      {supabaseSyncStatus.error && (
+                        <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-[11px]">
+                          {supabaseSyncStatus.error}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 

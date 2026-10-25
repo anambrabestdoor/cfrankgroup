@@ -47,11 +47,13 @@ CREATE INDEX IF NOT EXISTS idx_products_active ON public.products(active);
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access to active products
+DROP POLICY IF EXISTS "Allow public read access on active products" ON public.products;
 CREATE POLICY "Allow public read access on active products"
   ON public.products FOR SELECT
   USING (active = true);
 
 -- Allow authenticated admins full management
+DROP POLICY IF EXISTS "Allow admin write access on products" ON public.products;
 CREATE POLICY "Allow admin write access on products"
   ON public.products FOR ALL
   TO authenticated
@@ -71,6 +73,7 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
   whatsapp_number TEXT NOT NULL DEFAULT '2348032766854',
   email TEXT NOT NULL DEFAULT 'sales@anambrabestdoor.ng',
   address TEXT NOT NULL DEFAULT 'No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria',
+  second_address TEXT DEFAULT '',
   market_location TEXT NOT NULL DEFAULT 'Maraim Plaza, Building Material International Market Ogidi, Anambra State',
   working_hours TEXT NOT NULL DEFAULT 'Mon - Sat: 8:00 AM - 5:30 PM',
   delivery_info TEXT NOT NULL DEFAULT 'Nationwide waybill delivery across all 36 states',
@@ -80,15 +83,22 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
+-- Ensure second_address and newly added columns exist if table was created previously
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS second_address TEXT DEFAULT '';
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS working_hours TEXT DEFAULT 'Mon - Sat: 8:00 AM - 5:30 PM';
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS market_location TEXT DEFAULT 'Maraim Plaza, Building Material International Market Ogidi, Anambra State';
+
 -- Enable RLS on site_settings
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access to site settings
+DROP POLICY IF EXISTS "Allow public read access on site settings" ON public.site_settings;
 CREATE POLICY "Allow public read access on site settings"
   ON public.site_settings FOR SELECT
   USING (true);
 
 -- Allow authenticated admin to update settings
+DROP POLICY IF EXISTS "Allow admin write access on site settings" ON public.site_settings;
 CREATE POLICY "Allow admin write access on site settings"
   ON public.site_settings FOR ALL
   TO authenticated
@@ -117,11 +127,13 @@ CREATE TABLE IF NOT EXISTS public.quote_inquiries (
 ALTER TABLE public.quote_inquiries ENABLE ROW LEVEL SECURITY;
 
 -- Allow public to insert quote inquiries
+DROP POLICY IF EXISTS "Allow public insert on quote inquiries" ON public.quote_inquiries;
 CREATE POLICY "Allow public insert on quote inquiries"
   ON public.quote_inquiries FOR INSERT
   WITH CHECK (true);
 
 -- Allow authenticated admins to view and update quote inquiries
+DROP POLICY IF EXISTS "Allow admin management on quote inquiries" ON public.quote_inquiries;
 CREATE POLICY "Allow admin management on quote inquiries"
   ON public.quote_inquiries FOR ALL
   TO authenticated
@@ -141,6 +153,7 @@ INSERT INTO public.site_settings (
   whatsapp_number,
   email,
   address,
+  second_address,
   market_location,
   working_hours,
   delivery_info,
@@ -157,6 +170,7 @@ INSERT INTO public.site_settings (
   '2348032766854',
   'sales@anambrabestdoor.ng',
   'No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria',
+  '',
   'Maraim Plaza, Building Material International Market Ogidi, Anambra State',
   'Mon - Sat: 8:00 AM - 5:30 PM',
   'Nationwide waybill delivery across all 36 states',
@@ -167,5 +181,6 @@ INSERT INTO public.site_settings (
   whatsapp_inquiry_template = EXCLUDED.whatsapp_inquiry_template,
   whatsapp_cart_template = EXCLUDED.whatsapp_cart_template,
   address = EXCLUDED.address,
+  second_address = EXCLUDED.second_address,
   market_location = EXCLUDED.market_location,
   updated_at = NOW();

@@ -5,6 +5,7 @@ export interface SiteSettings {
   tagline: string;
   description: string;
   address: string;
+  secondAddress: string;
   marketLocation: string;
   phone: string;
   phoneDisplay: string;
@@ -32,6 +33,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   tagline: "Direct Importer of Heavy-Gauge Security Doors & Building Fittings",
   description: "Anambra Best Door Enterprises is a specialized construction activities and door fittings enterprise operated by CFrank Enterprise (Chidera Frank Okonkwo) at Maraim Plaza, Building Material International Market Ogidi, Anambra State. Supplying premium steel security doors, interior wooden doors, bullet proof doors, HDF doors, sanitary wares, and building fittings nationwide.",
   address: "No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria",
+  secondAddress: "",
   marketLocation: "Maraim Plaza, Building Material International Market, Ogidi, Onitsha",
   phone: "+2347070070305",
   phoneDisplay: "+234 707 007 0305",

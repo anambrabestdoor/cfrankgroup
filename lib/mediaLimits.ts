@@ -12,8 +12,8 @@ export const MEDIA_LIMITS = {
     maxDimension: 3000,
   },
   videos: {
-    maxSizeBytes: 50 * 1024 * 1024, // 50MB
-    maxSizeMB: 50,
+    maxSizeBytes: 10 * 1024 * 1024, // 10MB
+    maxSizeMB: 10,
     allowedMimeTypes: ["video/mp4", "video/webm"] as const,
     allowedExtensions: [".mp4", ".webm"] as const,
     maxDurationSeconds: 90,

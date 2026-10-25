@@ -94,11 +94,16 @@ export default function FrankieWidget() {
         .slice(-8)
         .map((m) => ({ role: m.role, content: m.content }));
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6500);
+
       const res = await fetch("/api/frankie/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({ message: text, history }),
       });
+      clearTimeout(timeoutId);
 
       if (res.ok) {
         const data = await res.json();

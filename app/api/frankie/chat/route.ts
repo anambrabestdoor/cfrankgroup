@@ -306,39 +306,62 @@ async function callGemini(apiKey: string, model: string, userMessage: string, hi
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   const systemPrompt = buildFrankieSystemPrompt();
 
+  // Gemini requires strictly alternating roles (user -> model -> user)
+  const sanitizedHistory: { role: "user" | "model"; parts: [{ text: string }] }[] = [];
+  let lastRole: "user" | "model" | null = null;
+
+  for (const h of history.slice(-6)) {
+    const role: "user" | "model" = h.role === "assistant" ? "model" : "user";
+    if (role !== lastRole) {
+      sanitizedHistory.push({ role, parts: [{ text: h.content }] });
+      lastRole = role;
+    }
+  }
+
+  // Ensure last item in history is not 'user' so appending userMessage alternates cleanly
+  if (sanitizedHistory.length > 0 && sanitizedHistory[sanitizedHistory.length - 1].role === "user") {
+    sanitizedHistory.pop();
+  }
+
   const contents = [
-    ...history.slice(-8).map((h) => ({
-      role: h.role === "assistant" ? "model" : "user",
-      parts: [{ text: h.content }],
-    })),
+    ...sanitizedHistory,
     {
-      role: "user",
+      role: "user" as const,
       parts: [{ text: userMessage }],
     },
   ];
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents,
-      system_instruction: {
-        parts: [{ text: systemPrompt }],
-      },
-      generationConfig: {
-        temperature: 0.4,
-        maxOutputTokens: 2048,
-      },
-    }),
-  });
+  // 4-second timeout so Frankie never hangs or causes serverless timeouts
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-  if (!res.ok) {
-    throw new Error(`Gemini status ${res.status}`);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
+      body: JSON.stringify({
+        contents,
+        system_instruction: {
+          parts: [{ text: systemPrompt }],
+        },
+        generationConfig: {
+          temperature: 0.4,
+          maxOutputTokens: 1024,
+        },
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Gemini status ${res.status}`);
+    }
+
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    return text || null;
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  return text || null;
 }
 
 export async function POST(req: NextRequest) {
@@ -351,15 +374,15 @@ export async function POST(req: NextRequest) {
     }
 
     const geminiKey = process.env.GEMINI_API_KEY;
-    const primaryModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-    const fallbackModels = (process.env.GEMINI_FALLBACK_MODELS || "gemini-1.5-flash,gemini-1.5-pro")
+    const primaryModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+    const fallbackModels = (process.env.GEMINI_FALLBACK_MODELS || "gemini-2.0-flash,gemini-1.5-pro")
       .split(",")
       .map((m) => m.trim())
       .filter(Boolean);
 
     const modelsToTry = [primaryModel, ...fallbackModels];
 
-    if (geminiKey) {
+    if (geminiKey && geminiKey.trim() !== "") {
       for (const model of modelsToTry) {
         try {
           const aiResponse = await callGemini(geminiKey, model, message, history);
@@ -376,12 +399,12 @@ export async function POST(req: NextRequest) {
             });
           }
         } catch (err: any) {
-          console.warn(`[FRANKIE_GEMINI] Model ${model} failed:`, err?.message);
+          console.warn(`[FRANKIE_GEMINI] Model ${model} failed or timed out:`, err?.message);
         }
       }
     }
 
-    // Fallback to local deterministic trade engine
+    // Instant fallback to local deterministic trade engine
     const fallbackResponse = runDeterministicFrankie(message);
     return NextResponse.json(fallbackResponse);
   } catch (error: any) {

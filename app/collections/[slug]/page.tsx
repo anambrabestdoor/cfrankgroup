@@ -80,6 +80,36 @@ const COLLECTIONS: Record<string, CollectionMeta> = {
     desc: "Heavy ceramic water closets, dual-flush siphon toilets, countertop wash hand basins, and solid brass plumbing fixtures for residential and commercial projects.",
     categoryKey: "sanitary-fittings",
   },
+  "paint": {
+    title: "Premium Architectural Paints & Wall Finishes",
+    seoTitle: "Quality Paints & Textured Wall Finishes | Anambra Best Door",
+    desc: "Long-lasting interior and exterior paints, satin emulsions, weather-shield acrylics, and textured coatings for residential estates and commercial buildings.",
+    categoryKey: "paint",
+  },
+  "roof-tiles": {
+    title: "Stone-Coated Roof Tiles & Roofing Materials",
+    seoTitle: "Stone-Coated Roof Tiles | Direct Supply | Anambra Best Door",
+    desc: "High-grade stone-coated steel roof tiles, classic, shingle, and Roman tile profiles engineered for weather resistance and enduring aesthetic appeal.",
+    categoryKey: "roof-tiles",
+  },
+  "bathrooms": {
+    title: "Complete Bathroom Suites & Sanitary Wares",
+    seoTitle: "Bathroom Suites, Tubs & Vanities | Anambra Best Door",
+    desc: "All-in-one bathroom equipment including glass shower enclosures, bathtubs, designer vanity units, and modern sanitary installations.",
+    categoryKey: "bathrooms",
+  },
+  "real-estate": {
+    title: "Real Estate & Commercial Properties",
+    seoTitle: "Verified Real Estate & Land Inquiries | Anambra Best Door",
+    desc: "Commercial building listings, residential plots, and investment property connections across Anambra State and the South-East region.",
+    categoryKey: "real-estate",
+  },
+  "careers": {
+    title: "Careers & Employment Opportunities",
+    seoTitle: "Join Our Team | Careers at CFrank Enterprise & Anambra Best Door",
+    desc: "Open job vacancies in sales, fabrication, technical fitting, inventory management, and digital marketing at Anambra Best Door.",
+    categoryKey: "careers",
+  },
 };
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://anambrabestdoor.com";

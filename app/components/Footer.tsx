@@ -84,22 +84,27 @@ export default function Footer() {
               <ul className="space-y-2.5 text-slate-600 font-medium">
                 <li>
                   <Link href="/shop?category=sanitary-fittings" className="hover:text-[#003296] transition-colors font-bold text-[#003296]">
-                    Water Closets & Basins
+                    Sanitary & Bathrooms
                   </Link>
                 </li>
                 <li>
-                  <Link href="/shop?category=sanitary-fittings" className="hover:text-[#003296] transition-colors">
-                    Shower Systems & Sinks
+                  <Link href="/shop?category=paint" className="hover:text-[#003296] transition-colors">
+                    Paints & Wall Finishes
                   </Link>
                 </li>
                 <li>
-                  <Link href="/shop" className="hover:text-[#003296] transition-colors">
-                    Door Locks & Accessories
+                  <Link href="/shop?category=roof-tiles" className="hover:text-[#003296] transition-colors">
+                    Roof Tiles & Roofing
                   </Link>
                 </li>
                 <li>
-                  <Link href="/collections/hdf-doors" className="hover:text-[#003296] transition-colors">
-                    Complete Pre-Hung Sets
+                  <Link href="/shop?category=real-estate" className="hover:text-[#003296] transition-colors">
+                    Real Estate & Properties
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/shop?category=careers" className="hover:text-[#003296] transition-colors">
+                    Careers & Job Openings
                   </Link>
                 </li>
               </ul>

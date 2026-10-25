@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     template: "%s | Anambra Best Door",
   },
   description:
-    "Anambra Best Door (operated by CFrank Enterprise) is Nigeria's trusted direct importer of Turkish armoured security doors, interior wooden doors, waterproof bathroom doors, and biometric smart locks in Ogidi, Onitsha, Anambra State. Nationwide delivery.",
+    "Anambra Best Door (operated by CFrank Enterprise) is Nigeria's trusted direct importer of quality HDF doors, Turkish armoured security doors, interior wooden doors, waterproof bathroom doors, and biometric smart locks in Ogidi, Onitsha, Anambra State. Nationwide delivery.",
   keywords: [
     "Security doors Onitsha",
     "Turkish security doors Nigeria",
@@ -63,8 +63,14 @@ export const metadata: Metadata = {
     ],
   },
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
   },
   verification: {
     google: "iBRJRBa4MEc-8HGKT_j8rtYi8twd964563fAsFqdQs8",

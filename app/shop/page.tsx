@@ -8,7 +8,7 @@ import { ChevronDown, Search, ArrowRight, MessageSquare, RotateCcw } from "lucid
 import { useApp } from "@/app/context/AppContext";
 
 function ShopContent() {
-  const { settings } = useApp();
+  const { settings, products } = useApp();
   const searchParams = useSearchParams();
   const urlCategory = searchParams.get("category");
   const urlSub = searchParams.get("sub");
@@ -24,16 +24,18 @@ function ShopContent() {
         setSelectedGroup("doors");
         setSelectedCategory("all");
       } else if (urlCategory === "sanitary" || urlCategory === "sanitary-fittings") {
-        setSelectedGroup("sanitary");
+        setSelectedGroup("all");
         setSelectedCategory("sanitary-fittings");
       } else {
+        setSelectedGroup("all");
         setSelectedCategory(urlCategory);
       }
     }
   }, [urlCategory]);
 
   const filteredProducts = useMemo(() => {
-    return DOOR_PRODUCTS.filter((product) => {
+    const activeList = products && products.length > 0 ? products : DOOR_PRODUCTS;
+    return activeList.filter((product) => {
       if (!product || !product.active) return false;
 
       // Group filter (Doors vs Sanitary)
@@ -90,20 +92,20 @@ function ShopContent() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* Main Group Switcher Tabs: All / Doors & Entrances / Sanitary Wares & Fittings */}
+        {/* Main Group Switcher Tabs */}
         <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
           <button
             onClick={() => {
               setSelectedGroup("all");
               setSelectedCategory("all");
             }}
-            className={`py-2 px-5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-              selectedGroup === "all"
+            className={`py-2 px-4 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              selectedGroup === "all" && selectedCategory === "all"
                 ? "bg-[#003296] text-white shadow-sm"
                 : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
             }`}
           >
-            All Products
+            All Items
           </button>
 
           <button
@@ -111,7 +113,7 @@ function ShopContent() {
               setSelectedGroup("doors");
               setSelectedCategory("all");
             }}
-            className={`py-2 px-5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            className={`py-2 px-4 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               selectedGroup === "doors"
                 ? "bg-[#003296] text-white shadow-sm"
                 : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
@@ -122,16 +124,72 @@ function ShopContent() {
 
           <button
             onClick={() => {
-              setSelectedGroup("sanitary");
-              setSelectedCategory("all");
+              setSelectedGroup("all");
+              setSelectedCategory("sanitary-fittings");
             }}
-            className={`py-2 px-5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-              selectedGroup === "sanitary"
+            className={`py-2 px-4 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              selectedCategory === "sanitary-fittings" || selectedCategory === "bathrooms"
                 ? "bg-[#003296] text-white shadow-sm"
                 : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
             }`}
           >
-            Sanitary Wares & Fittings
+            Bathrooms & Sanitary
+          </button>
+
+          <button
+            onClick={() => {
+              setSelectedGroup("all");
+              setSelectedCategory("paint");
+            }}
+            className={`py-2 px-4 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              selectedCategory === "paint"
+                ? "bg-[#003296] text-white shadow-sm"
+                : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
+            }`}
+          >
+            Paint & Finishes
+          </button>
+
+          <button
+            onClick={() => {
+              setSelectedGroup("all");
+              setSelectedCategory("roof-tiles");
+            }}
+            className={`py-2 px-4 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              selectedCategory === "roof-tiles"
+                ? "bg-[#003296] text-white shadow-sm"
+                : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
+            }`}
+          >
+            Roof Tiles
+          </button>
+
+          <button
+            onClick={() => {
+              setSelectedGroup("all");
+              setSelectedCategory("real-estate");
+            }}
+            className={`py-2 px-4 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              selectedCategory === "real-estate"
+                ? "bg-[#003296] text-white shadow-sm"
+                : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
+            }`}
+          >
+            Real Estate
+          </button>
+
+          <button
+            onClick={() => {
+              setSelectedGroup("all");
+              setSelectedCategory("careers");
+            }}
+            className={`py-2 px-4 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              selectedCategory === "careers"
+                ? "bg-[#003296] text-white shadow-sm"
+                : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
+            }`}
+          >
+            Careers
           </button>
         </div>
 

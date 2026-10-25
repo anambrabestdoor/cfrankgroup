@@ -8,6 +8,11 @@ const COLLECTION_SLUGS = [
   "bathroom-doors",
   "luxury-doors",
   "sanitary-fittings",
+  "paint",
+  "roof-tiles",
+  "bathrooms",
+  "real-estate",
+  "careers",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

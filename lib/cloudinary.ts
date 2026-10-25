@@ -43,10 +43,11 @@ export function getCloudinaryOptimizedUrl(publicIdOrUrl: string, options?: { wid
 export async function uploadImageToCloudinary(fileBase64: string, folder = 'anambra_best_door') {
   const instance = getCloudinary();
   if (!process.env.CLOUDINARY_API_SECRET) {
-    console.warn('[Cloudinary] CLOUDINARY_API_SECRET missing. Returning standard image asset URI.');
+    console.warn('[Cloudinary] CLOUDINARY_API_SECRET missing. Returning uploaded image data URL directly.');
     return {
-      url: fileBase64.startsWith('data:') ? '/products/bullet-proof-door.jpg' : fileBase64,
-      public_id: `demo_${Date.now()}`,
+      url: fileBase64,
+      public_id: `local_${Date.now()}`,
+      resource_type: 'image',
     };
   }
 
@@ -61,6 +62,7 @@ export async function uploadImageToCloudinary(fileBase64: string, folder = 'anam
       width: result.width,
       height: result.height,
       format: result.format,
+      resource_type: result.resource_type,
     };
   } catch (err) {
     console.error('[Cloudinary Upload Error]:', err);

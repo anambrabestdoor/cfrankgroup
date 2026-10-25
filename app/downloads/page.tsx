@@ -187,7 +187,7 @@ export default function DownloadsPage() {
               href="/shop"
               className="inline-flex items-center gap-1.5 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition-colors"
             >
-              <span>Explore Online Shop</span>
+              <span>Browse Online Shop</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
