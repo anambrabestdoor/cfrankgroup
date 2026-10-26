@@ -22,6 +22,7 @@ export interface DoorProduct {
   originalPrice?: number;
   priceOnRequest: boolean;
   priceMode?: "show_price" | "price_on_request" | "blank";
+  priceValidUntil?: string;
   image: string;
   gallery: string[];
   video?: string;

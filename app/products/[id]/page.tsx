@@ -146,9 +146,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
     (p) => p.id !== product.id && (p.category === product.category || p.featured)
   ).slice(0, 4);
 
-  const priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0];
+  const priceValidUntil =
+    product.priceValidUntil ||
+    new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
   const productJsonLd = {
     "@context": "https://schema.org",

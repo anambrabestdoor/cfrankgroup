@@ -78,6 +78,7 @@ export default function AdminPage() {
   const [formOriginalPrice, setFormOriginalPrice] = useState<number>(0);
   const [formPriceOnRequest, setFormPriceOnRequest] = useState(false);
   const [formPriceMode, setFormPriceMode] = useState<"show_price" | "price_on_request" | "blank">("blank");
+  const [formPriceValidUntil, setFormPriceValidUntil] = useState<string>("");
   const [formImage, setFormImage] = useState("");
   const [formGallery, setFormGallery] = useState<string[]>([]);
   const [formVideo, setFormVideo] = useState<string>("");
@@ -241,6 +242,7 @@ export default function AdminPage() {
     setFormOriginalPrice(0);
     setFormPriceOnRequest(false);
     setFormPriceMode("blank");
+    setFormPriceValidUntil("");
     setFormImage("");
     setFormGallery([]);
     setFormVideo("");
@@ -277,6 +279,7 @@ export default function AdminPage() {
       prod.priceMode || (prod.priceOnRequest ? "price_on_request" : (!prod.price || prod.price === 0 ? "blank" : "show_price"));
     setFormPriceMode(initialPriceMode);
     setFormPriceOnRequest(initialPriceMode === "price_on_request");
+    setFormPriceValidUntil(prod.priceValidUntil || "");
     setFormImage(prod.image);
     setFormGallery(prod.gallery && prod.gallery.length > 0 ? prod.gallery : [prod.image]);
     setFormVideo(prod.video || (prod.videos && prod.videos[0]) || "");
@@ -339,6 +342,7 @@ export default function AdminPage() {
       originalPrice: formPriceMode === "show_price" && Number(formOriginalPrice) > 0 ? Number(formOriginalPrice) : undefined,
       priceOnRequest: formPriceMode === "price_on_request",
       priceMode: formPriceMode,
+      priceValidUntil: formPriceMode === "show_price" && formPriceValidUntil.trim() ? formPriceValidUntil.trim() : undefined,
       image: formImage.trim() || (formGallery.length > 0 ? formGallery[0] : ""),
       gallery: formGallery.length > 0 ? formGallery : (formImage.trim() ? [formImage.trim()] : []),
       video: formVideo.trim() || undefined,
@@ -1489,6 +1493,21 @@ export default function AdminPage() {
                               Displays as {discountPercent}% discount
                             </span>
                           )}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            Price Validity Date (Optional)
+                          </label>
+                          <input
+                            type="date"
+                            value={formPriceValidUntil}
+                            onChange={(e) => setFormPriceValidUntil(e.target.value)}
+                            className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl"
+                          />
+                          <p className="text-[11px] text-slate-400 mt-1">
+                            Optional. Leave blank to automatically roll forward 365 days on Google.
+                          </p>
                         </div>
                       </div>
                     )}
