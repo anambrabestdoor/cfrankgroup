@@ -146,6 +146,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
     (p) => p.id !== product.id && (p.category === product.category || p.featured)
   ).slice(0, 4);
 
+  const priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
+
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -162,7 +166,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
       url: `${baseUrl}/products/${product.slug}`,
       priceCurrency: "NGN",
       price: product.price && product.price > 0 ? product.price : 0,
-      priceValidUntil: "2027-12-31",
+      priceValidUntil,
       availability:
         product.stockStatus === "in_stock"
           ? "https://schema.org/InStock"
