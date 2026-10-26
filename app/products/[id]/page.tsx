@@ -162,6 +162,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
       url: `${baseUrl}/products/${product.slug}`,
       priceCurrency: "NGN",
       price: product.price && product.price > 0 ? product.price : 0,
+      priceValidUntil: "2027-12-31",
       availability:
         product.stockStatus === "in_stock"
           ? "https://schema.org/InStock"
@@ -177,6 +178,47 @@ export default async function ProductDetailPage({ params }: PageProps) {
           addressLocality: "Ogidi",
           addressRegion: "Anambra State",
           addressCountry: "NG",
+        },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "NG",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 7,
+        returnMethod: "https://schema.org/ReturnInStore",
+        returnFees: "https://schema.org/FreeReturn",
+        returnShippingFeesAmount: {
+          "@type": "MonetaryAmount",
+          currency: "NGN",
+          value: "0",
+        },
+        url: `${baseUrl}/returns`,
+      },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          currency: "NGN",
+          value: "0",
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "NG",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 0,
+            maxValue: 1,
+            unitCode: "DAY",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 3,
+            unitCode: "DAY",
+          },
         },
       },
     },
