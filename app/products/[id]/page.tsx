@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { DOOR_PRODUCTS, DoorProduct } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
 import { isSupabaseConfigured, getSupabase } from "@/lib/supabase";
+import { generateGeoKeywords, generateGeoDescription } from "@/lib/geoKeywords";
 import ProductDetailClient from "./ProductDetailClient";
 
 interface PageProps {
@@ -78,9 +79,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const title = product.seoTitle || `${product.name} - Price & Specs | Anambra Best Door`;
-  const description =
-    product.seoDescription ||
-    `${product.name}. Direct supply from CFrank Enterprise. Available in standard 3ft x 7ft and custom openings. Nationwide delivery.`;
+  const description = generateGeoDescription(
+    product.name,
+    product.seoDescription || product.shortDescription
+  );
+  const keywords = generateGeoKeywords(product.name, product.categoryLabel);
 
   const ogImageUrl = product.image.startsWith("http")
     ? product.image
@@ -89,6 +92,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: { absolute: title },
     description,
+    keywords,
     alternates: {
       canonical: `${baseUrl}/products/${product.slug}`,
     },
@@ -122,24 +126,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const product = await fetchProduct(id);
 
   if (!product) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center px-4 py-16 bg-[#F8FAFC]">
-        <div className="text-center space-y-4 max-w-md bg-white p-8 rounded-xl border border-slate-200">
-          <h1 className="text-2xl font-bold text-slate-900">Door Model Not Found</h1>
-          <p className="text-xs text-slate-500">
-            The requested door or fitting is not currently listed in our online inventory or may have been updated.
-          </p>
-          <div className="pt-2">
-            <Link
-              href="/shop"
-              className="py-2.5 px-5 bg-[#003296] text-white text-xs font-bold rounded-xl inline-block"
-            >
-              Browse Full Catalogue
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   const relatedProducts = DOOR_PRODUCTS.filter(
@@ -179,8 +166,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
         address: {
           "@type": "PostalAddress",
           streetAddress: DEFAULT_SITE_SETTINGS.address,
-          addressLocality: "Ogidi",
-          addressRegion: "Anambra State",
           addressCountry: "NG",
         },
       },

@@ -90,7 +90,7 @@ export default function Hero() {
 
             {/* 2. Trade Copy */}
             <p className="text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed font-normal max-w-xl">
-              Anambra Best Door is a prominent door dealer and manufacturer in Anambra State, Nigeria, powered by C Frank Enterprise. From HDF interior doors to security doors and bathroom doors, we help homeowners, builders and contractors find the right fit for their projects.
+              Anambra Best Door is a prominent door dealer and manufacturer in Anambra State, Nigeria, a subsidiary of CFrank Enterprise. From HDF interior doors to security doors and bathroom doors, we help homeowners, builders and contractors find the right fit for their projects.
             </p>
 
 

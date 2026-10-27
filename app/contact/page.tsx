@@ -41,11 +41,11 @@ export default function ContactPage() {
           <div className="space-y-6">
             <div>
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block mb-1">
-                Physical Warehouse & Showroom
+                Showroom & Warehouse Locations
               </span>
 
               <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Our warehouse and showroom is located in the Building Material International Market, Ogidi, providing access to heavy-gauge steel security doors and hardware for clients across the South-East and nationwide.
+                Our physical showroom and warehouse facilities provide direct access for contractors, builders, and homeowners to inspect heavy-gauge steel security doors, lock mechanisms, and interior finishes in person before dispatch.
               </p>
             </div>
 

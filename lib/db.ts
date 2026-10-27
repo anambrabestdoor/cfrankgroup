@@ -8,7 +8,7 @@ import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
 export interface User {
   email: string;
   name: string;
-  role: "admin" | "user";
+  role: "admin" | "editor" | "user";
   joinDate: string;
   newsletterSubscribed: boolean;
   passwordHash: string;
@@ -464,7 +464,7 @@ export const db = {
     return null;
   },
 
-  async createUser(newUser: Omit<User, "passwordHash"> & { password?: string; passwordHash?: string }): Promise<User> {
+  async createUser(newUser: Partial<Omit<User, "passwordHash">> & { email: string; password?: string; passwordHash?: string }): Promise<User> {
     const cleanEmail = newUser.email.toLowerCase().trim();
     if (!cleanEmail) {
       throw new Error("Email address is required to create an account.");
@@ -509,7 +509,7 @@ export const db = {
     return createdUser;
   },
 
-  async updateUserRole(email: string, role: "admin" | "user"): Promise<boolean> {
+  async updateUserRole(email: string, role: "admin" | "editor" | "user"): Promise<boolean> {
     return this.updateUserData(email, { role });
   },
 

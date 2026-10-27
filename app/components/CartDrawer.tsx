@@ -4,10 +4,27 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useApp } from "@/app/context/AppContext";
-import { X, Trash2, Plus, Minus, MessageSquare, ShoppingCart } from "lucide-react";
+import { X, Trash2, Plus, Minus, MessageSquare, ShoppingCart, FileText } from "lucide-react";
 
 export default function CartDrawer() {
-  const { cart, cartOpen, setCartOpen, removeFromCart, updateQuantity, cartTotal, sendWhatsAppOrder, clearCart } = useApp();
+  const { cart, cartOpen, setCartOpen, removeFromCart, updateQuantity, cartTotal, sendWhatsAppOrder, clearCart, settings } = useApp();
+
+  const handleRequestBoq = () => {
+    if (cart.length === 0) return;
+    const itemList = cart
+      .map(
+        (item, idx) =>
+          `${idx + 1}. ${item.name}${item.size ? ` (Spec: ${item.size})` : ""} - Quantity: ${item.quantity}${
+            item.price > 0 ? ` [₦${(item.price * item.quantity).toLocaleString()}]` : ""
+          }`
+      )
+      .join("\n");
+
+    const message = `Hello CFrank Enterprise,\n\nPROJECT SCHEDULE / WHOLE-HOUSE BOQ INQUIRY:\nI am requesting a formal quotation and delivery schedule for the following items from your catalogue:\n\n${itemList}\n\nProject Destination (City & State): [Please enter]\nEstimated Installation Date: [Please enter]\n\nPlease advise on contractor wholesale pricing, lock handing (left/right open), and waybill delivery terms.`;
+
+    const url = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   if (!cartOpen) return null;
 
@@ -159,17 +176,27 @@ export default function CartDrawer() {
                 </div>
               )}
 
-              <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-[11px] text-blue-900 leading-snug">
-                💬 <strong>Direct WhatsApp Inquiry:</strong> Submitting will send your itemized list to CFrank Enterprise to confirm real-time price, stock availability, and delivery options.
+              <div className="p-3 rounded-xl bg-slate-100 border border-slate-200 text-[11px] text-slate-700 leading-snug">
+                <strong>WhatsApp Order Coordination:</strong> Submitting will send your itemized schedule to CFrank Enterprise to confirm real-time stock availability, key specifications, and dispatch logistics.
               </div>
 
-              <button
-                onClick={sendWhatsAppOrder}
-                className="w-full py-3.5 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95 text-xs sm:text-sm cursor-pointer"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>Send Inquiries via WhatsApp</span>
-              </button>
+              <div className="space-y-2 pt-1">
+                <button
+                  onClick={sendWhatsAppOrder}
+                  className="w-full py-3 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold rounded-xl flex items-center justify-center space-x-2 shadow-xs transition-transform active:scale-98 text-xs cursor-pointer"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>Send Cart Inquiry via WhatsApp</span>
+                </button>
+
+                <button
+                  onClick={handleRequestBoq}
+                  className="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-bold rounded-xl flex items-center justify-center space-x-2 transition-colors text-xs cursor-pointer"
+                >
+                  <FileText className="w-4 h-4 text-[#003296]" />
+                  <span>Request Whole-House BOQ / Project Quote</span>
+                </button>
+              </div>
 
               <div className="flex items-center justify-between pt-1">
                 <button

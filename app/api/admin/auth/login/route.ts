@@ -34,9 +34,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
     }
 
-    const isValid = validateAdminCredentials(email, password);
+    const authResult = await validateAdminCredentials(email, password);
 
-    if (!isValid) {
+    if (!authResult.valid) {
       // Record failed attempt
       const prev = attemptRecord || { attempts: 0, lockedUntil: 0 };
       const newAttempts = prev.attempts + 1;
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
         loginAttempts.set(ip, { attempts: newAttempts, lockedUntil: 0 });
         const remaining = 5 - newAttempts;
         return NextResponse.json(
-          { error: `Invalid admin credentials. (${remaining} attempt(s) remaining before security lockout)` },
+          { error: `Invalid credentials. (${remaining} attempt(s) remaining before security lockout)` },
           { status: 401 }
         );
       }
@@ -61,15 +61,17 @@ export async function POST(req: NextRequest) {
     // Reset rate limiter on successful login
     loginAttempts.delete(ip);
 
-    // Sign cryptographic JWT session token
-    const token = await signAdminToken(email, rememberMe);
+    // Sign cryptographic JWT session token with role
+    const token = await signAdminToken(authResult.email, authResult.role, rememberMe);
 
     const maxAge = rememberMe ? 30 * 24 * 60 * 60 : 8 * 60 * 60; // 30 days vs 8 hours
 
     const response = NextResponse.json({
       success: true,
       message: "Authenticated successfully",
-      email: email.trim().toLowerCase(),
+      email: authResult.email,
+      role: authResult.role,
+      name: authResult.name,
     });
 
     // Set secure HTTP-only cookie

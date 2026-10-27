@@ -41,6 +41,9 @@ import {
   Film,
   Play,
   Video,
+  Users,
+  UserPlus,
+  Shield,
 } from "lucide-react";
 
 export default function AdminPage() {
@@ -59,13 +62,32 @@ export default function AdminPage() {
   const [forgotStatus, setForgotStatus] = useState<string | null>(null);
 
   // App / Tab State
-  const [activeTab, setActiveTab] = useState<"products" | "inventory" | "settings" | "cac">("products");
+  const [activeTab, setActiveTab] = useState<"products" | "inventory" | "settings" | "cac" | "team">("products");
   const [productsList, setProductsList] = useState<DoorProduct[]>(products);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Team & Role Management State
+  const [currentUser, setCurrentUser] = useState<{ email: string; role: "admin" | "editor" } | null>(null);
+  const [teamMembers, setTeamMembers] = useState<Array<{
+    id: string;
+    email: string;
+    name: string;
+    role: "admin" | "editor" | "user";
+    joinDate: string;
+    isSuperAdmin?: boolean;
+  }>>([]);
+  const [loadingTeam, setLoadingTeam] = useState(false);
+  const [newEditorName, setNewEditorName] = useState("");
+  const [newEditorEmail, setNewEditorEmail] = useState("");
+  const [newEditorPassword, setNewEditorPassword] = useState("");
+  const [newEditorRole, setNewEditorRole] = useState<"editor" | "admin">("editor");
+  const [isSubmittingEditor, setIsSubmittingEditor] = useState(false);
+  const [teamError, setTeamError] = useState<string | null>(null);
+  const [teamSuccess, setTeamSuccess] = useState<string | null>(null);
 
   // Form Fields for Products
   const [formName, setFormName] = useState("");
@@ -131,6 +153,79 @@ export default function AdminPage() {
   // Settings Form State
   const [siteSettingsForm, setSiteSettingsForm] = useState<SiteSettings>(settings);
 
+  const fetchTeamMembers = async () => {
+    setLoadingTeam(true);
+    try {
+      const res = await fetch("/api/users");
+      if (res.ok) {
+        const data = await res.json();
+        setTeamMembers(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch team members:", err);
+    } finally {
+      setLoadingTeam(false);
+    }
+  };
+
+  const handleCreateTeamMember = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEditorEmail.trim() || !newEditorPassword.trim()) {
+      setTeamError("Email and password are required.");
+      return;
+    }
+    setTeamError(null);
+    setTeamSuccess(null);
+    setIsSubmittingEditor(true);
+    try {
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newEditorName.trim() || newEditorEmail.split("@")[0],
+          email: newEditorEmail.trim().toLowerCase(),
+          password: newEditorPassword,
+          role: newEditorRole,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setTeamError(data.error || "Failed to create team member.");
+      } else {
+        setTeamSuccess(`Account created for ${newEditorEmail} as ${newEditorRole === "admin" ? "Administrator" : "Editor"}.`);
+        setNewEditorName("");
+        setNewEditorEmail("");
+        setNewEditorPassword("");
+        fetchTeamMembers();
+        showToast("New team member added!");
+      }
+    } catch {
+      setTeamError("Network error while creating account.");
+    } finally {
+      setIsSubmittingEditor(false);
+    }
+  };
+
+  const handleDeleteTeamMember = async (email: string) => {
+    if (!confirm(`Are you sure you want to remove ${email}? They will no longer have access to the dashboard.`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/users?email=${encodeURIComponent(email)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Failed to remove user.");
+      } else {
+        showToast("Account removed.");
+        fetchTeamMembers();
+      }
+    } catch {
+      alert("Network error removing user.");
+    }
+  };
+
   useEffect(() => {
     const verifySession = async () => {
       try {
@@ -139,6 +234,8 @@ export default function AdminPage() {
           const data = await res.json();
           if (data.authenticated) {
             setIsAuthenticated(true);
+            setCurrentUser({ email: data.email, role: data.role });
+            fetchTeamMembers();
             return;
           }
         }
@@ -195,8 +292,10 @@ export default function AdminPage() {
       }
 
       setIsAuthenticated(true);
+      setCurrentUser({ email: data.user?.email || email, role: data.user?.role || "admin" });
       setLoginPassword("");
-      showToast("Signed in securely as Administrator");
+      fetchTeamMembers();
+      showToast(`Signed in as ${data.user?.role === "admin" ? "Administrator" : "Editor"}`);
     } catch {
       setLoginError("Network connection error. Please try again.");
     } finally {
@@ -211,6 +310,7 @@ export default function AdminPage() {
       // Ignore network errors on logout
     }
     setIsAuthenticated(false);
+    setCurrentUser(null);
     localStorage.removeItem("abd_admin_auth");
     showToast("Signed out successfully.");
   };
@@ -705,10 +805,23 @@ export default function AdminPage() {
   };
 
   // Save Settings
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     updateSettings(siteSettingsForm);
-    showToast("Site settings & addresses saved!");
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(siteSettingsForm),
+      });
+      if (res.ok) {
+        showToast("Site settings & addresses saved to server!");
+      } else {
+        showToast("Site settings & addresses saved!");
+      }
+    } catch {
+      showToast("Site settings & addresses saved!");
+    }
   };
 
   // Filtered Products for Table
@@ -1029,11 +1142,10 @@ export default function AdminPage() {
               setActiveTab("products");
               setIsEditing(false);
             }}
-            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${
-              activeTab === "products"
+            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${activeTab === "products"
                 ? "border-[#003296] text-[#003296]"
                 : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
+              }`}
           >
             <Package className="w-4 h-4" />
             <span>Products Inventory ({productsList.length})</span>
@@ -1041,11 +1153,10 @@ export default function AdminPage() {
 
           <button
             onClick={() => setActiveTab("inventory")}
-            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${
-              activeTab === "inventory"
+            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${activeTab === "inventory"
                 ? "border-[#003296] text-[#003296]"
                 : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
+              }`}
           >
             <TrendingUp className="w-4 h-4" />
             <span>Stock Status</span>
@@ -1053,11 +1164,10 @@ export default function AdminPage() {
 
           <button
             onClick={() => setActiveTab("settings")}
-            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${
-              activeTab === "settings"
+            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${activeTab === "settings"
                 ? "border-[#003296] text-[#003296]"
                 : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
+              }`}
           >
             <Settings className="w-4 h-4" />
             <span>Dynamic Site & Address Settings</span>
@@ -1065,14 +1175,27 @@ export default function AdminPage() {
 
           <button
             onClick={() => setActiveTab("cac")}
-            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${
-              activeTab === "cac"
+            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${activeTab === "cac"
                 ? "border-[#003296] text-[#003296]"
                 : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
+              }`}
           >
             <BadgeCheck className="w-4 h-4 text-emerald-600" />
             <span>CAC Compliance ({settings.cacNumber})</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab("team");
+              fetchTeamMembers();
+            }}
+            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${activeTab === "team"
+                ? "border-[#003296] text-[#003296]"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
+          >
+            <Users className="w-4 h-4 text-[#003296]" />
+            <span>Team & Editors ({teamMembers.length})</span>
           </button>
         </div>
       </header>
@@ -1295,13 +1418,12 @@ export default function AdminPage() {
                     <div className="flex items-center space-x-2">
                       <span className="text-xs text-slate-500">Search Readiness:</span>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-extrabold ${
-                          seoScore >= 80
+                        className={`px-2 py-0.5 rounded-full text-xs font-extrabold ${seoScore >= 80
                             ? "bg-emerald-100 text-emerald-800"
                             : seoScore >= 50
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
+                              ? "bg-amber-100 text-amber-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
                       >
                         {seoScore} / 100
                       </span>
@@ -1617,11 +1739,10 @@ export default function AdminPage() {
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
-                    className={`relative w-full h-48 rounded-xl overflow-hidden border-2 transition-all cursor-pointer flex flex-col items-center justify-center group ${
-                      isDraggingImage
+                    className={`relative w-full h-48 rounded-xl overflow-hidden border-2 transition-all cursor-pointer flex flex-col items-center justify-center group ${isDraggingImage
                         ? "border-[#003296] bg-blue-50/90 ring-2 ring-[#003296]/30 scale-[1.01]"
                         : "border-dashed border-slate-300 hover:border-[#003296] bg-slate-50"
-                    }`}
+                      }`}
                   >
                     {formImage ? (
                       <>
@@ -1756,11 +1877,10 @@ export default function AdminPage() {
                       }
                     }}
                     onClick={() => galleryInputRef.current?.click()}
-                    className={`w-full py-4 px-3 rounded-xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center ${
-                      isDraggingGallery
+                    className={`w-full py-4 px-3 rounded-xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center ${isDraggingGallery
                         ? "border-[#003296] bg-blue-50/90 ring-2 ring-[#003296]/30"
                         : "border-slate-300 hover:border-[#003296] bg-slate-50"
-                    }`}
+                      }`}
                   >
                     <Plus className="w-5 h-5 text-slate-400 mb-1" />
                     <span className="text-xs font-bold text-slate-700">
@@ -1888,11 +2008,10 @@ export default function AdminPage() {
                         if (file) processVideoFile(file);
                       }}
                       onClick={() => videoInputRef.current?.click()}
-                      className={`w-full py-5 px-3 rounded-xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center ${
-                        isDraggingVideo
+                      className={`w-full py-5 px-3 rounded-xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center ${isDraggingVideo
                           ? "border-[#003296] bg-blue-50/90 ring-2 ring-[#003296]/30"
                           : "border-slate-300 hover:border-[#003296] bg-slate-50"
-                      }`}
+                        }`}
                     >
                       <Video className="w-6 h-6 text-slate-400 mb-1" />
                       <span className="text-xs font-bold text-slate-700">
@@ -2071,11 +2190,10 @@ export default function AdminPage() {
                         </td>
                         <td className="py-3 px-4">
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                              prod.stockStatus === "in_stock"
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${prod.stockStatus === "in_stock"
                                 ? "bg-emerald-100 text-emerald-800"
                                 : "bg-red-100 text-red-800"
-                            }`}
+                              }`}
                           >
                             {prod.stockStatus === "in_stock" ? "In Stock" : "Sold Out"}
                           </span>
@@ -2154,16 +2272,15 @@ export default function AdminPage() {
                       {prod.price && prod.price > 0
                         ? `₦${prod.price.toLocaleString()}`
                         : prod.priceMode === "price_on_request" || prod.priceOnRequest
-                        ? "On Request"
-                        : "Blank (Chat)"}
+                          ? "On Request"
+                          : "Blank (Chat)"}
                     </span>
                     <button
                       onClick={() => handleToggleSoldOut(prod.id)}
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                        prod.stockStatus === "in_stock"
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${prod.stockStatus === "in_stock"
                           ? "bg-emerald-100 text-emerald-800"
                           : "bg-red-100 text-red-800"
-                      }`}
+                        }`}
                     >
                       {prod.stockStatus === "in_stock" ? "Mark as Sold Out" : "Mark as In Stock"}
                     </button>
@@ -2233,9 +2350,209 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
+        ) : activeTab === "team" ? (
+          /* ========================================================================= */
+          /* VIEW 5: TEAM & EDITORS ACCESS CONTROL                                     */
+          /* ========================================================================= */
+          <div className="space-y-6 max-w-5xl">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                Team & Content Editors
+              </h1>
+              <p className="text-xs text-slate-500">
+                Grant and manage team credentials for inventory updates, door pricing adjustments, and catalogue maintenance.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Account Creation Form */}
+              <div className="lg:col-span-1 bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
+                <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                  <UserPlus className="w-4 h-4 text-[#003296]" />
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                    Add Team Member
+                  </h2>
+                </div>
+
+                {teamError && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-start space-x-2">
+                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                    <span>{teamError}</span>
+                  </div>
+                )}
+
+                {teamSuccess && (
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-800 flex items-start space-x-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>{teamSuccess}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleCreateTeamMember} className="space-y-3.5 text-xs">
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Sales Coordinator"
+                      value={newEditorName}
+                      onChange={(e) => setNewEditorName(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="team@example.com"
+                      value={newEditorEmail}
+                      onChange={(e) => setNewEditorEmail(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">
+                      Initial Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="At least 6 characters"
+                      value={newEditorPassword}
+                      onChange={(e) => setNewEditorPassword(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">
+                      Assigned Role
+                    </label>
+                    <select
+                      value={newEditorRole}
+                      onChange={(e) => setNewEditorRole(e.target.value as "editor" | "admin")}
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
+                    >
+                      <option value="editor">Editor (Catalogue & Prices Only)</option>
+                      <option value="admin">Administrator (Full Dashboard Access)</option>
+                    </select>
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      Editors can create and update doors, images, and prices. Administrators can also manage settings and team accounts.
+                    </p>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmittingEditor}
+                    className="w-full py-2.5 px-4 bg-[#003296] hover:bg-[#092b7c] text-white font-bold rounded-lg shadow-xs flex items-center justify-center space-x-1.5 transition-colors disabled:opacity-60 cursor-pointer"
+                  >
+                    {isSubmittingEditor ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Creating Account...</span>
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="w-3.5 h-3.5" />
+                        <span>Create Team Account</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+
+              {/* Active Team Directory */}
+              <div className="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div className="flex items-center space-x-2">
+                    <Users className="w-4 h-4 text-[#003296]" />
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                      Active Team Directory ({teamMembers.length})
+                    </h2>
+                  </div>
+                  <button
+                    onClick={fetchTeamMembers}
+                    disabled={loadingTeam}
+                    className="text-xs text-slate-500 hover:text-slate-800 flex items-center space-x-1 cursor-pointer"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${loadingTeam ? "animate-spin" : ""}`} />
+                    <span>Refresh</span>
+                  </button>
+                </div>
+
+                {loadingTeam && teamMembers.length === 0 ? (
+                  <div className="py-12 text-center text-slate-400 text-xs">
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[#003296]" />
+                    <span>Loading team directory...</span>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-100 text-slate-400 uppercase text-[10px] font-bold">
+                          <th className="py-2.5 px-3">Member</th>
+                          <th className="py-2.5 px-3">Role</th>
+                          <th className="py-2.5 px-3">Joined</th>
+                          <th className="py-2.5 px-3 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {teamMembers.map((member) => (
+                          <tr key={member.id} className="hover:bg-slate-50/70 transition-colors">
+                            <td className="py-3 px-3">
+                              <span className="font-bold text-slate-900 block">{member.name}</span>
+                              <span className="text-slate-500 text-[11px] block">{member.email}</span>
+                            </td>
+                            <td className="py-3 px-3">
+                              {member.isSuperAdmin ? (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                                  Primary Admin
+                                </span>
+                              ) : member.role === "admin" ? (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#003296] border border-blue-200">
+                                  Administrator
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                                  Content Editor
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3 px-3 text-slate-500 text-[11px]">
+                              {member.joinDate || "Active"}
+                            </td>
+                            <td className="py-3 px-3 text-right">
+                              {member.isSuperAdmin ? (
+                                <span className="text-[10px] text-slate-400 italic">Protected</span>
+                              ) : (
+                                <button
+                                  onClick={() => handleDeleteTeamMember(member.email)}
+                                  className="text-red-500 hover:text-red-700 p-1 rounded-md hover:bg-red-50 transition-colors cursor-pointer"
+                                  title={`Remove ${member.email}`}
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         ) : (
           /* ========================================================================= */
-          /* VIEW 5: DYNAMIC SITE SETTINGS & ADDRESSES (NOT HARDCODED)                 */
+          /* VIEW 6: DYNAMIC SITE SETTINGS & ADDRESSES (NOT HARDCODED)                 */
           /* ========================================================================= */
           <form onSubmit={handleSaveSettings} className="space-y-6 max-w-4xl">
             <div>

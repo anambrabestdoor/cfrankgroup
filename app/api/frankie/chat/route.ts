@@ -35,10 +35,10 @@ OWNERSHIP & VERIFIED BUSINESS FACTS (GROUND TRUTH WHEN EXPLICITLY ASKED):
 - Sole Proprietor & Owner: Chidera Frank Okonkwo
 - Business Trading Name: Anambra Best Door Enterprises (powered and operated by CFrank Enterprise)
 - CAC Registration Number: BN 9943925 (Registered under Companies and Allied Matters Act, Active status)
-- Physical Warehouse Address: Maraim Plaza, Building Material International Market, Ogidi, Anambra State, Nigeria
-- Contact Phone: +234 707 007 0305
-- WhatsApp Order Line: 2347070070305 (direct link available in chat)
-- Working Hours: Monday - Saturday: 8:00 AM - 5:30 PM (Sunday closed)
+- Physical Warehouse Address: ${DEFAULT_SITE_SETTINGS.address}${DEFAULT_SITE_SETTINGS.secondAddress ? ` | Branch Location: ${DEFAULT_SITE_SETTINGS.secondAddress}` : ""}
+- Contact Phone: ${DEFAULT_SITE_SETTINGS.phoneDisplay}
+- WhatsApp Order Line: ${DEFAULT_SITE_SETTINGS.whatsappNumber} (direct link available in chat)
+- Working Hours: ${DEFAULT_SITE_SETTINGS.workingHours} (Sunday closed)
 
 CRITICAL RULES ON IDENTITY & BUSINESS FACTS:
 - You are a sales rep, NOT a co-planner or robotic assistant.
@@ -266,7 +266,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   if (q.includes("location") || q.includes("where") || q.includes("warehouse") || q.includes("depot") || q.includes("address") || q.includes("ogidi") || q.includes("onitsha") || q.includes("visit") || q.includes("shop")) {
     return {
       message:
-        "You can inspect doors in person at our showroom & warehouse:\n\n• Location: Maraim Plaza, Building Material International Market, Ogidi, Anambra State.\n• Hours: Monday - Saturday: 8:00 AM - 5:30 PM\n\nContractors, site engineers, and homeowners are always welcome to inspect lock mechanisms, woodgrain finishes, and steel gauges before dispatch.",
+        `You can inspect doors in person at our showroom & warehouse:\n\n• Primary Location: ${DEFAULT_SITE_SETTINGS.address}${DEFAULT_SITE_SETTINGS.secondAddress ? `\n• Branch Location: ${DEFAULT_SITE_SETTINGS.secondAddress}` : ""}\n• Hours: ${DEFAULT_SITE_SETTINGS.workingHours}\n\nContractors, site engineers, and homeowners are always welcome to inspect lock mechanisms, woodgrain finishes, and steel gauges before dispatch.`,
       suggested_actions: [
         { label: "Call Sales Desk", action_type: "call", payload: callUrl },
         { label: "WhatsApp Location Pin", action_type: "link", payload: waUrl },

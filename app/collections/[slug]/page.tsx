@@ -4,6 +4,7 @@ import Link from "next/link";
 import ProductCard from "@/app/components/ProductCard";
 import { DOOR_PRODUCTS, DoorProduct } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
+import { generateGeoKeywords } from "@/lib/geoKeywords";
 import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, Warehouse } from "lucide-react";
 
 interface CollectionMeta {
@@ -129,9 +130,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const keywords = generateGeoKeywords(col.title, col.categoryKey);
+
   return {
     title: { absolute: col.seoTitle },
     description: col.desc,
+    keywords,
     alternates: {
       canonical: `${baseUrl}/collections/${slug}`,
     },

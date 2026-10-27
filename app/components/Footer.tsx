@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useApp } from "@/app/context/AppContext";
-import { BadgeCheck, Phone, Mail, Clock, Store, Instagram, MessageSquare } from "lucide-react";
+import { BadgeCheck, Phone, Mail, Clock, Store, Instagram, MessageSquare, MapPin } from "lucide-react";
 
 export default function Footer() {
   const { settings, setCacModalOpen } = useApp();
@@ -129,6 +129,16 @@ export default function Footer() {
                       {settings.salesEmail}
                     </a>
                   </div>
+                  <div className="flex items-start space-x-2 text-slate-600">
+                    <MapPin className="w-4 h-4 text-[#003296] shrink-0 mt-0.5" />
+                    <span className="leading-tight">{settings.address}</span>
+                  </div>
+                  {settings.secondAddress && (
+                    <div className="flex items-start space-x-2 text-slate-600">
+                      <Store className="w-4 h-4 text-[#003296] shrink-0 mt-0.5" />
+                      <span className="leading-tight">{settings.secondAddress}</span>
+                    </div>
+                  )}
                   <div className="flex items-center space-x-2 text-slate-500">
                     <Clock className="w-4 h-4 text-[#003296] shrink-0" />
                     <span>{settings.workingHours}</span>
