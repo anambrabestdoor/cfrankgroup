@@ -43,7 +43,7 @@ const heroSlides = [
     image: "/WhatsApp Image 2026-10-19 at 7.46.19 AM (2).jpeg",
     href: "/shop",
     buttonText: "Browse Our Doors",
-    alt: "Anambra Best Door residential suite installation corridor",
+    alt: "Anambra Best Door residential suite installation project",
   },
 ];
 

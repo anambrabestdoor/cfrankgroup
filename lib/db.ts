@@ -104,6 +104,15 @@ export interface Settings {
   githubUrl?: string;
   whatsappInquiryTemplate?: string;
   whatsappCartTemplate?: string;
+  deliverySummaryHeading?: string;
+  deliverySummaryText?: string;
+  deliveryRegions?: Array<{
+    name: string;
+    duration: string;
+    coverage: string;
+  }>;
+  deliveryPackagingNote?: string;
+  preDispatchInspectionNote?: string;
 }
 
 export interface Review {
@@ -624,6 +633,11 @@ export const db = {
       githubUrl: DEFAULT_SITE_SETTINGS.githubUrl,
       whatsappInquiryTemplate: DEFAULT_SITE_SETTINGS.whatsappInquiryTemplate,
       whatsappCartTemplate: DEFAULT_SITE_SETTINGS.whatsappCartTemplate,
+      deliverySummaryHeading: DEFAULT_SITE_SETTINGS.deliverySummaryHeading,
+      deliverySummaryText: DEFAULT_SITE_SETTINGS.deliverySummaryText,
+      deliveryRegions: DEFAULT_SITE_SETTINGS.deliveryRegions,
+      deliveryPackagingNote: DEFAULT_SITE_SETTINGS.deliveryPackagingNote,
+      preDispatchInspectionNote: DEFAULT_SITE_SETTINGS.preDispatchInspectionNote,
     };
 
     if (disk.settings) {

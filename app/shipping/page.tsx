@@ -8,6 +8,33 @@ import { useApp } from "../context/AppContext";
 export default function ShippingPage() {
   const { settings } = useApp();
 
+  const regions = settings.deliveryRegions && settings.deliveryRegions.length > 0
+    ? settings.deliveryRegions
+    : [
+        {
+          name: "South-East & Eastern States",
+          duration: "Same-Day / 24h",
+          coverage: "Onitsha, Ogidi, Awka, Nnewi, Asaba, Enugu, Owerri, Aba, Abakaliki, Makurdi",
+        },
+        {
+          name: "South-South States",
+          duration: "24h Transit",
+          coverage: "Port Harcourt, Warri, Benin City, Uyo, Calabar",
+        },
+        {
+          name: "South-West States",
+          duration: "24h - 48h",
+          coverage: "Lagos State, Ibadan, Abeokuta, Ogun",
+        },
+        {
+          name: "North-Central & Northern States",
+          duration: "24h - 48h",
+          coverage: "Abuja (FCT), Jos, Lokoja, Kano, Kaduna",
+        },
+      ];
+
+  const warehouseLocation = settings.marketLocation || "warehouse";
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <div className="bg-[#0A192F] text-white py-14 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
@@ -19,7 +46,7 @@ export default function ShippingPage() {
             Warehouse Logistics & Site Delivery
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Direct door and sanitary ware dispatch from our warehouse to building contractors, site engineers, and private homeowners across all 36 states.
+            Direct door and sanitary ware dispatch from our {warehouseLocation} to building contractors, site engineers, and private homeowners across all 36 states.
           </p>
         </div>
       </div>
@@ -35,9 +62,9 @@ export default function ShippingPage() {
           </div>
           <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-xs space-y-2">
             <Clock className="w-7 h-7 mx-auto text-[#003296]" />
-            <h3 className="font-bold text-sm text-slate-900">Same-Day Southeast Loading</h3>
+            <h3 className="font-bold text-sm text-slate-900">Same-Day Regional Loading</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Orders confirmed before 12:00 PM are inspected and loaded same-day for Southeast and South-South corridors.
+              {settings.deliverySummaryText || "Same-day loading for South-East and Asaba; 24 to 48 hours for Lagos, Abuja, Port Harcourt and other states."}
             </p>
           </div>
           <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-xs space-y-2">
@@ -49,6 +76,31 @@ export default function ShippingPage() {
           </div>
         </div>
 
+        {/* Regional Delivery Schedule Cards */}
+        <div className="bg-white p-6 sm:p-8 border border-slate-200 rounded-xl space-y-5">
+          <div className="flex items-center space-x-2 text-slate-900 font-bold text-base pb-3 border-b border-slate-100">
+            <Truck className="w-5 h-5 text-[#003296]" />
+            <span>Regional Delivery Schedules & Durations</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            {regions.map((reg, idx) => (
+              <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-slate-900 text-xs sm:text-sm">{reg.name}</span>
+                  <span className="text-[10px] font-bold text-[#003296] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200 whitespace-nowrap shrink-0">
+                    {reg.duration}
+                  </span>
+                </div>
+                <p className="text-slate-600 text-[11px] leading-relaxed">
+                  <strong>Key Locations:</strong> {reg.coverage}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Packaging & Verification Procedures */}
         <div className="bg-white p-6 sm:p-8 border border-slate-200 rounded-xl space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
           <div className="flex items-center space-x-2 text-slate-900 font-bold text-base pb-3 border-b border-slate-100">
             <BadgeCheck className="w-5 h-5 text-[#003296]" />
@@ -59,18 +111,15 @@ export default function ShippingPage() {
             <div>
               <h4 className="font-bold text-slate-900 mb-1">1. Heavy-Duty Protective Wrapping</h4>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Every Turkish steel door, HDF pre-hung set, and sanitary ceramic fitting is padded with corrugated corners, bubble wrap, and waterproof plastic film to eliminate transit scratches.
+                {settings.deliveryPackagingNote || "All doors and sanitary ware are strapped with protective edge guards, corrugated pads, and waterproof wrap before handover to verified commercial transport lines."}
               </p>
             </div>
 
             <div>
-              <h4 className="font-bold text-slate-900 mb-1">2. Delivery Locations & Estimated Durations</h4>
-              <ul className="list-disc pl-5 space-y-1 text-slate-600 text-xs">
-                <li><strong>Anambra / Asaba / Delta / Enugu / Imo:</strong> Same-day to 24 hours.</li>
-                <li><strong>Port Harcourt / Benin / Warri / South-South:</strong> 24 to 48 hours.</li>
-                <li><strong>Lagos / Ibadan / Southwest:</strong> 1 to 3 business days via heavy truck freight.</li>
-                <li><strong>Abuja / Jos / Kano / Northern States:</strong> 2 to 4 business days.</li>
-              </ul>
+              <h4 className="font-bold text-slate-900 mb-1">2. Pre-Dispatch Video & Photo Verification</h4>
+              <p className="text-slate-600 text-xs leading-relaxed">
+                {settings.preDispatchInspectionNote || "Before any door or sanitary fitting leaves our warehouse, our sales team records photos and video of the exact product, frame, hinges, and hardware for WhatsApp confirmation with the buyer or site engineer."}
+              </p>
             </div>
 
             <div>
@@ -87,7 +136,7 @@ export default function ShippingPage() {
               href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I want to chat about delivery rates for my project location.")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="py-2.5 px-4 bg-[#25D366] text-white font-bold text-xs rounded-xl flex items-center space-x-2"
+              className="py-2.5 px-4 bg-[#25D366] hover:bg-[#1fb355] text-white font-bold text-xs rounded-xl flex items-center space-x-2 transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
               <span>Confirm Haulage on WhatsApp</span>

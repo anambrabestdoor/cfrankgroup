@@ -362,7 +362,7 @@ export default async function CollectionPage({ params }: PageProps) {
 
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
                 <span className="font-bold text-slate-900 block uppercase text-[11px] tracking-wider text-[#003296]">
-                  Corridor Waybill Dispatch
+                  Regional Waybill Dispatch
                 </span>
                 <p className="text-slate-600 leading-relaxed text-[11px]">
                   <strong>South-East & Delta:</strong> Same-day to 24h (Onitsha, Ogidi, Asaba, Enugu, Owerri, Aba).<br />

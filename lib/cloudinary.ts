@@ -69,3 +69,101 @@ export async function uploadImageToCloudinary(fileBase64: string, folder = 'anam
     throw err;
   }
 }
+
+/**
+ * List media resources from Cloudinary for admin media library
+ */
+export async function listCloudinaryMedia(options?: {
+  max_results?: number;
+  next_cursor?: string;
+  resource_type?: 'image' | 'video';
+}) {
+  const instance = getCloudinary();
+  if (!process.env.CLOUDINARY_API_SECRET) {
+    return { resources: [], next_cursor: null };
+  }
+
+  const resourceType = options?.resource_type || 'image';
+  const maxResults = options?.max_results || 40;
+
+  try {
+    const result = await instance.api.resources({
+      type: 'upload',
+      prefix: 'anambra_best_door',
+      max_results: maxResults,
+      next_cursor: options?.next_cursor || undefined,
+      resource_type: resourceType,
+    });
+
+    const resources = (result.resources || []).map((r: any) => ({
+      public_id: r.public_id,
+      url: r.secure_url || r.url,
+      format: r.format,
+      width: r.width,
+      height: r.height,
+      bytes: r.bytes,
+      created_at: r.created_at,
+      resource_type: r.resource_type,
+    }));
+
+    return {
+      resources,
+      next_cursor: result.next_cursor || null,
+    };
+  } catch (err: any) {
+    console.error('[Cloudinary List Error]:', err);
+    // Fallback without prefix in case assets were stored in other folders
+    try {
+      const fallbackResult = await instance.api.resources({
+        type: 'upload',
+        max_results: maxResults,
+        next_cursor: options?.next_cursor || undefined,
+        resource_type: resourceType,
+      });
+
+      const resources = (fallbackResult.resources || []).map((r: any) => ({
+        public_id: r.public_id,
+        url: r.secure_url || r.url,
+        format: r.format,
+        width: r.width,
+        height: r.height,
+        bytes: r.bytes,
+        created_at: r.created_at,
+        resource_type: r.resource_type,
+      }));
+
+      return {
+        resources,
+        next_cursor: fallbackResult.next_cursor || null,
+      };
+    } catch (fallbackErr) {
+      console.error('[Cloudinary Fallback List Error]:', fallbackErr);
+      throw err;
+    }
+  }
+}
+
+/**
+ * Delete a media resource from Cloudinary storage
+ */
+export async function deleteCloudinaryMedia(
+  public_id: string,
+  resource_type: 'image' | 'video' = 'image'
+) {
+  const instance = getCloudinary();
+  if (!process.env.CLOUDINARY_API_SECRET) {
+    return { result: 'ok', mock: true };
+  }
+
+  try {
+    const result = await instance.uploader.destroy(public_id, {
+      resource_type,
+      invalidate: true,
+    });
+    return result;
+  } catch (err) {
+    console.error('[Cloudinary Delete Error]:', err);
+    throw err;
+  }
+}
+

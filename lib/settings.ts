@@ -24,6 +24,15 @@ export interface SiteSettings {
   whatsappInquiryTemplate: string;
   whatsappCartTemplate: string;
   serviceAreas: string[];
+  deliverySummaryHeading?: string;
+  deliverySummaryText?: string;
+  deliveryRegions?: Array<{
+    name: string;
+    duration: string;
+    coverage: string;
+  }>;
+  deliveryPackagingNote?: string;
+  preDispatchInspectionNote?: string;
 }
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -60,6 +69,32 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     "Port Harcourt & South-South",
     "Nationwide Delivery"
   ],
+  deliverySummaryHeading: "Warehouse Direct Dispatch",
+  deliverySummaryText: "Same-day loading for South-East and Asaba; 24 to 48 hours for Lagos, Abuja, Port Harcourt and other states.",
+  deliveryRegions: [
+    {
+      name: "South-East & Eastern States",
+      duration: "Same-Day / 24h",
+      coverage: "Onitsha, Ogidi, Awka, Nnewi, Asaba, Enugu, Owerri, Aba, Abakaliki, Makurdi"
+    },
+    {
+      name: "South-South States",
+      duration: "24h Transit",
+      coverage: "Port Harcourt, Warri, Benin City, Uyo, Calabar"
+    },
+    {
+      name: "South-West States",
+      duration: "24h - 48h",
+      coverage: "Lagos State, Ibadan, Abeokuta, Ogun"
+    },
+    {
+      name: "North-Central & Northern States",
+      duration: "24h - 48h",
+      coverage: "Abuja (FCT), Jos, Lokoja, Kano, Kaduna"
+    }
+  ],
+  deliveryPackagingNote: "All doors and sanitary ware are strapped with protective edge guards, corrugated pads, and waterproof wrap before handover to verified commercial transport lines.",
+  preDispatchInspectionNote: "Before any door or sanitary fitting leaves our warehouse, our sales team records photos and video of the exact product, frame, hinges, and hardware for WhatsApp confirmation with the buyer or site engineer.",
 };
 
 // Helper to format WhatsApp order message using dynamic templates

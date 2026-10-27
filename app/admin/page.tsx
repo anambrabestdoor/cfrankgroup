@@ -7,6 +7,7 @@ import { useApp } from "@/app/context/AppContext";
 import { DOOR_PRODUCTS, DoorProduct, CATEGORIES } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS, SiteSettings } from "@/lib/settings";
 import {
+  LayoutDashboard,
   Package,
   Plus,
   Edit,
@@ -44,7 +45,89 @@ import {
   Users,
   UserPlus,
   Shield,
+  Truck,
+  ChevronDown,
+  ChevronRight,
+  Menu,
+  Image as ImageIcon,
+  Layers,
+  FolderOpen,
+  Calendar,
+  Check,
 } from "lucide-react";
+
+export const CATEGORY_DEFAULT_SPECS: Record<string, Record<string, string>> = {
+  "security-doors": {
+    "Material": "Cold-Rolled Electro-Galvanized Steel",
+    "Steel Gauge": "2.0mm Frame / 1.5mm Leaf",
+    "Dimensions": "3ft x 7ft (900mm x 2100mm)",
+    "Locking Mechanism": "14-Point Heavy Duty Deadbolt System",
+    "Infill Core": "High-Density Rockwool Acoustic Insulation",
+    "Frame Depth": "150mm Reinforced Structural Jamb",
+  },
+  "luxury-doors": {
+    "Material": "Cast Aluminium Composite & Armoured Steel Core",
+    "Leaf Thickness": "80mm Heavy Security Slab",
+    "Dimensions": "4ft x 7ft or 4.5ft x 7ft Double Leaf",
+    "Locking System": "Multi-Point Concealed Master Locking System",
+    "Weather Finish": "Rust-Resistant UV Architectural Coating",
+  },
+  "hdf-doors": {
+    "Material": "High-Density Fiberboard (HDF) with Solid Wood Infill",
+    "Door Leaf Thickness": "45mm",
+    "Finish": "Scratch-Resistant Melamine Finish",
+    "Frame Included": "Matching Pre-Hung Frame Set with Architraves",
+    "Dimensions": "3ft x 7ft (840mm x 2100mm)",
+  },
+  "interior-doors": {
+    "Material": "Solid Wood Infill with Engineered Veneer Face",
+    "Door Leaf Thickness": "40mm - 45mm",
+    "Hardware Included": "Mortise Lockset with 3 Stainless Steel Hinges",
+    "Dimensions": "3ft x 7ft (840mm x 2100mm)",
+  },
+  "bathroom-doors": {
+    "Material": "100% Waterproof WPC / Polymer Composite",
+    "Moisture Resistance": "100% Waterproof, Termite-Proof & Rot-Free",
+    "Dimensions": "2.5ft x 7ft (750mm x 2100mm)",
+    "Locking Hardware": "Corrosion-Proof Bathroom Privacy Lockset",
+  },
+  "sanitary-fittings": {
+    "Product Type": "Executive Ceramic Water Closet (WC)",
+    "Flushing System": "Dual-Flush Tornado Rimless Siphon",
+    "Roughing-in": "300mm / 400mm Floor S-Trap Outlet",
+    "Material": "Nanotech Self-Cleaning Glazed Ceramic",
+    "Seat Mechanism": "Soft-Closing Heavy-Duty UF Seat Cover",
+  },
+  "bathrooms": {
+    "Product Type": "Luxury Vanity Cabinet / Ceramic Wash Basin",
+    "Material": "Waterproof Solid Plywood / High-Gloss Ceramic",
+    "Mounting Type": "Wall-Hung or Free-Standing",
+    "Hardware": "Soft-Close DTC Stainless Steel Hinges",
+  },
+  "paint": {
+    "Product Type": "Premium Architectural Wall Finish",
+    "Coverage": "10 - 12 sq meters per litre",
+    "Drying Time": "Touch dry in 2 hours / Recoat in 4 hours",
+    "Application": "Interior and Exterior Masonry Surfaces",
+  },
+  "roof-tiles": {
+    "Material": "Stone Coated Galvanized Steel Sheet",
+    "Gauge / Thickness": "0.45mm - 0.55mm",
+    "Profile": "Bond / Classic / Shingle / Roman",
+    "Durability": "50 Years Anti-Rust Guarantee",
+  },
+};
+
+interface CloudinaryAsset {
+  public_id: string;
+  url: string;
+  format: string;
+  width: number;
+  height: number;
+  bytes: number;
+  created_at: string;
+  resource_type: string;
+}
 
 export default function AdminPage() {
   const { settings, updateSettings, products, setProducts } = useApp();
@@ -61,8 +144,24 @@ export default function AdminPage() {
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotStatus, setForgotStatus] = useState<string | null>(null);
 
-  // App / Tab State
-  const [activeTab, setActiveTab] = useState<"products" | "inventory" | "settings" | "cac" | "team">("products");
+  // WordPress-Style Navigation State
+  const [activeTab, setActiveTab] = useState<
+    "dashboard" | "products" | "inventory" | "media" | "delivery" | "team" | "settings" | "cac"
+  >("dashboard");
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [navDropdowns, setNavDropdowns] = useState<Record<string, boolean>>({
+    products: true,
+    media: true,
+    delivery: false,
+    team: false,
+    settings: false,
+  });
+
+  const toggleDropdown = (key: string) => {
+    setNavDropdowns((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Products State
   const [productsList, setProductsList] = useState<DoorProduct[]>(products);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -89,13 +188,21 @@ export default function AdminPage() {
   const [teamError, setTeamError] = useState<string | null>(null);
   const [teamSuccess, setTeamSuccess] = useState<string | null>(null);
 
+  // Cloudinary Media Library State
+  const [mediaItems, setMediaItems] = useState<CloudinaryAsset[]>([]);
+  const [loadingMedia, setLoadingMedia] = useState(false);
+  const [mediaResourceType, setMediaResourceType] = useState<"image" | "video">("image");
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
+  const [mediaPickerMode, setMediaPickerMode] = useState<"main_photo" | "gallery">("main_photo");
+  const [deletingPublicId, setDeletingPublicId] = useState<string | null>(null);
+
   // Form Fields for Products
   const [formName, setFormName] = useState("");
   const [formSlug, setFormSlug] = useState("");
   const [isSlugCustomized, setIsSlugCustomized] = useState(false);
   const [formCategory, setFormCategory] = useState<DoorProduct["category"]>("security-doors");
   const [formGroup, setFormGroup] = useState<string>("doors");
-  const [formSubcategory, setFormSubcategory] = useState<string>("Foreign HDF Luxury Doors");
+  const [formSubcategory, setFormSubcategory] = useState<string>("Heavy Duty Armored Security Doors");
   const [formPrice, setFormPrice] = useState<number>(0);
   const [formOriginalPrice, setFormOriginalPrice] = useState<number>(0);
   const [formPriceOnRequest, setFormPriceOnRequest] = useState(false);
@@ -112,19 +219,33 @@ export default function AdminPage() {
   const [formJijiUrl, setFormJijiUrl] = useState("https://jiji.ng/shop/anambrabestdoor");
   const [formActive, setFormActive] = useState(true);
 
-  // Media Upload State (Images max 5MB, Videos max 10MB)
+  // Dynamic Specifications State
+  const [formSpecs, setFormSpecs] = useState<Record<string, string>>({
+    Material: "Cold-Rolled Electro-Galvanized Steel",
+    "Steel Gauge": "2.0mm Frame / 1.5mm Leaf",
+    Dimensions: "3ft x 7ft (900mm x 2100mm)",
+    "Locking Mechanism": "14-Point Heavy Duty Deadbolt System",
+  });
+
+  // SEO Fields
+  const [focusKeyphrase, setFocusKeyphrase] = useState("");
+  const [seoTitle, setSeoTitle] = useState("");
+  const [seoDescription, setSeoDescription] = useState("");
+
+  // Settings State
+  const [siteSettingsForm, setSiteSettingsForm] = useState<SiteSettings>(settings);
+
+  // Media Upload States
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [imageUploadError, setImageUploadError] = useState<string | null>(null);
   const [imageUploadSuccess, setImageUploadSuccess] = useState(false);
-
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
   const [galleryUploadError, setGalleryUploadError] = useState<string | null>(null);
-
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const [videoUploadError, setVideoUploadError] = useState<string | null>(null);
   const [videoUploadSuccess, setVideoUploadSuccess] = useState(false);
 
-  // Cloudinary & Supabase Sync Status State
+  // Sync statuses
   const [cloudinarySyncStatus, setCloudinarySyncStatus] = useState<{
     loading: boolean;
     message: string | null;
@@ -137,21 +258,52 @@ export default function AdminPage() {
     error?: string | null;
   }>({ loading: false, message: null, error: null });
 
-  // Specifications state
-  const [formSpecs, setFormSpecs] = useState<Record<string, string>>({
-    Material: "Cold-Rolled Electro-Galvanized Steel",
-    "Steel Gauge": "2.0mm Frame / 1.5mm Leaf",
-    Dimensions: "3ft x 7ft (900mm x 2100mm)",
-    "Locking Mechanism": "14-Point Heavy Duty Deadbolt",
-  });
+  // Refs
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [isDraggingGallery, setIsDraggingGallery] = useState(false);
+  const [isDraggingVideo, setIsDraggingVideo] = useState(false);
 
-  // Google Search & Display Fields (Clear, simple labels)
-  const [focusKeyphrase, setFocusKeyphrase] = useState("");
-  const [seoTitle, setSeoTitle] = useState("");
-  const [seoDescription, setSeoDescription] = useState("");
+  // Check auth session
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        const res = await fetch("/api/admin/auth/check");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated) {
+            setIsAuthenticated(true);
+            setCurrentUser({ email: data.email, role: data.role });
+            fetchTeamMembers();
+            return;
+          }
+        }
+        setIsAuthenticated(false);
+      } catch {
+        setIsAuthenticated(false);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+    verifySession();
+  }, []);
 
-  // Settings Form State
-  const [siteSettingsForm, setSiteSettingsForm] = useState<SiteSettings>(settings);
+  useEffect(() => {
+    setSiteSettingsForm(settings);
+  }, [settings]);
+
+  useEffect(() => {
+    if (activeTab === "media") {
+      fetchCloudinaryMedia(mediaResourceType);
+    }
+  }, [activeTab, mediaResourceType]);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   const fetchTeamMembers = async () => {
     setLoadingTeam(true);
@@ -166,6 +318,56 @@ export default function AdminPage() {
     } finally {
       setLoadingTeam(false);
     }
+  };
+
+  const fetchCloudinaryMedia = async (type: "image" | "video" = "image") => {
+    setLoadingMedia(true);
+    try {
+      const res = await fetch(`/api/admin/cloudinary/resources?resource_type=${type}`);
+      if (res.ok) {
+        const data = await res.json();
+        setMediaItems(data.resources || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch Cloudinary media:", err);
+    } finally {
+      setLoadingMedia(false);
+    }
+  };
+
+  const handleDeleteCloudinaryMedia = async (publicId: string, resourceType: string = "image") => {
+    if (!confirm(`Are you sure you want to permanently delete this media file from Cloudinary storage?`)) {
+      return;
+    }
+    setDeletingPublicId(publicId);
+    try {
+      const res = await fetch(
+        `/api/admin/cloudinary/resources?public_id=${encodeURIComponent(publicId)}&resource_type=${resourceType}`,
+        { method: "DELETE" }
+      );
+      if (res.ok) {
+        setMediaItems((prev) => prev.filter((m) => m.public_id !== publicId));
+        showToast("File deleted from Cloudinary!");
+      } else {
+        alert("Failed to delete file from Cloudinary.");
+      }
+    } catch {
+      alert("Network error while deleting media.");
+    } finally {
+      setDeletingPublicId(null);
+    }
+  };
+
+  const handleSelectMediaFromPicker = (item: CloudinaryAsset) => {
+    if (mediaPickerMode === "main_photo") {
+      setFormImage(item.url);
+      setImageUploadSuccess(true);
+      showToast("Photo selected from Cloudinary library!");
+    } else {
+      setFormGallery((prev) => [...prev, item.url]);
+      showToast("Photo added to product gallery!");
+    }
+    setMediaPickerOpen(false);
   };
 
   const handleCreateTeamMember = async (e: React.FormEvent) => {
@@ -224,39 +426,6 @@ export default function AdminPage() {
     } catch {
       alert("Network error removing user.");
     }
-  };
-
-  useEffect(() => {
-    const verifySession = async () => {
-      try {
-        const res = await fetch("/api/admin/auth/check");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.authenticated) {
-            setIsAuthenticated(true);
-            setCurrentUser({ email: data.email, role: data.role });
-            fetchTeamMembers();
-            return;
-          }
-        }
-        setIsAuthenticated(false);
-      } catch {
-        setIsAuthenticated(false);
-      } finally {
-        setIsCheckingAuth(false);
-      }
-    };
-
-    verifySession();
-  }, []);
-
-  useEffect(() => {
-    setSiteSettingsForm(settings);
-  }, [settings]);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -335,9 +504,9 @@ export default function AdminPage() {
     setFormName("");
     setFormSlug("");
     setIsSlugCustomized(false);
-    setFormCategory("hdf-doors");
+    setFormCategory("security-doors");
     setFormGroup("doors");
-    setFormSubcategory("Foreign HDF Luxury Doors");
+    setFormSubcategory("Heavy Duty Armored Security Doors");
     setFormPrice(0);
     setFormOriginalPrice(0);
     setFormPriceOnRequest(false);
@@ -353,17 +522,14 @@ export default function AdminPage() {
     setFormDescription("");
     setFormJijiUrl("https://jiji.ng/shop/anambrabestdoor");
     setFormActive(true);
-    setFormSpecs({
-      Material: "Foreign High-Density Board",
-      Dimensions: "3ft x 7ft",
-      Application: "Interior Room / Suite"
-    });
+    setFormSpecs(CATEGORY_DEFAULT_SPECS["security-doors"]);
     setFocusKeyphrase("");
     setSeoTitle("");
     setSeoDescription("");
+    setActiveTab("products");
   };
 
-  // Open editor for an existing product
+  // Open editor for existing product
   const handleEditProduct = (prod: DoorProduct) => {
     setIsEditing(true);
     setEditingId(prod.id);
@@ -390,13 +556,13 @@ export default function AdminPage() {
     setFormDescription(prod.description);
     setFormJijiUrl(prod.jijiUrl || "");
     setFormActive(prod.active);
-    setFormSpecs(prod.specifications || {});
+    setFormSpecs(prod.specifications || CATEGORY_DEFAULT_SPECS[prod.category] || {});
     setFocusKeyphrase(prod.focusKeyphrase || "");
     setSeoTitle(prod.seoTitle || "");
     setSeoDescription(prod.seoDescription || "");
+    setActiveTab("products");
   };
 
-  // Helper to create clean URL slug from text
   const slugify = (text: string) =>
     text
       .toLowerCase()
@@ -404,7 +570,6 @@ export default function AdminPage() {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)+/g, "");
 
-  // Auto-generate slug and default SEO from title unless manually customized
   const handleTitleChange = (val: string) => {
     setFormName(val);
     if (!isSlugCustomized) {
@@ -415,6 +580,43 @@ export default function AdminPage() {
     }
     if (!focusKeyphrase) {
       setFocusKeyphrase(val.split(" ").slice(0, 3).join(" "));
+    }
+  };
+
+  // Category change with adaptive specifications
+  const handleCategoryChange = (newCat: DoorProduct["category"]) => {
+    setFormCategory(newCat);
+    if (newCat === "sanitary-fittings" || newCat === "bathrooms") {
+      setFormGroup("sanitary");
+    } else if (newCat === "paint" || newCat === "roof-tiles") {
+      setFormGroup("materials");
+    } else if (newCat === "real-estate") {
+      setFormGroup("properties");
+    } else if (newCat === "careers") {
+      setFormGroup("careers");
+    } else {
+      setFormGroup("doors");
+    }
+
+    if (newCat === "paint") setFormSubcategory("Wall Finishes & Screeding Paint");
+    else if (newCat === "roof-tiles") setFormSubcategory("Stone Coated Roof Tiles");
+    else if (newCat === "bathrooms" || newCat === "sanitary-fittings") setFormSubcategory("Sanitary Wares & Bath Fixtures");
+    else if (newCat === "real-estate") setFormSubcategory("Commercial & Residential Property");
+    else if (newCat === "careers") setFormSubcategory("Skilled Fabrication & Sales Vacancy");
+    else if (newCat === "security-doors") setFormSubcategory("Heavy Duty Armored Security Doors");
+    else if (newCat === "hdf-doors") setFormSubcategory("Foreign HDF Luxury Doors");
+    else if (newCat === "bathroom-doors") setFormSubcategory("Waterproof Polymer Bathroom Doors");
+
+    // Automatically adapt specifications if current specs are empty or default
+    if (!editingId && CATEGORY_DEFAULT_SPECS[newCat]) {
+      setFormSpecs(CATEGORY_DEFAULT_SPECS[newCat]);
+    }
+  };
+
+  const handleLoadDefaultSpecs = () => {
+    if (CATEGORY_DEFAULT_SPECS[formCategory]) {
+      setFormSpecs(CATEGORY_DEFAULT_SPECS[formCategory]);
+      showToast(`Loaded standard specifications for ${formCategory}`);
     }
   };
 
@@ -475,7 +677,6 @@ export default function AdminPage() {
     setIsEditing(false);
   };
 
-  // Delete product
   const handleDeleteProduct = (id: string) => {
     if (confirm("Are you sure you want to remove this product from catalogue?")) {
       const updated = productsList.filter((p) => p.id !== id);
@@ -485,7 +686,6 @@ export default function AdminPage() {
     }
   };
 
-  // Reset catalog to initial inventory defaults
   const handleResetCatalog = () => {
     if (confirm("Reset catalog back to initial factory inventory with blank prices? Any custom added doors will be cleared.")) {
       setProductsList(DOOR_PRODUCTS);
@@ -496,7 +696,6 @@ export default function AdminPage() {
     }
   };
 
-  // Quick toggle stock status
   const handleToggleSoldOut = (id: string) => {
     const updated: DoorProduct[] = productsList.map((p) => {
       if (p.id === id) {
@@ -511,24 +710,13 @@ export default function AdminPage() {
     showToast("Stock status updated.");
   };
 
-  // File Input Refs & Drag States for Media Uploads
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const galleryInputRef = useRef<HTMLInputElement>(null);
-  const videoInputRef = useRef<HTMLInputElement>(null);
-
-  const [isDraggingImage, setIsDraggingImage] = useState(false);
-  const [isDraggingGallery, setIsDraggingGallery] = useState(false);
-  const [isDraggingVideo, setIsDraggingVideo] = useState(false);
-
-  // Core image processor supporting both click-to-pick and drag-and-drop (5MB limit)
+  // Upload helpers
   const processImageFile = async (file: File) => {
     if (!file) return;
-
     if (!file.type.startsWith("image/")) {
       setImageUploadError("Please upload an image file (JPG, PNG, WEBP).");
       return;
     }
-
     if (file.size > 5 * 1024 * 1024) {
       setImageUploadError("Photo size exceeds the 5MB limit. Please upload an image under 5MB.");
       return;
@@ -539,15 +727,6 @@ export default function AdminPage() {
     setImageUploadSuccess(false);
 
     try {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const preview = ev.target?.result as string;
-        if (preview) {
-          setFormImage(preview);
-        }
-      };
-      reader.readAsDataURL(file);
-
       const formData = new FormData();
       formData.append("file", file);
       formData.append("folder", "anambra_best_door/products");
@@ -568,9 +747,7 @@ export default function AdminPage() {
         showToast("Photo uploaded to Cloudinary successfully!");
       }
     } catch (err: any) {
-      console.warn("Upload fallback to local preview:", err);
-      setImageUploadError(err.message || "Local preview attached.");
-      showToast("Photo preview attached!");
+      setImageUploadError(err.message || "Failed to upload image.");
     } finally {
       setIsUploadingImage(false);
     }
@@ -581,29 +758,6 @@ export default function AdminPage() {
     if (file) processImageFile(file);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDraggingImage(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDraggingImage(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDraggingImage(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      processImageFile(file);
-    }
-  };
-
-  // Gallery multi-file processor (5MB limit per image)
   const processGalleryFiles = async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
     if (fileArray.length === 0) return;
@@ -618,7 +772,7 @@ export default function AdminPage() {
           throw new Error(`File ${file.name} is not an image (JPG, PNG, WEBP).`);
         }
         if (file.size > 5 * 1024 * 1024) {
-          throw new Error(`File ${file.name} exceeds the 5MB limit. Please upload images under 5MB.`);
+          throw new Error(`File ${file.name} exceeds the 5MB limit.`);
         }
 
         const formData = new FormData();
@@ -634,10 +788,7 @@ export default function AdminPage() {
         if (!res.ok || data.error) {
           throw new Error(data.error || `Failed to upload ${file.name}`);
         }
-
-        if (data.url) {
-          newUrls.push(data.url);
-        }
+        if (data.url) newUrls.push(data.url);
       }
 
       if (newUrls.length > 0) {
@@ -645,7 +796,6 @@ export default function AdminPage() {
         showToast(`Added ${newUrls.length} photo(s) to product gallery.`);
       }
     } catch (err: any) {
-      console.error("Gallery upload error:", err);
       setGalleryUploadError(err.message || "Failed to upload gallery images.");
     } finally {
       setIsUploadingGallery(false);
@@ -653,26 +803,21 @@ export default function AdminPage() {
   };
 
   const handleGalleryFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      processGalleryFiles(e.target.files);
-    }
+    if (e.target.files) processGalleryFiles(e.target.files);
   };
 
-  const handleRemoveGalleryImage = (indexToRemove: number) => {
-    setFormGallery((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  const handleRemoveGalleryImage = (idxToRemove: number) => {
+    setFormGallery((prev) => prev.filter((_, i) => i !== idxToRemove));
   };
 
-  // Video processor (10MB limit)
   const processVideoFile = async (file: File) => {
     if (!file) return;
-
     if (!file.type.startsWith("video/")) {
       setVideoUploadError("Please upload a video file (MP4, WEBM).");
       return;
     }
-
     if (file.size > 10 * 1024 * 1024) {
-      setVideoUploadError("Video size exceeds the 10MB limit. Please compress or select a video under 10MB.");
+      setVideoUploadError("Video size exceeds the 10MB limit. Please compress under 10MB.");
       return;
     }
 
@@ -692,16 +837,14 @@ export default function AdminPage() {
 
       const data = await res.json();
       if (!res.ok || data.error) {
-        throw new Error(data.error || "Failed to upload video to server.");
+        throw new Error(data.error || "Failed to upload video.");
       }
-
       if (data.url) {
         setFormVideo(data.url);
         setVideoUploadSuccess(true);
-        showToast("Product video uploaded to Cloudinary successfully!");
+        showToast("Video uploaded and connected to product!");
       }
     } catch (err: any) {
-      console.error("Video upload error:", err);
       setVideoUploadError(err.message || "Failed to upload video.");
     } finally {
       setIsUploadingVideo(false);
@@ -713,874 +856,1084 @@ export default function AdminPage() {
     if (file) processVideoFile(file);
   };
 
-  // Handle Category Switching with automatic group assignment
-  const handleCategoryChange = (newCat: DoorProduct["category"]) => {
-    setFormCategory(newCat);
-    if (newCat === "sanitary-fittings" || newCat === "bathrooms") {
-      setFormGroup("sanitary");
-    } else if (newCat === "paint" || newCat === "roof-tiles") {
-      setFormGroup("materials");
-    } else if (newCat === "real-estate") {
-      setFormGroup("properties");
-    } else if (newCat === "careers") {
-      setFormGroup("careers");
-    } else {
-      setFormGroup("doors");
-    }
-
-    if (!formSubcategory || formSubcategory === "Foreign HDF Luxury Doors" || formSubcategory === "Sanitary Fixtures") {
-      if (newCat === "paint") setFormSubcategory("Wall Finishes & Screeding Paint");
-      else if (newCat === "roof-tiles") setFormSubcategory("Stone Coated Roof Tiles");
-      else if (newCat === "bathrooms" || newCat === "sanitary-fittings") setFormSubcategory("Sanitary Wares & Bath Fixtures");
-      else if (newCat === "real-estate") setFormSubcategory("Commercial & Residential Property");
-      else if (newCat === "careers") setFormSubcategory("Skilled Fabrication & Sales Vacancy");
-      else if (newCat === "security-doors") setFormSubcategory("Heavy Duty Armored Security Doors");
-      else if (newCat === "hdf-doors") setFormSubcategory("Foreign HDF Luxury Doors");
-    }
-  };
-
-  // Cloudinary Sync Handler
-  const handleSyncCloudinary = async () => {
-    setCloudinarySyncStatus({ loading: true, message: "Checking and pushing images to Cloudinary...", error: null });
-    try {
-      const res = await fetch("/api/admin/cloudinary-sync", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        setCloudinarySyncStatus({
-          loading: false,
-          message: null,
-          error: data.error || data.message || "Could not complete Cloudinary sync.",
-        });
-      } else {
-        setCloudinarySyncStatus({
-          loading: false,
-          message: data.message || `Uploaded ${data.uploadedCount || 0} images to Cloudinary successfully!`,
-          error: null,
-        });
-        showToast("Cloudinary sync complete!");
-      }
-    } catch (err: any) {
-      setCloudinarySyncStatus({
-        loading: false,
-        message: null,
-        error: err.message || "Network error while syncing Cloudinary.",
-      });
-    }
-  };
-
-  // Supabase Sync Handler
-  const handleSyncSupabase = async () => {
-    setSupabaseSyncStatus({ loading: true, message: "Connecting to Supabase and uploading data...", error: null });
-    try {
-      const res = await fetch("/api/admin/supabase-sync", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          products: productsList,
-          settings: siteSettingsForm,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        setSupabaseSyncStatus({
-          loading: false,
-          message: null,
-          error: data.error || data.message || "Could not complete Supabase sync.",
-        });
-      } else {
-        setSupabaseSyncStatus({
-          loading: false,
-          message: data.message || `Pushed ${data.productsInserted || 0} items to Supabase successfully!`,
-          error: null,
-        });
-        showToast("Supabase sync complete!");
-      }
-    } catch (err: any) {
-      setSupabaseSyncStatus({
-        loading: false,
-        message: null,
-        error: err.message || "Network error while syncing Supabase.",
-      });
-    }
-  };
-
-  // Save Settings
-  const handleSaveSettings = async (e: React.FormEvent) => {
+  const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
     updateSettings(siteSettingsForm);
-    try {
-      const res = await fetch("/api/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(siteSettingsForm),
-      });
-      if (res.ok) {
-        showToast("Site settings & addresses saved to server!");
-      } else {
-        showToast("Site settings & addresses saved!");
-      }
-    } catch {
-      showToast("Site settings & addresses saved!");
-    }
+    showToast("Settings updated successfully!");
   };
 
-  // Filtered Products for Table
   const filteredProducts = useMemo(() => {
     return productsList.filter((p) => {
-      if (!p) return false;
-      if (selectedCategory !== "all" && p.category !== selectedCategory) return false;
-      if (searchQuery.trim() !== "") {
-        const q = searchQuery.toLowerCase();
-        return (p.name || "").toLowerCase().includes(q) || (p.slug || "").toLowerCase().includes(q);
-      }
-      return true;
+      const matchSearch =
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.categoryLabel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (p.subcategory && p.subcategory.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchCategory =
+        selectedCategory === "all" || p.category === selectedCategory;
+      return matchSearch && matchCategory;
     });
-  }, [productsList, selectedCategory, searchQuery]);
+  }, [productsList, searchQuery, selectedCategory]);
 
-  // Google Search Readiness Checks (Plain, simple English)
-  const seoChecks = useMemo(() => {
-    const checks = [];
-    const kp = focusKeyphrase.toLowerCase().trim();
-
-    if (!kp) {
-      checks.push({ label: "Main Search Words", status: "bad", note: "Add the words customers type when searching for this item." });
-    } else if (seoTitle.toLowerCase().includes(kp)) {
-      checks.push({ label: "Search Words in Title", status: "good", note: "Your search words appear in the Google title." });
-    } else {
-      checks.push({ label: "Search Words in Title", status: "warning", note: "Consider including your search words in the title." });
+  const discountPercent = useMemo(() => {
+    if (formPriceMode !== "show_price") return 0;
+    if (formOriginalPrice > 0 && formPrice > 0 && formOriginalPrice > formPrice) {
+      return Math.round(((formOriginalPrice - formPrice) / formOriginalPrice) * 100);
     }
-
-    if (seoTitle.length >= 20 && seoTitle.length <= 65) {
-      checks.push({ label: "Google Title Length", status: "good", note: `${seoTitle.length} characters (Ideal for Google display).` });
-    } else {
-      checks.push({ label: "Google Title Length", status: "warning", note: `${seoTitle.length} characters (Recommended: between 25 and 60 characters).` });
-    }
-
-    if (seoDescription.length >= 40 && seoDescription.length <= 160) {
-      checks.push({ label: "Google Summary Length", status: "good", note: `${seoDescription.length} characters (Clear description for searchers).` });
-    } else if (seoDescription.length === 0) {
-      checks.push({ label: "Google Summary", status: "bad", note: "No summary provided. Write 1 or 2 sentences describing the item." });
-    } else {
-      checks.push({ label: "Google Summary Length", status: "warning", note: `${seoDescription.length} characters (Recommended: between 40 and 150 characters).` });
-    }
-
-    if (formImage) {
-      checks.push({ label: "Product Photo", status: "good", note: "Photo is attached and ready." });
-    } else {
-      checks.push({ label: "Product Photo", status: "bad", note: "Please upload or select a product photo." });
-    }
-
-    if (formJijiUrl && formJijiUrl.startsWith("http")) {
-      checks.push({ label: "Jiji Shop Link", status: "good", note: "Connected to your Jiji marketplace page." });
-    } else {
-      checks.push({ label: "Jiji Shop Link", status: "warning", note: "Optional: add your Jiji item link." });
-    }
-
-    return checks;
-  }, [focusKeyphrase, seoTitle, seoDescription, formImage, formJijiUrl]);
+    return 0;
+  }, [formPrice, formOriginalPrice, formPriceMode]);
 
   const seoScore = useMemo(() => {
-    if (seoChecks.length === 0) return 50;
-    const goodCount = seoChecks.filter((c) => c.status === "good").length;
-    return Math.round((goodCount / seoChecks.length) * 100);
-  }, [seoChecks]);
+    let score = 0;
+    if (formName.trim().length >= 5) score += 20;
+    if (seoTitle.trim().length >= 15 && seoTitle.trim().length <= 65) score += 25;
+    if (seoDescription.trim().length >= 50 && seoDescription.trim().length <= 160) score += 25;
+    if (focusKeyphrase.trim().length >= 3) score += 15;
+    if (formImage.trim() || formGallery.length > 0) score += 15;
+    return score;
+  }, [formName, seoTitle, seoDescription, focusKeyphrase, formImage, formGallery]);
 
-  // Discount percentage calculation
-  const discountPercent = useMemo(() => {
-    if (!formOriginalPrice || formOriginalPrice <= formPrice) return 0;
-    return Math.round(((formOriginalPrice - formPrice) / formOriginalPrice) * 100);
-  }, [formPrice, formOriginalPrice]);
-
-  // =========================================================================
-  // VIEW: UNTOUCHED ADMIN LOGIN (STRICTLY EMAIL, PASSWORD, FORGOTTEN PASSWORD)
-  // =========================================================================
+  // Loading Screen
   if (isCheckingAuth) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
-        <div className="w-14 h-14 bg-[#003296] text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-4 shadow-lg border border-blue-400/20 animate-pulse">
-          ABD
-        </div>
-        <div className="flex items-center space-x-2.5 text-xs font-semibold text-slate-300">
-          <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
-          <span>Verifying administrator session...</span>
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+        <div className="text-center text-white space-y-3">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#2563EB]" />
+          <p className="text-xs font-semibold text-slate-300">Verifying administrative access...</p>
         </div>
       </div>
     );
   }
 
+  // Login Screen
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="w-14 h-14 bg-[#003296] text-white rounded-2xl flex items-center justify-center font-black text-2xl mx-auto shadow-lg border border-blue-400/20">
-            ABD
+      <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+          <div className="text-center space-y-2">
+            <div className="w-12 h-12 rounded-2xl bg-[#003296] text-white flex items-center justify-center font-black text-xl mx-auto shadow-md">
+              ABD
+            </div>
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+              Anambra Best Door Admin
+            </h1>
+            <p className="text-xs text-slate-400">
+              Sign in to manage products, prices, media, and regional dispatch.
+            </p>
           </div>
-          <h2 className="mt-4 text-center text-2xl font-black text-white tracking-tight">
-            Anambra Best Door Admin
-          </h2>
-          <p className="mt-1 text-center text-xs text-slate-400">
-            Staff Portal
-          </p>
-        </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-6 shadow-2xl rounded-xl sm:px-10 border border-slate-200">
-            <form onSubmit={handleLogin} className="space-y-5">
-              {loginError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start space-x-2.5 text-xs text-red-700">
-                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-                  <span>{loginError}</span>
-                </div>
-              )}
+          {loginError && (
+            <div className="p-3 bg-red-950/80 border border-red-800 rounded-xl text-red-200 text-xs flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+              <span>{loginError}</span>
+            </div>
+          )}
 
-              {/* Email Input */}
+          {!showForgotPassword ? (
+            <form onSubmit={handleLogin} className="space-y-4 text-left">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Admin Email Address
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                  Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <Mail className="w-4 h-4" />
-                  </div>
+                  <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="email"
                     required
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="name@domain.com"
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-[#003296]"
+                    placeholder="admin@anambrabestdoor.com"
+                    className="w-full pl-10 pr-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#003296]"
                   />
                 </div>
               </div>
 
-              {/* Password Input */}
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    Password
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowForgotPassword(true)}
-                    className="text-xs font-semibold text-[#003296] hover:underline cursor-pointer"
-                  >
-                    Forgotten Password?
-                  </button>
-                </div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                  Password
+                </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <Lock className="w-4 h-4" />
-                  </div>
+                  <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type={showPassword ? "text" : "password"}
                     required
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-[#003296]"
+                    placeholder="Enter admin password"
+                    className="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#003296]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              {/* Sign In Button */}
+              <div className="flex justify-between items-center text-xs">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-slate-400 hover:text-white"
+                >
+                  Forgot password?
+                </button>
+              </div>
+
               <button
                 type="submit"
                 disabled={isSubmittingLogin}
-                className="w-full py-3 px-4 bg-[#003296] hover:bg-[#092b7c] disabled:bg-slate-400 text-white text-sm font-bold rounded-xl shadow-md transition-transform active:scale-95 flex items-center justify-center space-x-2 cursor-pointer"
+                className="w-full py-3 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold text-xs rounded-xl shadow-md transition disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
               >
                 {isSubmittingLogin ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Verifying Credentials...</span>
+                    <span>Signing in...</span>
                   </>
                 ) : (
-                  <>
-                    <KeyRound className="w-4 h-4" />
-                    <span>Sign In to Admin Portal</span>
-                  </>
+                  <span>Access Dashboard</span>
                 )}
               </button>
             </form>
-
-            <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <Link href="/" className="hover:text-slate-900 font-semibold flex items-center space-x-1">
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Return to Storefront</span>
-              </Link>
-              <span className="text-[11px] text-slate-400">Staff Portal Only</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Forgotten Password Modal */}
-        {showForgotPassword && (
-          <div
-            role="dialog"
-            aria-modal="true"
-            className="fixed inset-0 z-50 overflow-hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
-          >
-            <div className="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div className="flex items-center space-x-2">
-                  <KeyRound className="w-5 h-5 text-[#003296]" />
-                  <h3 className="font-bold text-slate-900 text-sm">Reset Admin Access</h3>
-                </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white">Reset Admin Password</h3>
                 <button
                   onClick={() => setShowForgotPassword(false)}
-                  className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500"
+                  className="text-xs text-slate-400 hover:text-white"
                 >
-                  <X className="w-4 h-4" />
+                  Back to login
                 </button>
               </div>
-
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Password resets are verified directly with the administrator.
-              </p>
-
-              {forgotStatus ? (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-medium">
-                  {forgotStatus}
-                </div>
-              ) : (
-                <form onSubmit={handleForgotPassword} className="space-y-3.5">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      Staff / Admin Email
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={forgotEmail}
-                      onChange={(e) => setForgotEmail(e.target.value)}
-                      placeholder="name@domain.com"
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-[#003296]"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 px-4 bg-[#003296] hover:bg-[#092b7c] text-white text-xs font-bold rounded-xl"
-                  >
-                    Submit Password Reset Request
-                  </button>
-                </form>
-              )}
-
-              <div className="pt-3 border-t border-slate-100">
-                <a
-                  href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                    "Hello, I am requesting an administrative password reset for the Anambra Best Door portal."
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold rounded-xl flex items-center justify-center space-x-2"
+              <form onSubmit={handleForgotPassword} className="space-y-3">
+                <input
+                  type="email"
+                  required
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  placeholder="Enter your admin email"
+                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
+                />
+                <button
+                  type="submit"
+                  className="w-full py-2.5 bg-[#003296] text-white text-xs font-bold rounded-xl"
                 >
-                  <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Verify on WhatsApp</span>
-                </a>
-              </div>
+                  Send Reset Link
+                </button>
+              </form>
+              {forgotStatus && (
+                <p className="text-xs text-emerald-400">{forgotStatus}</p>
+              )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }
 
   // =========================================================================
-  // AUTHENTICATED ADMIN DASHBOARD
+  // AUTHENTICATED WORDPRESS-STYLE VERTICAL DASHBOARD
   // =========================================================================
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
-      {/* Top Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-[#003296] text-white flex items-center justify-center font-black text-sm shadow-sm">
+    <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row font-sans">
+      {/* Mobile Top Header */}
+      <div className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800 sticky top-0 z-40">
+        <div className="flex items-center space-x-2">
+          <div className="w-7 h-7 rounded-lg bg-[#003296] text-white flex items-center justify-center font-bold text-xs">
+            ABD
+          </div>
+          <span className="font-bold text-xs">Anambra Best Door</span>
+        </div>
+        <button
+          onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+          className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white"
+          aria-label="Toggle Navigation Menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* WordPress-Style Left Vertical Sidebar */}
+      <aside
+        className={`fixed md:sticky top-0 left-0 z-40 h-screen w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 transition-transform ${
+          mobileSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        {/* Brand / Logo Top Bar */}
+        <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-xl bg-[#003296] text-white flex items-center justify-center font-black text-sm">
               ABD
             </div>
             <div>
-              <h1 className="text-sm font-black text-slate-900 leading-tight">
-                Anambra Best Door Admin
-              </h1>
-              <p className="text-[11px] text-slate-500">
-                Store Management Portal
-              </p>
+              <span className="font-bold text-xs text-white block leading-tight">Anambra Best Door</span>
+              <span className="text-[10px] text-slate-400 block">CFrank Enterprise Admin</span>
             </div>
           </div>
+          <button
+            onClick={() => setMobileSidebarOpen(false)}
+            className="md:hidden text-slate-400 hover:text-white p-1"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
-          <div className="flex items-center space-x-3">
-            <Link
-              href="/"
-              target="_blank"
-              className="text-xs font-semibold text-slate-600 hover:text-[#003296] flex items-center space-x-1 px-3 py-1.5 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-200"
+        {/* Vertical Nav List with Collapsible Dropdowns */}
+        <nav className="flex-1 overflow-y-auto p-3 space-y-1 text-xs">
+          {/* Dashboard */}
+          <button
+            onClick={() => {
+              setActiveTab("dashboard");
+              setIsEditing(false);
+              setMobileSidebarOpen(false);
+            }}
+            className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl font-semibold transition-colors cursor-pointer ${
+              activeTab === "dashboard"
+                ? "bg-[#003296] text-white shadow-xs"
+                : "text-slate-300 hover:bg-slate-800 hover:text-white"
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            <span>Dashboard</span>
+          </button>
+
+          {/* Products Group */}
+          <div>
+            <button
+              onClick={() => toggleDropdown("products")}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-bold uppercase tracking-wider text-[10px] cursor-pointer"
             >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">View Storefront</span>
-            </Link>
+              <div className="flex items-center space-x-2">
+                <Package className="w-3.5 h-3.5" />
+                <span>Products</span>
+              </div>
+              {navDropdowns.products ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            </button>
 
+            {navDropdowns.products && (
+              <div className="pl-6 space-y-1 mt-1">
+                <button
+                  onClick={() => {
+                    setActiveTab("products");
+                    setIsEditing(false);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                    activeTab === "products" && !isEditing
+                      ? "bg-slate-800 text-white font-bold"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  All Products ({productsList.length})
+                </button>
+                <button
+                  onClick={() => {
+                    handleNewProduct();
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center justify-between ${
+                    isEditing && !editingId
+                      ? "bg-slate-800 text-white font-bold"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <span>Add New Product</span>
+                  <Plus className="w-3 h-3 text-[#2563EB]" />
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("inventory");
+                    setIsEditing(false);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                    activeTab === "inventory"
+                      ? "bg-slate-800 text-white font-bold"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  Stock & Availability
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Media Library Group */}
+          <div>
+            <button
+              onClick={() => toggleDropdown("media")}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-bold uppercase tracking-wider text-[10px] cursor-pointer"
+            >
+              <div className="flex items-center space-x-2">
+                <ImageIcon className="w-3.5 h-3.5" />
+                <span>Media Library</span>
+              </div>
+              {navDropdowns.media ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            </button>
+
+            {navDropdowns.media && (
+              <div className="pl-6 space-y-1 mt-1">
+                <button
+                  onClick={() => {
+                    setActiveTab("media");
+                    setIsEditing(false);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                    activeTab === "media"
+                      ? "bg-slate-800 text-white font-bold"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  Cloudinary Storage
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Warehouses & Delivery Group */}
+          <div>
+            <button
+              onClick={() => toggleDropdown("delivery")}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-bold uppercase tracking-wider text-[10px] cursor-pointer"
+            >
+              <div className="flex items-center space-x-2">
+                <Truck className="w-3.5 h-3.5" />
+                <span>Warehouses & Delivery</span>
+              </div>
+              {navDropdowns.delivery ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            </button>
+
+            {navDropdowns.delivery && (
+              <div className="pl-6 space-y-1 mt-1">
+                <button
+                  onClick={() => {
+                    setActiveTab("delivery");
+                    setIsEditing(false);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                    activeTab === "delivery"
+                      ? "bg-slate-800 text-white font-bold"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  Regional Delivery Schedules
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Team Group */}
+          <div>
+            <button
+              onClick={() => toggleDropdown("team")}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-bold uppercase tracking-wider text-[10px] cursor-pointer"
+            >
+              <div className="flex items-center space-x-2">
+                <Users className="w-3.5 h-3.5" />
+                <span>Team & Staff</span>
+              </div>
+              {navDropdowns.team ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            </button>
+
+            {navDropdowns.team && (
+              <div className="pl-6 space-y-1 mt-1">
+                <button
+                  onClick={() => {
+                    setActiveTab("team");
+                    fetchTeamMembers();
+                    setIsEditing(false);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                    activeTab === "team"
+                      ? "bg-slate-800 text-white font-bold"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  All Users ({teamMembers.length})
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Settings & Compliance Group */}
+          <div>
+            <button
+              onClick={() => toggleDropdown("settings")}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-bold uppercase tracking-wider text-[10px] cursor-pointer"
+            >
+              <div className="flex items-center space-x-2">
+                <Settings className="w-3.5 h-3.5" />
+                <span>Settings</span>
+              </div>
+              {navDropdowns.settings ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            </button>
+
+            {navDropdowns.settings && (
+              <div className="pl-6 space-y-1 mt-1">
+                <button
+                  onClick={() => {
+                    setActiveTab("settings");
+                    setIsEditing(false);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                    activeTab === "settings"
+                      ? "bg-slate-800 text-white font-bold"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  Store Info & Addresses
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("cac");
+                    setIsEditing(false);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                    activeTab === "cac"
+                      ? "bg-slate-800 text-white font-bold"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  CAC Legal Verification
+                </button>
+              </div>
+            )}
+          </div>
+        </nav>
+
+        {/* Sidebar Footer with User Profile and Storefront Link */}
+        <div className="p-3 border-t border-slate-800 space-y-2 text-xs">
+          <Link
+            href="/shop"
+            target="_blank"
+            className="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl flex items-center justify-between transition-colors"
+          >
+            <div className="flex items-center space-x-2">
+              <ExternalLink className="w-3.5 h-3.5 text-[#2563EB]" />
+              <span className="font-semibold">View Storefront</span>
+            </div>
+            <span className="text-[10px] bg-slate-900 px-1.5 py-0.5 rounded text-slate-400">Live</span>
+          </Link>
+
+          <div className="px-2 py-1 flex items-center justify-between text-[11px]">
+            <div className="truncate mr-2">
+              <span className="font-bold text-white block truncate">{currentUser?.email || "Admin"}</span>
+              <span className="text-slate-500 uppercase tracking-wider text-[9px] font-bold">
+                {currentUser?.role === "admin" ? "Administrator" : "Editor"}
+              </span>
+            </div>
             <button
               onClick={handleLogout}
-              className="text-xs font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-3 py-1.5 rounded-lg flex items-center space-x-1.5 transition-colors"
+              className="text-red-400 hover:text-red-300 p-1 cursor-pointer"
+              title="Sign Out"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span>Sign Out</span>
             </button>
           </div>
         </div>
+      </aside>
 
-        {/* Admin Navigation Tabs */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-2 border-t border-slate-100 overflow-x-auto">
-          <button
-            onClick={() => {
-              setActiveTab("products");
-              setIsEditing(false);
-            }}
-            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${activeTab === "products"
-                ? "border-[#003296] text-[#003296]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
-          >
-            <Package className="w-4 h-4" />
-            <span>Products Inventory ({productsList.length})</span>
-          </button>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        {/* Floating Toast Notice */}
+        {toastMessage && (
+          <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-slate-900 text-white text-xs font-semibold rounded-xl shadow-xl border border-slate-700 flex items-center space-x-2 animate-fade-in">
+            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <span>{toastMessage}</span>
+          </div>
+        )}
 
-          <button
-            onClick={() => setActiveTab("inventory")}
-            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${activeTab === "inventory"
-                ? "border-[#003296] text-[#003296]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
-          >
-            <TrendingUp className="w-4 h-4" />
-            <span>Stock Status</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("settings")}
-            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${activeTab === "settings"
-                ? "border-[#003296] text-[#003296]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
-          >
-            <Settings className="w-4 h-4" />
-            <span>Dynamic Site & Address Settings</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("cac")}
-            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${activeTab === "cac"
-                ? "border-[#003296] text-[#003296]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
-          >
-            <BadgeCheck className="w-4 h-4 text-emerald-600" />
-            <span>CAC Compliance ({settings.cacNumber})</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setActiveTab("team");
-              fetchTeamMembers();
-            }}
-            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-colors ${activeTab === "team"
-                ? "border-[#003296] text-[#003296]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
-          >
-            <Users className="w-4 h-4 text-[#003296]" />
-            <span>Team & Editors ({teamMembers.length})</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Floating Toast Notice */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-slate-900 text-white text-xs font-semibold rounded-xl shadow-xl border border-slate-700 flex items-center space-x-2 animate-fade-in">
-          <CheckCircle className="w-4 h-4 text-emerald-400" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* ========================================================================= */}
-        {/* VIEW 1: WORDPRESS-STYLE PRODUCT CREATION & EDITING SCREEN                */}
-        {/* ========================================================================= */}
-        {isEditing ? (
-          <form onSubmit={handleSaveProduct} className="space-y-6">
-            {/* Top Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200">
-              <div className="flex items-center space-x-2">
+        {/* Cloudinary Media Picker Modal */}
+        {mediaPickerOpen && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+              <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900">
+                    {mediaPickerMode === "main_photo" ? "Select Main Product Photo" : "Add Photos to Gallery"}
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Click any uploaded photo from your Cloudinary warehouse library
+                  </p>
+                </div>
                 <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-100"
+                  onClick={() => setMediaPickerOpen(false)}
+                  className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <X className="w-4 h-4" />
                 </button>
-                <h1 className="text-xl font-black text-slate-900">
-                  {editingId ? "Edit Door Model" : "Add New Door Product"}
-                </h1>
               </div>
 
-              <div className="flex items-center space-x-2.5">
+              <div className="flex-1 overflow-y-auto p-4">
+                {loadingMedia ? (
+                  <div className="py-16 text-center text-xs text-slate-500 flex flex-col items-center justify-center space-y-2">
+                    <Loader2 className="w-6 h-6 animate-spin text-[#003296]" />
+                    <span>Loading Cloudinary warehouse media...</span>
+                  </div>
+                ) : mediaItems.length === 0 ? (
+                  <div className="py-16 text-center text-xs text-slate-500 space-y-2">
+                    <ImageIcon className="w-8 h-8 text-slate-300 mx-auto stroke-1" />
+                    <p className="font-bold text-slate-700">No media found in Cloudinary library</p>
+                    <p className="text-slate-400">Upload product photos from your device using the upload box.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                    {mediaItems.map((item) => (
+                      <button
+                        key={item.public_id}
+                        type="button"
+                        onClick={() => handleSelectMediaFromPicker(item)}
+                        className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 hover:border-[#003296] hover:ring-2 hover:ring-[#003296]/30 group transition-all cursor-pointer bg-slate-100"
+                      >
+                        <Image
+                          src={item.url}
+                          alt={item.public_id}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold">
+                          Select
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="p-3 border-t border-slate-200 bg-slate-50 flex justify-between items-center text-xs">
+                <span className="text-slate-500 text-[11px]">
+                  Showing {mediaItems.length} photos from Cloudinary CDN
+                </span>
                 <button
                   type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50"
+                  onClick={() => setMediaPickerOpen(false)}
+                  className="px-4 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-300"
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-[#003296] hover:bg-[#092b7c] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5"
-                >
-                  <Save className="w-3.5 h-3.5" />
-                  <span>Publish / Save Changes</span>
-                </button>
               </div>
             </div>
+          </div>
+        )}
 
-            {/* 2-Column WordPress Layout: Main Content (Left) & Sidebar (Right) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Left Column: Product Information (8 Cols) */}
-              <div className="lg:col-span-8 space-y-6">
-                {/* Title & Slug Box */}
-                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
-                  <div>
-                    <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block mb-1">
-                      Product Title *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formName}
-                      onChange={(e) => handleTitleChange(e.target.value)}
-                      placeholder="e.g. Bullet Proof Door"
-                      className="w-full px-3.5 py-2.5 text-base font-bold bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-[#003296]"
-                    />
-                  </div>
+        <main className="p-4 sm:p-6 lg:p-8 space-y-6">
+          {/* ========================================================================= */}
+          {/* VIEW: DASHBOARD OVERVIEW                                                  */}
+          {/* ========================================================================= */}
+          {activeTab === "dashboard" && !isEditing && (
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Overview Dashboard</h1>
+                <p className="text-xs text-slate-500">
+                  Quick operational metrics for Anambra Best Door and CFrank Enterprise.
+                </p>
+              </div>
 
-                  {/* Permalink Editor */}
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 pt-1">
-                    <span className="font-semibold text-slate-400">Permalink:</span>
-                    <div className="flex items-center">
-                      <span className="text-slate-400 font-mono">/products/</span>
+              {/* Stats Cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                    Total Products
+                  </span>
+                  <span className="text-3xl font-black text-[#003296] block">
+                    {productsList.length}
+                  </span>
+                  <span className="text-[11px] text-slate-400">Across all building categories</span>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                    In Stock
+                  </span>
+                  <span className="text-3xl font-black text-emerald-600 block">
+                    {productsList.filter((p) => p.stockStatus === "in_stock").length}
+                  </span>
+                  <span className="text-[11px] text-slate-400">Ready for warehouse loading</span>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                    Out of Stock / Sold
+                  </span>
+                  <span className="text-3xl font-black text-amber-600 block">
+                    {productsList.filter((p) => p.stockStatus === "out_of_stock").length}
+                  </span>
+                  <span className="text-[11px] text-slate-400">Requires re-stocking</span>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                    Staff & Editors
+                  </span>
+                  <span className="text-3xl font-black text-slate-900 block">
+                    {teamMembers.length || 1}
+                  </span>
+                  <span className="text-[11px] text-slate-400">Authorized portal users</span>
+                </div>
+              </div>
+
+              {/* Quick Actions Bar */}
+              <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs space-y-4">
+                <h3 className="font-bold text-sm text-slate-900">Quick Actions</h3>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={handleNewProduct}
+                    className="py-2.5 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold text-xs rounded-xl flex items-center space-x-1.5 cursor-pointer shadow-xs"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Product</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveTab("media");
+                      fetchCloudinaryMedia();
+                    }}
+                    className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <ImageIcon className="w-4 h-4 text-slate-600" />
+                    <span>Open Media Library</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("delivery")}
+                    className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <Truck className="w-4 h-4 text-slate-600" />
+                    <span>Update Regional Delivery Schedule</span>
+                  </button>
+                  <Link
+                    href="/shop"
+                    target="_blank"
+                    className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center space-x-1.5"
+                  >
+                    <ExternalLink className="w-4 h-4 text-slate-600" />
+                    <span>View Public Storefront</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* VIEW: PRODUCT EDITING / CREATION SCREEN (WORDPRESS 2-COLUMN LAYOUT)       */}
+          {/* ========================================================================= */}
+          {isEditing && (
+            <form onSubmit={handleSaveProduct} className="space-y-6">
+              {/* Top Action Header */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200">
+                <div className="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                  <h1 className="text-xl font-black text-slate-900">
+                    {editingId ? "Edit Product" : "Add New Product"}
+                  </h1>
+                </div>
+
+                <div className="flex items-center space-x-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Publish / Save Changes</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 2-Column Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Left Main Column: Product Content & Specs */}
+                <div className="lg:col-span-8 space-y-6">
+                  {/* Title & Slug */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-4 shadow-xs">
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        Product Title *
+                      </label>
                       <input
                         type="text"
-                        value={formSlug}
-                        onChange={(e) => {
-                          const rawVal = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
-                          setFormSlug(rawVal);
-                          if (!rawVal.trim()) {
-                            setIsSlugCustomized(false);
-                            setFormSlug(slugify(formName));
-                          } else {
-                            setIsSlugCustomized(true);
-                          }
-                        }}
-                        placeholder="auto-generated-from-title"
-                        className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-mono text-slate-800 focus:bg-white focus:outline-none focus:border-[#003296]"
+                        required
+                        value={formName}
+                        onChange={(e) => handleTitleChange(e.target.value)}
+                        placeholder="e.g. Heavy-Gauge Turkish Steel Security Door or Luxury Water Closet"
+                        className="w-full px-3.5 py-2.5 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl"
                       />
                     </div>
 
-                    {isSlugCustomized ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsSlugCustomized(false);
-                          setFormSlug(slugify(formName));
-                        }}
-                        className="text-[11px] text-[#003296] hover:underline flex items-center space-x-1 font-semibold"
-                        title="Reset permalink to auto-generate from title"
-                      >
-                        <RotateCcw className="w-3 h-3" />
-                        <span>Auto-derive from title</span>
-                      </button>
-                    ) : (
-                      <span className="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-medium border border-emerald-200/60">
-                        Auto-syncing with title
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Short Description & Full Technical Specs */}
-                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
-                  <div>
-                    <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block mb-1">
-                      Summary Excerpt (Card Display)
-                    </label>
-                    <textarea
-                      rows={2}
-                      value={formShortDesc}
-                      onChange={(e) => setFormShortDesc(e.target.value)}
-                      placeholder="Ultra heavy-gauge bullet-resistant security door with reinforced structural steel core..."
-                      className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-[#003296]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block mb-1">
-                      Detailed Architectural & Construction Description
-                    </label>
-                    <textarea
-                      rows={5}
-                      value={formDescription}
-                      onChange={(e) => setFormDescription(e.target.value)}
-                      placeholder="Full details on steel gauge thickness, internal acoustic infill, lock mechanism..."
-                      className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-[#003296]"
-                    />
-                  </div>
-                </div>
-
-                {/* Dynamic Specifications Key-Value Editor */}
-                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                      Technical Door Specifications
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setFormSpecs({
-                          ...formSpecs,
-                          [`Spec ${Object.keys(formSpecs).length + 1}`]: "Value",
-                        })
-                      }
-                      className="text-xs text-[#003296] font-bold hover:underline flex items-center space-x-1"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>Add Spec Field</span>
-                    </button>
-                  </div>
-
-                  <div className="space-y-2">
-                    {Object.entries(formSpecs).map(([key, value], idx) => (
-                      <div key={idx} className="flex items-center space-x-2">
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        URL Slug
+                      </label>
+                      <div className="flex items-center space-x-2 text-xs text-slate-500 font-mono">
+                        <span className="hidden sm:inline">/products/</span>
                         <input
                           type="text"
-                          value={key}
+                          value={formSlug}
                           onChange={(e) => {
-                            const newSpecs: Record<string, string> = {};
-                            Object.entries(formSpecs).forEach(([k, v]) => {
-                              if (k === key) {
-                                newSpecs[e.target.value] = v;
-                              } else {
-                                newSpecs[k] = v;
-                              }
-                            });
-                            setFormSpecs(newSpecs);
+                            setFormSlug(e.target.value);
+                            setIsSlugCustomized(true);
                           }}
-                          className="w-1/3 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg font-semibold"
-                          placeholder="Spec Name (e.g. Dimensions)"
+                          className="flex-1 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs"
                         />
-                        <input
-                          type="text"
-                          value={value}
-                          onChange={(e) =>
-                            setFormSpecs({ ...formSpecs, [key]: e.target.value })
-                          }
-                          className="flex-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg"
-                          placeholder="Spec Value (e.g. 3ft x 7ft)"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newSpecs = { ...formSpecs };
-                            delete newSpecs[key];
-                            setFormSpecs(newSpecs);
-                          }}
-                          className="text-slate-400 hover:text-red-500 p-1"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Google Search Appearance Section */}
-                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <div className="flex items-center space-x-2">
-                      <Globe className="w-4 h-4 text-[#003296]" />
-                      <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                        Google Search Appearance
-                      </h3>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xs text-slate-500">Search Readiness:</span>
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-extrabold ${seoScore >= 80
-                            ? "bg-emerald-100 text-emerald-800"
-                            : seoScore >= 50
-                              ? "bg-amber-100 text-amber-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                      >
-                        {seoScore} / 100
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">
-                        Main Search Words
-                      </label>
-                      <input
-                        type="text"
-                        value={focusKeyphrase}
-                        onChange={(e) => setFocusKeyphrase(e.target.value)}
-                        placeholder="e.g. Bullet Proof Door Onitsha"
-                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
-                      />
-                      <p className="text-[11px] text-slate-400 mt-0.5">
-                        Words customers type when searching for this item on Google.
-                      </p>
                     </div>
 
                     <div>
                       <label className="text-xs font-bold text-slate-700 block mb-1">
-                        Title on Google
+                        Short Summary Description
                       </label>
                       <input
                         type="text"
-                        value={seoTitle}
-                        onChange={(e) => setSeoTitle(e.target.value)}
-                        placeholder="e.g. Bullet Proof Door in Onitsha Nigeria | Anambra Best Door"
+                        value={formShortDesc}
+                        onChange={(e) => setFormShortDesc(e.target.value)}
+                        placeholder="Key specifications summarized in one punchy sentence for product cards."
                         className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
                       />
                     </div>
 
                     <div>
                       <label className="text-xs font-bold text-slate-700 block mb-1">
-                        Short Summary for Google
+                        Full Product Details & Description
                       </label>
                       <textarea
-                        rows={2}
-                        value={seoDescription}
-                        onChange={(e) => setSeoDescription(e.target.value)}
-                        placeholder="One or two clear sentences describing this item..."
-                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                        rows={5}
+                        value={formDescription}
+                        onChange={(e) => setFormDescription(e.target.value)}
+                        placeholder="Detailed construction specifications, steel thickness, locking hardware, and fitting notes."
+                        className="w-full p-3 text-xs bg-slate-50 border border-slate-200 rounded-xl"
                       />
                     </div>
+                  </div>
 
-                    {/* Google Search Preview Box */}
-                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
-                      <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">
-                        How it looks on Google
-                      </span>
-                      <p className="text-xs font-medium text-[#1a0dab] truncate">
-                        {seoTitle || `${formName} | Anambra Best Door`}
-                      </p>
-                      <p className="text-[11px] text-[#006621] truncate font-mono">
-                        https://anambrabestdoor.ng/products/{formSlug || "model"}
-                      </p>
-                      <p className="text-[11px] text-slate-600 line-clamp-2">
-                        {seoDescription || formShortDesc || "Direct supplier of heavy-gauge security doors."}
-                      </p>
+                  {/* Category-Adaptive Specifications & Custom Attribute Builder */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-4 shadow-xs">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                      <div>
+                        <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                          Product Specifications & Attributes
+                        </h3>
+                        <p className="text-[11px] text-slate-500">
+                          Dynamic attributes adapted for {formCategory}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          onClick={handleLoadDefaultSpecs}
+                          className="px-2.5 py-1 text-[11px] font-bold text-[#003296] bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 cursor-pointer"
+                        >
+                          Load Standard Specs
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormSpecs({
+                              ...formSpecs,
+                              [`Custom Spec ${Object.keys(formSpecs).length + 1}`]: "",
+                            })
+                          }
+                          className="px-2.5 py-1 text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Add Field</span>
+                        </button>
+                      </div>
                     </div>
 
-                    {/* Quick Checks */}
-                    <div className="pt-2 space-y-1.5">
-                      {seoChecks.map((check, idx) => (
-                        <div key={idx} className="flex items-center space-x-2 text-xs">
-                          {check.status === "good" ? (
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                          ) : check.status === "warning" ? (
-                            <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                          ) : (
-                            <AlertCircle className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                          )}
-                          <span className="font-semibold text-slate-700">{check.label}:</span>
-                          <span className="text-slate-500">{check.note}</span>
+                    {/* Specification Key-Value Rows */}
+                    <div className="space-y-2.5">
+                      {Object.entries(formSpecs).map(([key, value], idx) => (
+                        <div key={idx} className="flex items-center space-x-2">
+                          <input
+                            type="text"
+                            value={key}
+                            onChange={(e) => {
+                              const newSpecs: Record<string, string> = {};
+                              Object.entries(formSpecs).forEach(([k, v]) => {
+                                if (k === key) {
+                                  newSpecs[e.target.value] = v;
+                                } else {
+                                  newSpecs[k] = v;
+                                }
+                              });
+                              setFormSpecs(newSpecs);
+                            }}
+                            className="w-1/3 px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800"
+                            placeholder="Attribute Name (e.g. Material)"
+                          />
+                          <input
+                            type="text"
+                            value={value}
+                            onChange={(e) =>
+                              setFormSpecs({ ...formSpecs, [key]: e.target.value })
+                            }
+                            className="flex-1 px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-700"
+                            placeholder="Specification Value (e.g. S-Trap 300mm / 2.0mm Steel)"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newSpecs = { ...formSpecs };
+                              delete newSpecs[key];
+                              setFormSpecs(newSpecs);
+                            }}
+                            className="p-2 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50 cursor-pointer"
+                            title="Delete Attribute"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                       ))}
                     </div>
                   </div>
+
+                  {/* Product Photos & Cloudinary Library Picker */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-4 shadow-xs">
+                    <div className="border-b border-slate-100 pb-2">
+                      <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                        Main Product Photo
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        Upload from device or pick directly from your Cloudinary warehouse library
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                      {/* Photo Preview Box */}
+                      <div className="relative aspect-square max-w-xs rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
+                        {formImage ? (
+                          <Image
+                            src={formImage.startsWith("/") || formImage.startsWith("http") ? formImage : `/${formImage}`}
+                            alt={formName || "Product photo"}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="text-center p-4 text-slate-400 text-xs">
+                            <ImageIcon className="w-8 h-8 mx-auto mb-1 stroke-1" />
+                            <span>No photo selected</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Photo Actions */}
+                      <div className="space-y-2.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMediaPickerMode("main_photo");
+                            fetchCloudinaryMedia("image");
+                            setMediaPickerOpen(true);
+                          }}
+                          className="w-full py-2.5 px-3 bg-blue-50 hover:bg-blue-100 text-[#003296] border border-blue-200 text-xs font-bold rounded-xl flex items-center justify-center space-x-2 cursor-pointer"
+                        >
+                          <FolderOpen className="w-4 h-4" />
+                          <span>Choose from Cloudinary Library</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={isUploadingImage}
+                          className="w-full py-2.5 px-3 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl flex items-center justify-center space-x-2 cursor-pointer"
+                        >
+                          {isUploadingImage ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <UploadCloud className="w-4 h-4" />
+                          )}
+                          <span>Upload from Phone / PC</span>
+                        </button>
+
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageFilePick}
+                          className="hidden"
+                        />
+
+                        <div>
+                          <label className="text-[10px] text-slate-500 font-semibold block mb-0.5">
+                            Direct Image URL
+                          </label>
+                          <input
+                            type="text"
+                            value={formImage}
+                            onChange={(e) => setFormImage(e.target.value)}
+                            placeholder="https://res.cloudinary.com/..."
+                            className="w-full px-3 py-1.5 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg text-slate-600"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Image Gallery */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-4 shadow-xs">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <div>
+                        <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                          Additional Gallery Photos
+                        </h3>
+                        <p className="text-[11px] text-slate-400">
+                          Angles and warehouse offloading views ({formGallery.length} photos)
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMediaPickerMode("gallery");
+                            fetchCloudinaryMedia("image");
+                            setMediaPickerOpen(true);
+                          }}
+                          className="px-2.5 py-1 text-[11px] font-bold text-[#003296] bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 cursor-pointer"
+                        >
+                          Pick from Library
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => galleryInputRef.current?.click()}
+                          className="px-2.5 py-1 text-[11px] font-bold text-slate-700 bg-slate-100 border border-slate-200 rounded-lg hover:bg-slate-200 cursor-pointer"
+                        >
+                          Upload Files
+                        </button>
+                      </div>
+                    </div>
+
+                    <input
+                      ref={galleryInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleGalleryFilePick}
+                      className="hidden"
+                    />
+
+                    {formGallery.length > 0 ? (
+                      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                        {formGallery.map((url, i) => (
+                          <div
+                            key={i}
+                            className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100 group"
+                          >
+                            <Image src={url} alt={`Gallery ${i}`} fill className="object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveGalleryImage(i)}
+                              className="absolute top-1 right-1 w-5 h-5 bg-black/70 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors cursor-pointer"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-slate-400 text-center py-4">No gallery photos added yet.</p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Right Column: Pricing, Inventory, Jiji Link & Image (4 Cols) */}
-              <div className="lg:col-span-4 space-y-6">
-                {/* Pricing & Stock Card */}
-                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">
-                    Pricing & Inventory
-                  </h3>
-
-                  {/* Price Display Settings: Fixed Price vs Price on Request vs Blank */}
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-                    <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block">
-                      Price Display Setting
+                {/* Right Column: Category, Pricing, Stock, Jiji */}
+                <div className="lg:col-span-4 space-y-6">
+                  {/* Category Selection */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-3 shadow-xs">
+                    <label className="text-xs font-bold text-slate-900 block">
+                      Product Category *
                     </label>
+                    <select
+                      value={formCategory}
+                      onChange={(e) => handleCategoryChange(e.target.value as DoorProduct["category"])}
+                      className="w-full px-3 py-2 text-xs font-bold bg-slate-50 border border-slate-300 rounded-xl"
+                    >
+                      <optgroup label="Doors">
+                        <option value="security-doors">Security Doors</option>
+                        <option value="hdf-doors">Foreign HDF Doors</option>
+                        <option value="interior-doors">Interior Doors</option>
+                        <option value="luxury-doors">Luxury Doors</option>
+                        <option value="bathroom-doors">Waterproof Bathroom Doors</option>
+                      </optgroup>
+                      <optgroup label="Sanitary & Bathroom Wares">
+                        <option value="sanitary-fittings">Sanitary Wares & Water Closets</option>
+                        <option value="bathrooms">Bathroom Vanities & Sinks</option>
+                      </optgroup>
+                      <optgroup label="Finishes">
+                        <option value="paint">Paint & Screeding</option>
+                        <option value="roof-tiles">Roof Tiles</option>
+                      </optgroup>
+                    </select>
 
+                    <label className="text-xs font-bold text-slate-900 block pt-1">
+                      Subcategory / Tag
+                    </label>
+                    <input
+                      type="text"
+                      value={formSubcategory}
+                      onChange={(e) => setFormSubcategory(e.target.value)}
+                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                    />
+                  </div>
+
+                  {/* Pricing Mode */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-3 shadow-xs">
+                    <label className="text-xs font-bold text-slate-900 block">
+                      Pricing Display Mode
+                    </label>
                     <div className="space-y-2 text-xs">
-                      <label className="flex items-start space-x-2.5 cursor-pointer">
+                      <label className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="radio"
                           name="priceMode"
-                          value="show_price"
                           checked={formPriceMode === "show_price"}
-                          onChange={() => {
-                            setFormPriceMode("show_price");
-                            setFormPriceOnRequest(false);
-                          }}
-                          className="mt-0.5 w-4 h-4 text-[#003296] border-slate-300 focus:ring-[#003296]"
+                          onChange={() => setFormPriceMode("show_price")}
+                          className="w-4 h-4 text-[#003296]"
                         />
-                        <div>
-                          <span className="font-bold text-slate-900 block">Show Fixed Price (₦)</span>
-                          <span className="text-[11px] text-slate-500 block">Display regular amount and direct buy order buttons</span>
-                        </div>
+                        <span className="font-semibold text-slate-800">Show Specific Price</span>
                       </label>
-
-                      <label className="flex items-start space-x-2.5 cursor-pointer">
+                      <label className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="radio"
                           name="priceMode"
-                          value="price_on_request"
                           checked={formPriceMode === "price_on_request"}
-                          onChange={() => {
-                            setFormPriceMode("price_on_request");
-                            setFormPriceOnRequest(true);
-                          }}
-                          className="mt-0.5 w-4 h-4 text-[#003296] border-slate-300 focus:ring-[#003296]"
+                          onChange={() => setFormPriceMode("price_on_request")}
+                          className="w-4 h-4 text-[#003296]"
                         />
-                        <div>
-                          <span className="font-bold text-slate-900 block">Price on Request</span>
-                          <span className="text-[11px] text-slate-500 block">Displays &ldquo;Price on Request&rdquo; with WhatsApp quote button</span>
-                        </div>
+                        <span className="font-semibold text-slate-800">Price on Request</span>
                       </label>
-
-                      <label className="flex items-start space-x-2.5 cursor-pointer">
+                      <label className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="radio"
                           name="priceMode"
-                          value="blank"
                           checked={formPriceMode === "blank"}
-                          onChange={() => {
-                            setFormPriceMode("blank");
-                            setFormPriceOnRequest(false);
-                          }}
-                          className="mt-0.5 w-4 h-4 text-[#003296] border-slate-300 focus:ring-[#003296]"
+                          onChange={() => setFormPriceMode("blank")}
+                          className="w-4 h-4 text-[#003296]"
                         />
-                        <div>
-                          <span className="font-bold text-slate-900 block">Leave Blank / Chat for Price</span>
-                          <span className="text-[11px] text-slate-500 block">No price displayed on cards; directs customer to chat on WhatsApp</span>
-                        </div>
+                        <span className="font-semibold text-slate-800">Leave Blank / Chat for Price</span>
                       </label>
                     </div>
 
                     {formPriceMode === "show_price" && (
-                      <div className="pt-3 border-t border-slate-200/80 space-y-3">
+                      <div className="pt-3 border-t border-slate-100 space-y-2.5">
                         <div>
                           <label className="text-xs font-bold text-slate-700 block mb-1">
                             Selling Price (₦)
@@ -1589,482 +1942,60 @@ export default function AdminPage() {
                             type="number"
                             value={formPrice || ""}
                             onChange={(e) => setFormPrice(Number(e.target.value) || 0)}
-                            placeholder="e.g. 185000"
-                            className="w-full px-3 py-2 text-sm font-bold bg-white border border-slate-200 rounded-xl"
+                            className="w-full px-3 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-xl"
                           />
-                          {formPrice === 0 && (
-                            <p className="text-[11px] text-amber-600 mt-1">
-                              Price is ₦0. If you do not want ₦0 to show, choose &ldquo;Price on Request&rdquo; or &ldquo;Leave Blank&rdquo; above.
-                            </p>
-                          )}
                         </div>
 
                         <div>
                           <label className="text-xs font-bold text-slate-700 block mb-1">
-                            Original / Regular Price (₦)
+                            Original Price (₦)
                           </label>
                           <input
                             type="number"
                             value={formOriginalPrice || ""}
                             onChange={(e) => setFormOriginalPrice(Number(e.target.value) || 0)}
-                            placeholder="e.g. 210000"
-                            className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl"
+                            className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
                           />
-                          {discountPercent > 0 && (
-                            <span className="text-[10px] text-emerald-600 font-bold mt-1 block">
-                              Displays as {discountPercent}% discount
-                            </span>
-                          )}
-                        </div>
-
-                        <div>
-                          <label className="text-xs font-bold text-slate-700 block mb-1">
-                            Price Validity Date (Optional)
-                          </label>
-                          <input
-                            type="date"
-                            value={formPriceValidUntil}
-                            onChange={(e) => setFormPriceValidUntil(e.target.value)}
-                            className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl"
-                          />
-                          <p className="text-[11px] text-slate-400 mt-1">
-                            Optional. Leave blank to automatically roll forward 365 days on Google.
-                          </p>
                         </div>
                       </div>
                     )}
                   </div>
 
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Choose Product Category *
-                    </label>
-                    <select
-                      value={formCategory}
-                      onChange={(e) =>
-                        handleCategoryChange(e.target.value as DoorProduct["category"])
-                      }
-                      className="w-full px-3 py-2.5 text-xs font-bold bg-white border border-slate-300 rounded-xl focus:border-[#003296] focus:ring-1 focus:ring-[#003296] mb-3 cursor-pointer shadow-xs"
-                    >
-                      <optgroup label="Doors & Entrances">
-                        <option value="security-doors">Security Doors</option>
-                        <option value="hdf-doors">Foreign HDF Doors</option>
-                        <option value="interior-doors">Interior Doors</option>
-                        <option value="luxury-doors">Luxury Doors</option>
-                        <option value="bathroom-doors">Waterproof Bathroom Doors</option>
-                      </optgroup>
-                      <optgroup label="Sanitary & Plumbing">
-                        <option value="sanitary-fittings">Sanitary Wares & Fittings</option>
-                        <option value="bathrooms">Bathrooms & Wash Basins</option>
-                      </optgroup>
-                      <optgroup label="Building Materials & Finishes">
-                        <option value="paint">Paint & Wall Finishes</option>
-                        <option value="roof-tiles">Roof Tiles & Roofing</option>
-                      </optgroup>
-                      <optgroup label="Properties & Vacancies">
-                        <option value="real-estate">Real Estate & Properties</option>
-                        <option value="careers">Careers & Vacancies</option>
-                      </optgroup>
-                    </select>
-
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Subcategory / Specific Type
-                    </label>
-                    <input
-                      type="text"
-                      value={formSubcategory}
-                      onChange={(e) => setFormSubcategory(e.target.value)}
-                      placeholder="e.g. Foreign HDF Luxury Doors, Stone Coated Tiles, Exterior Emulsion"
-                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl mb-3"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Warehouse Stock Quantity
-                    </label>
-                    <input
-                      type="number"
-                      value={formStock}
-                      onChange={(e) => setFormStock(Number(e.target.value))}
-                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Stock Status
-                    </label>
-                    <select
-                      value={formStockStatus}
-                      onChange={(e) =>
-                        setFormStockStatus(e.target.value as DoorProduct["stockStatus"])
-                      }
-                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
-                    >
-                      <option value="in_stock">In Stock</option>
-                      <option value="low_stock">Low Stock (Under 5 units)</option>
-                      <option value="out_of_stock">Out of Stock</option>
-                      <option value="made_to_order">Made to Order (Fabrication)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Product Badge
-                    </label>
-                    <input
-                      type="text"
-                      value={formBadge}
-                      onChange={(e) => setFormBadge(e.target.value)}
-                      placeholder="e.g. Best Seller / Contractor Pick"
-                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
-                    />
-                  </div>
-                </div>
-
-                {/* Product Photo Upload */}
-                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                      Product Photo
-                    </h3>
-                    <span className="text-[11px] text-slate-400 font-medium">Drag & drop or click to upload</span>
-                  </div>
-
-                  {/* Drag & Drop Upload Dropzone */}
-                  <div
-                    onDragOver={handleDragOver}
-                    onDragEnter={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    onClick={() => fileInputRef.current?.click()}
-                    className={`relative w-full h-48 rounded-xl overflow-hidden border-2 transition-all cursor-pointer flex flex-col items-center justify-center group ${isDraggingImage
-                        ? "border-[#003296] bg-blue-50/90 ring-2 ring-[#003296]/30 scale-[1.01]"
-                        : "border-dashed border-slate-300 hover:border-[#003296] bg-slate-50"
-                      }`}
-                  >
-                    {formImage ? (
-                      <>
-                        <Image
-                          src={formImage.startsWith("/") || formImage.startsWith("http") || formImage.startsWith("data:") ? formImage : `/${formImage}`}
-                          alt={formName || "Product photo"}
-                          fill
-                          className="object-cover group-hover:opacity-80 transition-opacity"
-                        />
-                        <div className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white p-3 text-center">
-                          <UploadCloud className="w-6 h-6 mb-1 text-white" />
-                          <span className="text-xs font-bold">Drop photo or click to change</span>
-                          <span className="text-[10px] text-slate-200 mt-0.5">JPG, PNG, WEBP</span>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center text-xs text-slate-500 p-4 text-center">
-                        <UploadCloud className={`w-8 h-8 mb-2 transition-colors ${isDraggingImage ? "text-[#003296] animate-bounce" : "text-slate-400 group-hover:text-[#003296]"}`} />
-                        <span className="font-bold text-slate-700">
-                          {isDraggingImage ? "Drop photo here now" : "Drag & drop product photo here"}
-                        </span>
-                        <span className="text-[11px] text-slate-400 mt-0.5">or click to browse from device</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Hidden file input for phone / desktop file picking */}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageFilePick}
-                    className="hidden"
-                  />
-
-                  {/* Prominent Upload Button */}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploadingImage}
-                    className="w-full py-2.5 px-3 bg-[#003296] hover:bg-[#092b7c] disabled:bg-slate-300 text-white text-xs font-bold rounded-xl transition flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
-                  >
-                    {isUploadingImage ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Uploading Photo...</span>
-                      </>
-                    ) : (
-                      <>
-                        <UploadCloud className="w-4 h-4" />
-                        <span>Choose Photo from Device (Phone / PC)</span>
-                      </>
-                    )}
-                  </button>
-
-                  {imageUploadSuccess && (
-                    <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-[11px] flex items-center space-x-1.5">
-                      <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                      <span>Photo uploaded and attached!</span>
-                    </div>
-                  )}
-
-                  {imageUploadError && (
-                    <div className="p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-[11px]">
-                      {imageUploadError}
-                    </div>
-                  )}
-
-                  <div className="pt-1">
-                    <label className="text-[11px] font-semibold text-slate-500 block mb-1">
-                      Photo Link / Path (Optional edit)
-                    </label>
-                    <input
-                      type="text"
-                      value={formImage}
-                      onChange={(e) => setFormImage(e.target.value)}
-                      placeholder="/products/door.jpg or https://res.cloudinary.com/..."
-                      className="w-full px-3 py-1.5 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg text-slate-600"
-                    />
-                  </div>
-                </div>
-
-                {/* Product Gallery (Multiple Images for Product Single Template) */}
-                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  {/* Stock & Status */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-3 shadow-xs">
                     <div>
-                      <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                        Image Gallery
-                      </h3>
-                      <p className="text-[11px] text-slate-400">
-                        Additional angles & warehouse photos for product single page (max 5MB each)
-                      </p>
+                      <label className="text-xs font-bold text-slate-900 block mb-1">
+                        Stock Status
+                      </label>
+                      <select
+                        value={formStockStatus}
+                        onChange={(e) => setFormStockStatus(e.target.value as DoorProduct["stockStatus"])}
+                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                      >
+                        <option value="in_stock">In Stock</option>
+                        <option value="low_stock">Low Stock (Under 5 units)</option>
+                        <option value="out_of_stock">Out of Stock</option>
+                        <option value="made_to_order">Made to Order</option>
+                      </select>
                     </div>
-                    <span className="text-[11px] font-bold text-[#003296] bg-blue-50 px-2 py-0.5 rounded-md">
-                      {formGallery.length} {formGallery.length === 1 ? "photo" : "photos"}
-                    </span>
-                  </div>
 
-                  {/* Hidden input for multi-file selection */}
-                  <input
-                    ref={galleryInputRef}
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleGalleryFilePick}
-                    className="hidden"
-                  />
-
-                  {/* Drag & drop dropzone for gallery */}
-                  <div
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsDraggingGallery(true);
-                    }}
-                    onDragEnter={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsDraggingGallery(true);
-                    }}
-                    onDragLeave={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsDraggingGallery(false);
-                    }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsDraggingGallery(false);
-                      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                        processGalleryFiles(e.dataTransfer.files);
-                      }
-                    }}
-                    onClick={() => galleryInputRef.current?.click()}
-                    className={`w-full py-4 px-3 rounded-xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center ${isDraggingGallery
-                        ? "border-[#003296] bg-blue-50/90 ring-2 ring-[#003296]/30"
-                        : "border-slate-300 hover:border-[#003296] bg-slate-50"
-                      }`}
-                  >
-                    <Plus className="w-5 h-5 text-slate-400 mb-1" />
-                    <span className="text-xs font-bold text-slate-700">
-                      {isDraggingGallery ? "Drop gallery photos here" : "Add Gallery Photos"}
-                    </span>
-                    <span className="text-[10px] text-slate-400 mt-0.5">
-                      Select or drop multiple images (JPG, PNG, WEBP — up to 5MB)
-                    </span>
-                  </div>
-
-                  {isUploadingGallery && (
-                    <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-[#003296] text-xs flex items-center space-x-2">
-                      <Loader2 className="w-4 h-4 animate-spin shrink-0" />
-                      <span>Uploading gallery photos to Cloudinary...</span>
-                    </div>
-                  )}
-
-                  {galleryUploadError && (
-                    <div className="p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-[11px]">
-                      {galleryUploadError}
-                    </div>
-                  )}
-
-                  {/* Gallery Thumbnails Grid */}
-                  {formGallery.length > 0 && (
-                    <div className="grid grid-cols-4 gap-2 pt-1">
-                      {formGallery.map((imgUrl, idx) => (
-                        <div
-                          key={idx}
-                          className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 bg-slate-100 group"
-                        >
-                          <Image
-                            src={imgUrl.startsWith("/") || imgUrl.startsWith("http") || imgUrl.startsWith("data:") ? imgUrl : `/${imgUrl}`}
-                            alt={`Gallery photo ${idx + 1}`}
-                            fill
-                            className="object-cover"
-                          />
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveGalleryImage(idx);
-                            }}
-                            className="absolute top-1 right-1 w-5 h-5 bg-black/70 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors cursor-pointer"
-                            title="Remove photo"
-                            aria-label={`Remove photo ${idx + 1}`}
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Product Video Showcase (Appears in Hero & Product Single Page) */}
-                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <div>
-                      <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                        Product Video Showcase
-                      </h3>
-                      <p className="text-[11px] text-slate-400">
-                        Offloading, depot or walkthrough video (max 10MB, MP4/WEBM)
-                      </p>
+                      <label className="text-xs font-bold text-slate-900 block mb-1">
+                        Warehouse Units Available
+                      </label>
+                      <input
+                        type="number"
+                        value={formStock}
+                        onChange={(e) => setFormStock(Number(e.target.value))}
+                        className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                      />
                     </div>
-                    <Film className="w-4 h-4 text-slate-400" />
                   </div>
 
-                  {/* Hidden input for video file selection */}
-                  <input
-                    ref={videoInputRef}
-                    type="file"
-                    accept="video/mp4,video/webm"
-                    onChange={handleVideoFilePick}
-                    className="hidden"
-                  />
-
-                  {formVideo ? (
-                    <div className="space-y-2">
-                      <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-200">
-                        <video
-                          key={formVideo}
-                          src={formVideo}
-                          controls
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      <div className="flex items-center justify-between pt-1">
-                        <span className="text-[10px] text-emerald-600 font-semibold flex items-center space-x-1">
-                          <CheckCircle className="w-3 h-3 shrink-0" />
-                          <span>Video linked</span>
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setFormVideo("")}
-                          className="text-[11px] text-red-600 hover:text-red-700 font-bold cursor-pointer"
-                        >
-                          Remove Video
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setIsDraggingVideo(true);
-                      }}
-                      onDragEnter={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setIsDraggingVideo(true);
-                      }}
-                      onDragLeave={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setIsDraggingVideo(false);
-                      }}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setIsDraggingVideo(false);
-                        const file = e.dataTransfer.files?.[0];
-                        if (file) processVideoFile(file);
-                      }}
-                      onClick={() => videoInputRef.current?.click()}
-                      className={`w-full py-5 px-3 rounded-xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center ${isDraggingVideo
-                          ? "border-[#003296] bg-blue-50/90 ring-2 ring-[#003296]/30"
-                          : "border-slate-300 hover:border-[#003296] bg-slate-50"
-                        }`}
-                    >
-                      <Video className="w-6 h-6 text-slate-400 mb-1" />
-                      <span className="text-xs font-bold text-slate-700">
-                        {isDraggingVideo ? "Drop product video here" : "Upload Product Video"}
-                      </span>
-                      <span className="text-[10px] text-slate-400 mt-0.5">
-                        MP4, WEBM format • Maximum 10MB
-                      </span>
-                    </div>
-                  )}
-
-                  {isUploadingVideo && (
-                    <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-[#003296] text-xs flex items-center space-x-2">
-                      <Loader2 className="w-4 h-4 animate-spin shrink-0" />
-                      <span>Uploading video to Cloudinary CDN (up to 10MB)...</span>
-                    </div>
-                  )}
-
-                  {videoUploadSuccess && (
-                    <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-[11px] flex items-center space-x-1.5">
-                      <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                      <span>Video uploaded and connected to product!</span>
-                    </div>
-                  )}
-
-                  {videoUploadError && (
-                    <div className="p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-[11px]">
-                      {videoUploadError}
-                    </div>
-                  )}
-
-                  <div className="pt-1">
-                    <label className="text-[11px] font-semibold text-slate-500 block mb-1">
-                      Direct Video URL (Cloudinary / MP4 link)
-                    </label>
-                    <input
-                      type="text"
-                      value={formVideo}
-                      onChange={(e) => setFormVideo(e.target.value)}
-                      placeholder="https://res.cloudinary.com/.../video.mp4"
-                      className="w-full px-3 py-1.5 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg text-slate-600"
-                    />
-                  </div>
-                </div>
-
-                {/* Cross-Channel Jiji Link */}
-                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">
-                    Cross-Channel Marketplace Link
-                  </h3>
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Jiji.ng Item Listing URL
+                  {/* Jiji Link */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-3 shadow-xs">
+                    <label className="text-xs font-bold text-slate-900 block mb-1">
+                      Jiji.ng Store Item URL
                     </label>
                     <input
                       type="url"
@@ -2076,61 +2007,50 @@ export default function AdminPage() {
                   </div>
                 </div>
               </div>
-            </div>
-          </form>
-        ) : activeTab === "products" ? (
-          /* ========================================================================= */
-          /* VIEW 2: PRODUCT ARCHIVE & CATALOGUE LIST                                  */
-          /* ========================================================================= */
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  Door Catalogue Management
-                </h1>
-                <p className="text-xs text-slate-500">
-                  Manage inventory, add genuine door samples, edit technical specifications, and cross-link to Jiji.ng.
-                </p>
+            </form>
+          )}
+
+          {/* ========================================================================= */}
+          {/* VIEW: ALL PRODUCTS LIST                                                   */}
+          {/* ========================================================================= */}
+          {activeTab === "products" && !isEditing && (
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 space-y-5 shadow-xs">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div className="flex items-center space-x-2">
+                  <Package className="w-5 h-5 text-[#003296]" />
+                  <h2 className="text-lg font-black text-slate-900">
+                    Product Catalogue ({filteredProducts.length})
+                  </h2>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={handleNewProduct}
+                    className="py-2.5 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold text-xs rounded-xl flex items-center space-x-1.5 cursor-pointer shadow-xs"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 self-start sm:self-auto">
-                <button
-                  type="button"
-                  onClick={handleResetCatalog}
-                  className="py-2.5 px-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition-colors cursor-pointer"
-                  title="Reset catalog back to initial state with blank prices"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Reset to Defaults</span>
-                </button>
-                <button
-                  onClick={handleNewProduct}
-                  className="py-2.5 px-4 bg-[#003296] hover:bg-[#092b7c] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add Door Model</span>
-                </button>
-              </div>
-            </div>
+              {/* Filters Bar */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by door name, lock type, or category..."
+                    className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
 
-            {/* Filter Bar */}
-            <div className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
-              <div className="relative w-full sm:w-72">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search door name or slug..."
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs"
-                />
-              </div>
-
-              <div className="flex items-center space-x-2 w-full sm:w-auto">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs w-full sm:w-auto"
+                  className="px-3 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl"
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat.id} value={cat.id}>
@@ -2139,97 +2059,65 @@ export default function AdminPage() {
                   ))}
                 </select>
               </div>
-            </div>
 
-            {/* Products Table */}
-            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-bold uppercase text-[10px] tracking-wider">
-                      <th className="py-3 px-4">Photo</th>
-                      <th className="py-3 px-4">Product Name & Category</th>
-                      <th className="py-3 px-4">Price (₦)</th>
-                      <th className="py-3 px-4">Stock</th>
-                      <th className="py-3 px-4">Jiji Cross-Link</th>
-                      <th className="py-3 px-4 text-right">Actions</th>
+              {/* Products Table */}
+              <div className="overflow-x-auto border border-slate-200 rounded-xl">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 border-b border-slate-200 font-bold text-slate-700">
+                    <tr>
+                      <th className="p-3 w-14">Photo</th>
+                      <th className="p-3">Product Name</th>
+                      <th className="p-3">Category</th>
+                      <th className="p-3">Price</th>
+                      <th className="p-3">Stock Status</th>
+                      <th className="p-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {filteredProducts.map((prod) => (
-                      <tr key={prod.id} className="hover:bg-slate-50/60 transition-colors">
-                        <td className="py-3 px-4">
-                          <div className="relative w-12 h-14 rounded-lg bg-slate-100 overflow-hidden border border-slate-200">
-                            <Image
-                              src={prod.image}
-                              alt={prod.name}
-                              fill
-                              className="object-cover"
-                            />
+                    {filteredProducts.map((p) => (
+                      <tr key={p.id} className="hover:bg-slate-50/70">
+                        <td className="p-3">
+                          <div className="relative w-10 h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
+                            {p.image ? (
+                              <Image src={p.image} alt={p.name} fill className="object-cover" />
+                            ) : (
+                              <ImageIcon className="w-4 h-4 m-auto text-slate-400 stroke-1" />
+                            )}
                           </div>
                         </td>
-                        <td className="py-3 px-4 space-y-0.5">
-                          <div className="font-bold text-slate-900">{prod.name}</div>
-                          <div className="text-[11px] text-slate-500 font-mono">
-                            /products/{prod.slug}
-                          </div>
-                          <span className="inline-block px-2 py-0.5 rounded bg-blue-50 text-[#003296] text-[10px] font-bold">
-                            {prod.categoryLabel}
-                          </span>
+                        <td className="p-3 font-bold text-slate-900 max-w-xs truncate">
+                          {p.name}
                         </td>
-                        <td className="py-3 px-4 font-extrabold text-[#003296]">
-                          {prod.priceMode === "blank" ? (
-                            <span className="text-xs text-slate-400 font-medium">Blank (Chat)</span>
-                          ) : prod.priceMode === "price_on_request" || prod.priceOnRequest ? (
-                            <span className="text-xs font-bold text-blue-700">On Request</span>
-                          ) : prod.price > 0 ? (
-                            `₦${prod.price.toLocaleString()}`
-                          ) : (
-                            <span className="text-xs text-slate-400 font-medium">—</span>
-                          )}
+                        <td className="p-3 text-slate-600">{p.categoryLabel}</td>
+                        <td className="p-3 font-semibold text-slate-900">
+                          {p.price && p.price > 0 ? `₦${p.price.toLocaleString()}` : "Price on Request"}
                         </td>
-                        <td className="py-3 px-4">
+                        <td className="p-3">
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${prod.stockStatus === "in_stock"
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              p.stockStatus === "in_stock"
                                 ? "bg-emerald-100 text-emerald-800"
-                                : "bg-red-100 text-red-800"
-                              }`}
+                                : "bg-amber-100 text-amber-800"
+                            }`}
                           >
-                            {prod.stockStatus === "in_stock" ? "In Stock" : "Sold Out"}
+                            {p.stockStatus === "in_stock" ? "In Stock" : "Out of Stock"}
                           </span>
                         </td>
-                        <td className="py-3 px-4">
-                          {prod.jijiUrl ? (
-                            <a
-                              href={prod.jijiUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[11px] text-emerald-600 hover:underline flex items-center space-x-1 font-semibold"
-                            >
-                              <span>Verified Listing</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </a>
-                          ) : (
-                            <span className="text-[10px] text-slate-400">None</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          <div className="flex items-center justify-end space-x-1.5">
-                            <button
-                              onClick={() => handleEditProduct(prod)}
-                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700"
-                              title="Edit product"
-                            >
-                              <Edit className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteProduct(prod.id)}
-                              className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600"
-                              title="Delete product"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
+                        <td className="p-3 text-right space-x-1">
+                          <button
+                            onClick={() => handleEditProduct(p)}
+                            className="p-1.5 text-slate-600 hover:text-[#003296] rounded-lg hover:bg-slate-100 cursor-pointer"
+                            title="Edit Product"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteProduct(p.id)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 cursor-pointer"
+                            title="Delete Product"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -2237,337 +2125,460 @@ export default function AdminPage() {
                 </table>
               </div>
             </div>
-          </div>
-        ) : activeTab === "inventory" ? (
-          /* ========================================================================= */
-          /* VIEW 3: INVENTORY & QUICK AVAILABILITY STATUS                            */
-          /* ========================================================================= */
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                Warehouse Inventory Management
-              </h1>
-              <p className="text-xs text-slate-500">
-                Quickly adjust stock quantities and toggle sold-out status for WhatsApp order verification.
-              </p>
-            </div>
+          )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {productsList.map((prod) => (
-                <div key={prod.id} className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center space-x-2.5">
-                      <div className="relative w-10 h-12 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
-                        <Image src={prod.image} alt={prod.name} fill className="object-cover" />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-xs text-slate-900 line-clamp-1">{prod.name}</h4>
-                        <span className="text-[10px] text-slate-400">{prod.categoryLabel}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
-                    <span className="font-bold text-[#003296]">
-                      {prod.price && prod.price > 0
-                        ? `₦${prod.price.toLocaleString()}`
-                        : prod.priceMode === "price_on_request" || prod.priceOnRequest
-                          ? "On Request"
-                          : "Blank (Chat)"}
-                    </span>
-                    <button
-                      onClick={() => handleToggleSoldOut(prod.id)}
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${prod.stockStatus === "in_stock"
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-red-100 text-red-800"
-                        }`}
-                    >
-                      {prod.stockStatus === "in_stock" ? "Mark as Sold Out" : "Mark as In Stock"}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : activeTab === "cac" ? (
-          /* ========================================================================= */
-          /* VIEW 4: CAC COMPLIANCE & OFFICIAL REGISTRATION DOCUMENTS                  */
-          /* ========================================================================= */
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                CAC Registration Compliance
-              </h1>
-              <p className="text-xs text-slate-500">
-                Official Corporate Affairs Commission Status Report and Proprietor Information under CAC Act.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-6 shadow-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-xs">
-                <div>
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Registered Business Name</span>
-                  <span className="font-extrabold text-slate-900 text-sm">{siteSettingsForm.companyName}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Registration BN</span>
-                  <span className="font-extrabold text-[#003296] text-sm">{siteSettingsForm.cacNumber}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Proprietor</span>
-                  <span className="font-extrabold text-slate-900 text-sm">{siteSettingsForm.proprietor}</span>
-                </div>
+          {/* ========================================================================= */}
+          {/* VIEW: STOCK & INVENTORY MANAGEMENT                                        */}
+          {/* ========================================================================= */}
+          {activeTab === "inventory" && !isEditing && (
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 space-y-5 shadow-xs">
+              <div className="flex items-center space-x-2">
+                <TrendingUp className="w-5 h-5 text-[#003296]" />
+                <h2 className="text-lg font-black text-slate-900">Stock & Availability Status</h2>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <span className="text-xs font-bold text-slate-800 block">
-                    Page 1: Official CAC Status Report
-                  </span>
-                  <div className="relative w-full h-80 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
-                    <Image
-                      src={siteSettingsForm.cacCertificateUrl || "/cac-status-report-page1.jpeg"}
-                      alt="CAC Status Report Page 1"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <span className="text-xs font-bold text-slate-800 block">
-                    Page 2: Proprietor Details (Chidera Frank Okonkwo)
-                  </span>
-                  <div className="relative w-full h-80 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
-                    <Image
-                      src={siteSettingsForm.cacPage2Url || "/cac-proprietor-page2.jpeg"}
-                      alt="CAC Proprietor Details Page 2"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                </div>
+              <div className="overflow-x-auto border border-slate-200 rounded-xl">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 border-b border-slate-200 font-bold text-slate-700">
+                    <tr>
+                      <th className="p-3">Product</th>
+                      <th className="p-3">Units in Warehouse</th>
+                      <th className="p-3">Current Status</th>
+                      <th className="p-3 text-right">Quick Toggle</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {productsList.map((p) => (
+                      <tr key={p.id} className="hover:bg-slate-50/70">
+                        <td className="p-3 font-bold text-slate-900">{p.name}</td>
+                        <td className="p-3 text-slate-700 font-semibold">{p.stock} units</td>
+                        <td className="p-3">
+                          <span
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                              p.stockStatus === "in_stock"
+                                ? "bg-emerald-100 text-emerald-800"
+                                : "bg-amber-100 text-amber-800"
+                            }`}
+                          >
+                            {p.stockStatus === "in_stock" ? "Available" : "Sold Out"}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSoldOut(p.id)}
+                            className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-lg cursor-pointer"
+                          >
+                            Mark {p.stockStatus === "in_stock" ? "Sold Out" : "In Stock"}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div>
-        ) : activeTab === "team" ? (
-          /* ========================================================================= */
-          /* VIEW 5: TEAM & EDITORS ACCESS CONTROL                                     */
-          /* ========================================================================= */
-          <div className="space-y-6 max-w-5xl">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                Team & Content Editors
-              </h1>
-              <p className="text-xs text-slate-500">
-                Grant and manage team credentials for inventory updates, door pricing adjustments, and catalogue maintenance.
-              </p>
-            </div>
+          )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Account Creation Form */}
-              <div className="lg:col-span-1 bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
-                <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
-                  <UserPlus className="w-4 h-4 text-[#003296]" />
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                    Add Team Member
+          {/* ========================================================================= */}
+          {/* VIEW: CLOUDINARY MEDIA LIBRARY                                            */}
+          {/* ========================================================================= */}
+          {activeTab === "media" && !isEditing && (
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 space-y-5 shadow-xs">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div className="flex items-center space-x-2">
+                  <ImageIcon className="w-5 h-5 text-[#003296]" />
+                  <h2 className="text-lg font-black text-slate-900">
+                    Cloudinary Media Library ({mediaItems.length})
                   </h2>
                 </div>
 
-                {teamError && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-start space-x-2">
-                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-                    <span>{teamError}</span>
-                  </div>
-                )}
-
-                {teamSuccess && (
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-800 flex items-start space-x-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>{teamSuccess}</span>
-                  </div>
-                )}
-
-                <form onSubmit={handleCreateTeamMember} className="space-y-3.5 text-xs">
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Sales Coordinator"
-                      value={newEditorName}
-                      onChange={(e) => setNewEditorName(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="team@example.com"
-                      value={newEditorEmail}
-                      onChange={(e) => setNewEditorEmail(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">
-                      Initial Password
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="At least 6 characters"
-                      value={newEditorPassword}
-                      onChange={(e) => setNewEditorPassword(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">
-                      Assigned Role
-                    </label>
-                    <select
-                      value={newEditorRole}
-                      onChange={(e) => setNewEditorRole(e.target.value as "editor" | "admin")}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
+                <div className="flex items-center space-x-2">
+                  <div className="flex border border-slate-200 rounded-xl overflow-hidden text-xs">
+                    <button
+                      onClick={() => setMediaResourceType("image")}
+                      className={`px-3 py-1.5 font-bold cursor-pointer ${
+                        mediaResourceType === "image"
+                          ? "bg-[#003296] text-white"
+                          : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                      }`}
                     >
-                      <option value="editor">Editor (Catalogue & Prices Only)</option>
-                      <option value="admin">Administrator (Full Dashboard Access)</option>
-                    </select>
-                    <p className="text-[10px] text-slate-500 mt-1">
-                      Editors can create and update doors, images, and prices. Administrators can also manage settings and team accounts.
-                    </p>
+                      Images
+                    </button>
+                    <button
+                      onClick={() => setMediaResourceType("video")}
+                      className={`px-3 py-1.5 font-bold cursor-pointer ${
+                        mediaResourceType === "video"
+                          ? "bg-[#003296] text-white"
+                          : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                      }`}
+                    >
+                      Videos
+                    </button>
                   </div>
 
                   <button
-                    type="submit"
-                    disabled={isSubmittingEditor}
-                    className="w-full py-2.5 px-4 bg-[#003296] hover:bg-[#092b7c] text-white font-bold rounded-lg shadow-xs flex items-center justify-center space-x-1.5 transition-colors disabled:opacity-60 cursor-pointer"
+                    onClick={() => fetchCloudinaryMedia(mediaResourceType)}
+                    className="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 cursor-pointer"
+                    title="Refresh from Cloudinary"
                   >
-                    {isSubmittingEditor ? (
-                      <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Creating Account...</span>
-                      </>
-                    ) : (
-                      <>
-                        <UserPlus className="w-3.5 h-3.5" />
-                        <span>Create Team Account</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
-
-              {/* Active Team Directory */}
-              <div className="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 space-y-4 shadow-xs">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <div className="flex items-center space-x-2">
-                    <Users className="w-4 h-4 text-[#003296]" />
-                    <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                      Active Team Directory ({teamMembers.length})
-                    </h2>
-                  </div>
-                  <button
-                    onClick={fetchTeamMembers}
-                    disabled={loadingTeam}
-                    className="text-xs text-slate-500 hover:text-slate-800 flex items-center space-x-1 cursor-pointer"
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${loadingTeam ? "animate-spin" : ""}`} />
-                    <span>Refresh</span>
+                    <RefreshCw className={`w-3.5 h-3.5 ${loadingMedia ? "animate-spin" : ""}`} />
                   </button>
                 </div>
+              </div>
 
-                {loadingTeam && teamMembers.length === 0 ? (
-                  <div className="py-12 text-center text-slate-400 text-xs">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[#003296]" />
-                    <span>Loading team directory...</span>
+              {loadingMedia ? (
+                <div className="py-20 text-center text-xs text-slate-500 flex flex-col items-center justify-center space-y-2">
+                  <Loader2 className="w-8 h-8 animate-spin text-[#003296]" />
+                  <span>Fetching media files from Cloudinary storage...</span>
+                </div>
+              ) : mediaItems.length === 0 ? (
+                <div className="py-16 text-center text-xs text-slate-500 space-y-2">
+                  <ImageIcon className="w-10 h-10 text-slate-300 mx-auto stroke-1" />
+                  <p className="font-bold text-slate-800">No {mediaResourceType}s found</p>
+                  <p className="text-slate-400">Photos and videos uploaded will appear here permanently.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {mediaItems.map((item) => (
+                    <div
+                      key={item.public_id}
+                      className="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden flex flex-col group hover:shadow-md transition-shadow"
+                    >
+                      <div className="relative aspect-square w-full bg-slate-100">
+                        {item.resource_type === "video" ? (
+                          <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-white p-2">
+                            <Play className="w-8 h-8 text-white mb-1" />
+                            <span className="text-[10px] font-bold uppercase">{item.format} video</span>
+                          </div>
+                        ) : (
+                          <Image src={item.url} alt={item.public_id} fill className="object-cover" />
+                        )}
+                      </div>
+
+                      <div className="p-3 text-[11px] space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                          <span className="font-bold text-slate-900 block truncate" title={item.public_id}>
+                            {item.public_id.split("/").pop()}
+                          </span>
+                          <span className="text-slate-400 text-[10px] block">
+                            {item.width && item.height ? `${item.width}x${item.height} • ` : ""}
+                            {item.bytes ? `${Math.round(item.bytes / 1024)} KB` : ""}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center space-x-1 pt-1 border-t border-slate-200">
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(item.url);
+                              showToast("URL copied to clipboard!");
+                            }}
+                            className="flex-1 py-1 px-2 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-semibold text-[10px] flex items-center justify-center space-x-1 cursor-pointer"
+                          >
+                            <Copy className="w-3 h-3" />
+                            <span>Copy</span>
+                          </button>
+                          <button
+                            disabled={deletingPublicId === item.public_id}
+                            onClick={() => handleDeleteCloudinaryMedia(item.public_id, item.resource_type)}
+                            className="p-1 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 cursor-pointer disabled:opacity-50"
+                            title="Delete from Cloudinary"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* VIEW: REGIONAL DELIVERY & WAREHOUSE SETTINGS                              */}
+          {/* ========================================================================= */}
+          {activeTab === "delivery" && !isEditing && (
+            <form onSubmit={handleSaveSettings} className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-8 space-y-6 shadow-xs">
+              <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                <Truck className="w-5 h-5 text-[#003296]" />
+                <div>
+                  <h2 className="text-lg font-black text-slate-900">
+                    Regional Delivery & Warehouse Transit Settings
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Control the dispatch schedules and durations shown on your single product pages and /shipping page.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="font-bold text-slate-800 block mb-1">
+                    Delivery Notice Heading
+                  </label>
+                  <input
+                    type="text"
+                    value={siteSettingsForm.deliverySummaryHeading || "Warehouse Direct Dispatch"}
+                    onChange={(e) =>
+                      setSiteSettingsForm({
+                        ...siteSettingsForm,
+                        deliverySummaryHeading: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-800 block mb-1">
+                    Delivery Summary Text (Appears on every product page)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={siteSettingsForm.deliverySummaryText || "Same-day loading for South-East and Asaba; 24 to 48 hours for Lagos, Abuja, Port Harcourt and other states."}
+                    onChange={(e) =>
+                      setSiteSettingsForm({
+                        ...siteSettingsForm,
+                        deliverySummaryText: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+
+                <div className="pt-3 border-t border-slate-100">
+                  <h3 className="font-bold text-slate-900 mb-2">Regional Delivery Schedule Blocks</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(siteSettingsForm.deliveryRegions || DEFAULT_SITE_SETTINGS.deliveryRegions || []).map((reg, idx) => (
+                      <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-500 uppercase">Region Name</label>
+                          <input
+                            type="text"
+                            value={reg.name}
+                            onChange={(e) => {
+                              const updated = [...(siteSettingsForm.deliveryRegions || DEFAULT_SITE_SETTINGS.deliveryRegions || [])];
+                              updated[idx] = { ...updated[idx], name: e.target.value };
+                              setSiteSettingsForm({ ...siteSettingsForm, deliveryRegions: updated });
+                            }}
+                            className="w-full px-3 py-1.5 text-xs font-bold bg-white border border-slate-200 rounded-lg"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-500 uppercase">Estimated Duration Badge</label>
+                          <input
+                            type="text"
+                            value={reg.duration}
+                            onChange={(e) => {
+                              const updated = [...(siteSettingsForm.deliveryRegions || DEFAULT_SITE_SETTINGS.deliveryRegions || [])];
+                              updated[idx] = { ...updated[idx], duration: e.target.value };
+                              setSiteSettingsForm({ ...siteSettingsForm, deliveryRegions: updated });
+                            }}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-500 uppercase">Locations Covered</label>
+                          <textarea
+                            rows={2}
+                            value={reg.coverage}
+                            onChange={(e) => {
+                              const updated = [...(siteSettingsForm.deliveryRegions || DEFAULT_SITE_SETTINGS.deliveryRegions || [])];
+                              updated[idx] = { ...updated[idx], coverage: e.target.value };
+                              setSiteSettingsForm({ ...siteSettingsForm, deliveryRegions: updated });
+                            }}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg"
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs border-collapse">
-                      <thead>
-                        <tr className="border-b border-slate-100 text-slate-400 uppercase text-[10px] font-bold">
-                          <th className="py-2.5 px-3">Member</th>
-                          <th className="py-2.5 px-3">Role</th>
-                          <th className="py-2.5 px-3">Joined</th>
-                          <th className="py-2.5 px-3 text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {teamMembers.map((member) => (
-                          <tr key={member.id} className="hover:bg-slate-50/70 transition-colors">
-                            <td className="py-3 px-3">
-                              <span className="font-bold text-slate-900 block">{member.name}</span>
-                              <span className="text-slate-500 text-[11px] block">{member.email}</span>
-                            </td>
-                            <td className="py-3 px-3">
-                              {member.isSuperAdmin ? (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                                  Primary Admin
-                                </span>
-                              ) : member.role === "admin" ? (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#003296] border border-blue-200">
-                                  Administrator
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                                  Content Editor
-                                </span>
-                              )}
-                            </td>
-                            <td className="py-3 px-3 text-slate-500 text-[11px]">
-                              {member.joinDate || "Active"}
-                            </td>
-                            <td className="py-3 px-3 text-right">
-                              {member.isSuperAdmin ? (
-                                <span className="text-[10px] text-slate-400 italic">Protected</span>
-                              ) : (
-                                <button
-                                  onClick={() => handleDeleteTeamMember(member.email)}
-                                  className="text-red-500 hover:text-red-700 p-1 rounded-md hover:bg-red-50 transition-colors cursor-pointer"
-                                  title={`Remove ${member.email}`}
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                </div>
+
+                <div className="pt-2">
+                  <label className="font-bold text-slate-800 block mb-1">
+                    Protective Packaging Note
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={siteSettingsForm.deliveryPackagingNote || ""}
+                    onChange={(e) =>
+                      setSiteSettingsForm({
+                        ...siteSettingsForm,
+                        deliveryPackagingNote: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-800 block mb-1">
+                    Pre-Dispatch Video & Photo Verification Note
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={siteSettingsForm.preDispatchInspectionNote || ""}
+                    onChange={(e) =>
+                      setSiteSettingsForm({
+                        ...siteSettingsForm,
+                        preDispatchInspectionNote: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 flex justify-end">
+                <button
+                  type="submit"
+                  className="py-2.5 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 cursor-pointer"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Save Delivery Settings</span>
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* ========================================================================= */}
+          {/* VIEW: TEAM & USERS                                                        */}
+          {/* ========================================================================= */}
+          {activeTab === "team" && !isEditing && (
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-8 space-y-6 shadow-xs">
+              <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                <Users className="w-5 h-5 text-[#003296]" />
+                <div>
+                  <h2 className="text-lg font-black text-slate-900">
+                    Team & Content Editor Management
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Create authorized accounts to help manage products, prices, and orders.
+                  </p>
+                </div>
+              </div>
+
+              {/* Add New Editor Form */}
+              <form onSubmit={handleCreateTeamMember} className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 text-xs">
+                <h3 className="font-bold text-slate-900">Add New Staff Member</h3>
+                {teamError && <p className="text-red-600 font-semibold">{teamError}</p>}
+                {teamSuccess && <p className="text-emerald-700 font-semibold">{teamSuccess}</p>}
+
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                  <input
+                    type="text"
+                    required
+                    value={newEditorName}
+                    onChange={(e) => setNewEditorName(e.target.value)}
+                    placeholder="Staff Full Name"
+                    className="px-3 py-2 bg-white border border-slate-200 rounded-xl"
+                  />
+                  <input
+                    type="email"
+                    required
+                    value={newEditorEmail}
+                    onChange={(e) => setNewEditorEmail(e.target.value)}
+                    placeholder="Staff Email"
+                    className="px-3 py-2 bg-white border border-slate-200 rounded-xl"
+                  />
+                  <input
+                    type="password"
+                    required
+                    value={newEditorPassword}
+                    onChange={(e) => setNewEditorPassword(e.target.value)}
+                    placeholder="Assign Password"
+                    className="px-3 py-2 bg-white border border-slate-200 rounded-xl"
+                  />
+                  <select
+                    value={newEditorRole}
+                    onChange={(e) => setNewEditorRole(e.target.value as "editor" | "admin")}
+                    className="px-3 py-2 bg-white border border-slate-200 rounded-xl font-bold"
+                  >
+                    <option value="editor">Editor</option>
+                    <option value="admin">Administrator</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingEditor}
+                  className="py-2 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold rounded-xl flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>{isSubmittingEditor ? "Creating Account..." : "Create Account"}</span>
+                </button>
+              </form>
+
+              {/* Staff Table */}
+              <div className="overflow-x-auto border border-slate-200 rounded-xl">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 border-b border-slate-200 font-bold text-slate-700">
+                    <tr>
+                      <th className="p-3">Staff Name</th>
+                      <th className="p-3">Email</th>
+                      <th className="p-3">Role</th>
+                      <th className="p-3">Joined</th>
+                      <th className="p-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {teamMembers.map((m) => (
+                      <tr key={m.id || m.email} className="hover:bg-slate-50/70">
+                        <td className="p-3 font-bold text-slate-900">{m.name || m.email.split("@")[0]}</td>
+                        <td className="p-3 text-slate-600">{m.email}</td>
+                        <td className="p-3">
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              m.role === "admin"
+                                ? "bg-purple-100 text-purple-800"
+                                : "bg-blue-100 text-[#003296]"
+                            }`}
+                          >
+                            {m.role === "admin" ? "Administrator" : "Editor"}
+                          </span>
+                        </td>
+                        <td className="p-3 text-slate-400">{m.joinDate || "Active"}</td>
+                        <td className="p-3 text-right">
+                          {m.isSuperAdmin ? (
+                            <span className="text-[10px] text-slate-400 font-semibold">Primary</span>
+                          ) : (
+                            <button
+                              onClick={() => handleDeleteTeamMember(m.email)}
+                              className="text-red-500 hover:text-red-700 text-xs font-semibold cursor-pointer"
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div>
-        ) : (
-          /* ========================================================================= */
-          /* VIEW 6: DYNAMIC SITE SETTINGS & ADDRESSES (NOT HARDCODED)                 */
-          /* ========================================================================= */
-          <form onSubmit={handleSaveSettings} className="space-y-6 max-w-4xl">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                Dynamic Site Settings & Addresses
-              </h1>
-              <p className="text-xs text-slate-500">
-                Update business addresses, phone numbers, WhatsApp lines, CAC registration numbers, and social URLs. Changes propagate across the storefront header, footer, contact page, and WhatsApp order flow dynamically.
-              </p>
-            </div>
+          )}
 
-            <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-4 shadow-xs">
+          {/* ========================================================================= */}
+          {/* VIEW: SETTINGS & GENERAL INFO                                             */}
+          {/* ========================================================================= */}
+          {activeTab === "settings" && !isEditing && (
+            <form onSubmit={handleSaveSettings} className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-8 space-y-6 shadow-xs">
+              <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                <Settings className="w-5 h-5 text-[#003296]" />
+                <div>
+                  <h2 className="text-lg font-black text-slate-900">Store Profile & Warehouse Addresses</h2>
+                  <p className="text-xs text-slate-500">
+                    Update business details, phone contacts, and physical branch locations.
+                  </p>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Company Trading Name</label>
+                  <label className="font-bold text-slate-700 block mb-1">Company Name</label>
                   <input
                     type="text"
                     required
@@ -2580,7 +2591,7 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Parent Corporate Entity</label>
+                  <label className="font-bold text-slate-700 block mb-1">Parent Business</label>
                   <input
                     type="text"
                     required
@@ -2592,36 +2603,8 @@ export default function AdminPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Sole Proprietor</label>
-                  <input
-                    type="text"
-                    required
-                    value={siteSettingsForm.proprietor}
-                    onChange={(e) =>
-                      setSiteSettingsForm({ ...siteSettingsForm, proprietor: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Market Location Summary</label>
-                  <input
-                    type="text"
-                    required
-                    value={siteSettingsForm.marketLocation}
-                    onChange={(e) =>
-                      setSiteSettingsForm({ ...siteSettingsForm, marketLocation: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
                 <div className="sm:col-span-2">
-                  <label className="font-bold text-slate-700 block mb-1">
-                    Main Shop / Warehouse Address (From CAC Registration)
-                  </label>
+                  <label className="font-bold text-slate-700 block mb-1">Primary Warehouse Address</label>
                   <input
                     type="text"
                     required
@@ -2635,7 +2618,7 @@ export default function AdminPage() {
 
                 <div className="sm:col-span-2">
                   <label className="font-bold text-slate-700 block mb-1">
-                    Second Shop / Branch Address (Optional)
+                    Second Warehouse / Branch Address (Optional)
                   </label>
                   <input
                     type="text"
@@ -2643,44 +2626,26 @@ export default function AdminPage() {
                     onChange={(e) =>
                       setSiteSettingsForm({ ...siteSettingsForm, secondAddress: e.target.value })
                     }
-                    placeholder="e.g. Branch Shop: Shop 14, Building Materials Market, Ogidi, Anambra State"
+                    placeholder="e.g. Asaba Haulage Yard or Onitsha Main Market Annex"
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
                   />
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    If you have a 2nd shop or warehouse, enter the address here. It will automatically show on the Contact page and Footer.
-                  </p>
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Official Phone (+234...)</label>
+                  <label className="font-bold text-slate-700 block mb-1">Market Location Description</label>
                   <input
                     type="text"
                     required
-                    value={siteSettingsForm.phone}
+                    value={siteSettingsForm.marketLocation}
                     onChange={(e) =>
-                      setSiteSettingsForm({ ...siteSettingsForm, phone: e.target.value })
+                      setSiteSettingsForm({ ...siteSettingsForm, marketLocation: e.target.value })
                     }
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Display Phone Format</label>
-                  <input
-                    type="text"
-                    required
-                    value={siteSettingsForm.phoneDisplay}
-                    onChange={(e) =>
-                      setSiteSettingsForm({ ...siteSettingsForm, phoneDisplay: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">
-                    WhatsApp Order Line (Digits without +, e.g. 2347070070305)
-                  </label>
+                  <label className="font-bold text-slate-700 block mb-1">WhatsApp Sales Desk Number</label>
                   <input
                     type="text"
                     required
@@ -2693,52 +2658,26 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Official Sales Email</label>
+                  <label className="font-bold text-slate-700 block mb-1">Display Phone Number</label>
+                  <input
+                    type="text"
+                    required
+                    value={siteSettingsForm.phoneDisplay}
+                    onChange={(e) =>
+                      setSiteSettingsForm({ ...siteSettingsForm, phoneDisplay: e.target.value })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Sales Email</label>
                   <input
                     type="email"
                     required
                     value={siteSettingsForm.salesEmail}
                     onChange={(e) =>
                       setSiteSettingsForm({ ...siteSettingsForm, salesEmail: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">CAC Registration BN Number</label>
-                  <input
-                    type="text"
-                    required
-                    value={siteSettingsForm.cacNumber}
-                    onChange={(e) =>
-                      setSiteSettingsForm({ ...siteSettingsForm, cacNumber: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">CAC Registration Date</label>
-                  <input
-                    type="text"
-                    required
-                    value={siteSettingsForm.cacRegistrationDate}
-                    onChange={(e) =>
-                      setSiteSettingsForm({ ...siteSettingsForm, cacRegistrationDate: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">CAC Status</label>
-                  <input
-                    type="text"
-                    required
-                    value={siteSettingsForm.cacStatus}
-                    onChange={(e) =>
-                      setSiteSettingsForm({ ...siteSettingsForm, cacStatus: e.target.value })
                     }
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
                   />
@@ -2757,7 +2696,7 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Jiji.ng Store URL</label>
+                  <label className="font-bold text-slate-700 block mb-1">Jiji.ng Shop URL</label>
                   <input
                     type="url"
                     value={siteSettingsForm.jijiShopUrl}
@@ -2768,28 +2707,12 @@ export default function AdminPage() {
                   />
                 </div>
 
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Working Hours</label>
-                  <input
-                    type="text"
-                    value={siteSettingsForm.workingHours}
-                    onChange={(e) =>
-                      setSiteSettingsForm({ ...siteSettingsForm, workingHours: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
                 <div className="sm:col-span-2 pt-2 border-t border-slate-100">
                   <label className="font-bold text-slate-800 block mb-1">
                     WhatsApp Single Product Inquiry Template
                   </label>
-                  <p className="text-[11px] text-slate-500 mb-1.5">
-                    Tokens: <code className="bg-slate-100 px-1 py-0.5 rounded text-[#003296] font-mono">[Door Name]</code>, <code className="bg-slate-100 px-1 py-0.5 rounded text-[#003296] font-mono">[Size]</code>, <code className="bg-slate-100 px-1 py-0.5 rounded text-[#003296] font-mono">[Qty]</code>, <code className="bg-slate-100 px-1 py-0.5 rounded text-[#003296] font-mono">[Quantity]</code>
-                  </p>
                   <textarea
-                    rows={3}
+                    rows={2}
                     value={siteSettingsForm.whatsappInquiryTemplate}
                     onChange={(e) =>
                       setSiteSettingsForm({
@@ -2797,19 +2720,16 @@ export default function AdminPage() {
                         whatsappInquiryTemplate: e.target.value,
                       })
                     }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
                   <label className="font-bold text-slate-800 block mb-1">
-                    WhatsApp Multi-Item Cart Inquiry Template
+                    WhatsApp Cart Order Template
                   </label>
-                  <p className="text-[11px] text-slate-500 mb-1.5">
-                    Token: <code className="bg-slate-100 px-1 py-0.5 rounded text-[#003296] font-mono">[Items]</code>
-                  </p>
                   <textarea
-                    rows={3}
+                    rows={2}
                     value={siteSettingsForm.whatsappCartTemplate}
                     onChange={(e) =>
                       setSiteSettingsForm({
@@ -2817,25 +2737,73 @@ export default function AdminPage() {
                         whatsappCartTemplate: e.target.value,
                       })
                     }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs focus:bg-white focus:outline-none focus:border-[#003296]"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs"
                   />
                 </div>
-
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex justify-end">
                 <button
                   type="submit"
-                  className="py-2.5 px-6 bg-[#003296] hover:bg-[#092b7c] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5"
+                  className="py-2.5 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Site Settings</span>
                 </button>
               </div>
+            </form>
+          )}
+
+          {/* ========================================================================= */}
+          {/* VIEW: CAC LEGAL COMPLIANCE                                                */}
+          {/* ========================================================================= */}
+          {activeTab === "cac" && !isEditing && (
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-8 space-y-6 shadow-xs">
+              <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                <BadgeCheck className="w-5 h-5 text-emerald-600" />
+                <div>
+                  <h2 className="text-lg font-black text-slate-900">
+                    Corporate Affairs Commission (CAC) Verification
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Active legal credentials for CFrank Enterprise (BN 9943925).
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Registration Number</span>
+                  <span className="text-sm font-black text-slate-900 block mt-0.5">{settings.cacNumber}</span>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Status</span>
+                  <span className="text-sm font-black text-emerald-600 block mt-0.5">{settings.cacStatus}</span>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Registered Proprietor</span>
+                  <span className="text-sm font-black text-slate-900 block mt-0.5">{settings.proprietor}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="border border-slate-200 rounded-xl overflow-hidden p-2 bg-slate-50">
+                  <span className="text-[11px] font-bold text-slate-700 block mb-2">Page 1: Status Report</span>
+                  <div className="relative aspect-[4/5] w-full rounded-lg overflow-hidden bg-slate-200">
+                    <Image src="/cac-status-report-page1.jpeg" alt="CAC Status Report" fill className="object-cover" />
+                  </div>
+                </div>
+                <div className="border border-slate-200 rounded-xl overflow-hidden p-2 bg-slate-50">
+                  <span className="text-[11px] font-bold text-slate-700 block mb-2">Page 2: Proprietor Particulars</span>
+                  <div className="relative aspect-[4/5] w-full rounded-lg overflow-hidden bg-slate-200">
+                    <Image src="/cac-proprietor-page2.jpeg" alt="CAC Proprietor Particulars" fill className="object-cover" />
+                  </div>
+                </div>
+              </div>
             </div>
-          </form>
-        )}
-      </main>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
