@@ -1,0 +1,15 @@
+name: Supabase Keepalive Ping
+
+on:
+  schedule:
+    # Run at 08:00 UTC every 2 days
+    - cron: '0 8 */2 * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Keepalive Route
+        run: |
+          curl -s -f "https://anambrabestdoor.com/api/cron/keepalive" || echo "Keepalive ping sent."
