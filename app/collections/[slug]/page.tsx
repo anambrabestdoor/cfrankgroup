@@ -316,6 +316,62 @@ export default async function CollectionPage({ params }: PageProps) {
               </div>
             </section>
           )}
+
+          {/* Contractor & Project Procurement Schedule */}
+          <section className="bg-white p-6 sm:p-8 rounded-xl border border-slate-200/90 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900">
+                  Contractor & Project Procurement for {collection.title}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Direct warehouse supply terms for property developers, architects, and quantity surveyors across Nigeria.
+                </p>
+              </div>
+              <a
+                href={`https://wa.me/${DEFAULT_SITE_SETTINGS.whatsappNumber}?text=${encodeURIComponent(`Hello CFrank Enterprise, I would like to request contractor wholesale pricing for ${collection.title}.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center py-2 px-3.5 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer self-start sm:self-auto"
+              >
+                <span>Request Project BOQ</span>
+              </a>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                <span className="font-bold text-slate-900 block uppercase text-[11px] tracking-wider text-[#003296]">
+                  Standard Masonry Openings
+                </span>
+                <p className="text-slate-600 leading-relaxed text-[11px]">
+                  <strong>Single Leaf:</strong> 3ft x 7ft (900mm x 2100mm) and 4ft x 7ft (1200mm x 2100mm).<br />
+                  <strong>Double Leaf:</strong> 4.5ft x 7ft (1400mm x 2100mm) and 5ft x 7ft (1500mm x 2100mm).<br />
+                  Custom rough masonry openings fabricated to architectural schedule.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                <span className="font-bold text-slate-900 block uppercase text-[11px] tracking-wider text-[#003296]">
+                  Bulk Developer Brackets
+                </span>
+                <p className="text-slate-600 leading-relaxed text-[11px]">
+                  <strong>Duplex Orders (5 to 15 doors):</strong> Tiered contractor discounts with factory-matched architraves.<br />
+                  <strong>Estate Projects (20+ doors):</strong> Direct wholesale container pricing with scheduled phased dispatch.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                <span className="font-bold text-slate-900 block uppercase text-[11px] tracking-wider text-[#003296]">
+                  Corridor Waybill Dispatch
+                </span>
+                <p className="text-slate-600 leading-relaxed text-[11px]">
+                  <strong>South-East & Delta:</strong> Same-day to 24h (Onitsha, Ogidi, Asaba, Enugu, Owerri, Aba).<br />
+                  <strong>Rivers & Middle Belt:</strong> 24h waybill (Port Harcourt, Makurdi, Gboko).<br />
+                  <strong>Lagos & Abuja:</strong> 24h to 48h freight to major building materials hubs.
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </>

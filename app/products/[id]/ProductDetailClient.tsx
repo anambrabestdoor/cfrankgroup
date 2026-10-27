@@ -502,6 +502,77 @@ export default function ProductDetailClient({
               {product.description}
             </p>
           </div>
+
+          {/* Regional Delivery & Corridor Transit Schedule */}
+          <div className="pt-6 border-t border-slate-200 space-y-4">
+            <div className="flex items-center space-x-2">
+              <Truck className="w-4 h-4 text-[#003296]" />
+              <h3 className="text-sm font-bold text-slate-900">
+                Nationwide Transit & Corridor Delivery Schedule
+              </h3>
+            </div>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              CFrank Enterprise coordinates direct dispatch from our Building Material International Market depot in Ogidi, Anambra State. All doors are strapped and edge-protected before waybill handover to verified commercial transport lines.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-xs">
+              {/* Eastern Commercial Hubs */}
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">Eastern Commercial Hubs</span>
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Same-Day / 24h</span>
+                </div>
+                <div className="text-slate-600 leading-relaxed text-[11px] space-y-1">
+                  <div><strong>Onitsha, Ogidi, Awka, Nnewi:</strong> Same-day direct warehouse pickup or site delivery.</div>
+                  <div><strong>Asaba & Delta State:</strong> Cross-bridge haulage (2 to 4 hours) directly to site.</div>
+                  <div><strong>Enugu, Owerri, Aba, Abakaliki:</strong> Daily scheduled waybill via major transport parks.</div>
+                  <div><strong>Benue (Makurdi, Gboko, Otukpo):</strong> Scheduled transit via Middle Belt freight lines.</div>
+                </div>
+              </div>
+
+              {/* South-South Corridor */}
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">South-South Corridor</span>
+                  <span className="text-[10px] font-bold text-[#003296] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">24h Transit</span>
+                </div>
+                <div className="text-slate-600 leading-relaxed text-[11px] space-y-1">
+                  <div><strong>Port Harcourt & Rivers State:</strong> Direct crated waybill to Trans Amadi / Mile 1.</div>
+                  <div><strong>Warri & Delta Central:</strong> Daily dispatch via Asaba-Benin Expressway.</div>
+                  <div><strong>Benin City (Edo State):</strong> Direct transit via commercial haulage lines.</div>
+                  <div><strong>Uyo & Calabar:</strong> Direct haulage via Aba/Ikot Ekpene corridor.</div>
+                </div>
+              </div>
+
+              {/* South-West Commercial Hubs */}
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">South-West Commercial Hubs</span>
+                  <span className="text-[10px] font-bold text-slate-700 bg-slate-200/70 px-2 py-0.5 rounded-full border border-slate-300">24h - 48h</span>
+                </div>
+                <div className="text-slate-600 leading-relaxed text-[11px] space-y-1">
+                  <div><strong>Lagos State:</strong> Regular freight to Alaba International, Trade Fair Complex, and direct site delivery across Lekki-Epe corridor and Ikeja.</div>
+                  <div><strong>Ibadan (Oyo State):</strong> Waybill transit via Lagos-Ibadan expressway freight lines.</div>
+                </div>
+              </div>
+
+              {/* North-Central & Northern Hubs */}
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">North-Central & Northern Corridors</span>
+                  <span className="text-[10px] font-bold text-slate-700 bg-slate-200/70 px-2 py-0.5 rounded-full border border-slate-300">24h - 48h</span>
+                </div>
+                <div className="text-slate-600 leading-relaxed text-[11px] space-y-1">
+                  <div><strong>Abuja (FCT):</strong> Scheduled haulage to Dei-Dei International Building Materials Market, Kubwa, and Gwarinpa.</div>
+                  <div><strong>Jos, Lokoja, Kano, Kaduna:</strong> Road transport through verified inter-state parks.</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-blue-50/70 rounded-xl border border-blue-200/70 text-[11px] text-[#003296] leading-relaxed">
+              <strong>Pre-Dispatch Inspection:</strong> Before any door leaves our warehouse, our sales team records photos and video of the exact door leaf, frame, hinges, and lock cylinder mechanism for WhatsApp confirmation with the buyer or site engineer.
+            </div>
+          </div>
         </div>
 
         {/* Related Products Grid */}
