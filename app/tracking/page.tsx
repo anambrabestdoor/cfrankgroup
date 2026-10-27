@@ -76,7 +76,7 @@ export default function OrderTrackingPage() {
               </label>
               <input
                 type="text"
-                placeholder="customer@email.com or phone number"
+                placeholder="customer@example.com or phone number"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#003296]"

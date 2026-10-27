@@ -166,7 +166,7 @@ export default function WholesalePage() {
                   <input
                     type="email"
                     required
-                    placeholder="procurement@company.com"
+                    placeholder="procurement@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#003296]"

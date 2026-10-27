@@ -910,8 +910,15 @@ export default function AdminPage() {
       <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
           <div className="text-center space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-[#003296] text-white flex items-center justify-center font-black text-xl mx-auto shadow-md">
-              ABD
+            <div className="relative w-14 h-14 mx-auto rounded-2xl overflow-hidden bg-white p-1.5 shadow-md border border-slate-700/60 flex items-center justify-center">
+              <Image
+                src="/favicon.png"
+                alt="Anambra Best Door"
+                width={48}
+                height={48}
+                className="rounded-xl object-contain"
+                priority
+              />
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               Anambra Best Door Admin
@@ -941,7 +948,7 @@ export default function AdminPage() {
                     required
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="admin@anambrabestdoor.com"
+                    placeholder="admin@example.com"
                     className="w-full pl-10 pr-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#003296]"
                   />
                 </div>
@@ -1013,7 +1020,7 @@ export default function AdminPage() {
                   required
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
-                  placeholder="Enter your admin email"
+                  placeholder="name@example.com"
                   className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
                 />
                 <button
@@ -1041,8 +1048,14 @@ export default function AdminPage() {
       {/* Mobile Top Header */}
       <div className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800 sticky top-0 z-40">
         <div className="flex items-center space-x-2">
-          <div className="w-7 h-7 rounded-lg bg-[#003296] text-white flex items-center justify-center font-bold text-xs">
-            ABD
+          <div className="relative w-7 h-7 rounded-lg overflow-hidden bg-white p-0.5 shadow-xs border border-slate-700/60 flex items-center justify-center shrink-0">
+            <Image
+              src="/favicon-48x48.png"
+              alt="Anambra Best Door"
+              width={22}
+              height={22}
+              className="rounded-md object-contain"
+            />
           </div>
           <span className="font-bold text-xs">Anambra Best Door</span>
         </div>
@@ -1055,6 +1068,14 @@ export default function AdminPage() {
         </button>
       </div>
 
+      {/* Mobile Drawer Backdrop */}
+      {mobileSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-30 md:hidden animate-fade-in"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+      )}
+
       {/* WordPress-Style Left Vertical Sidebar */}
       <aside
         className={`fixed md:sticky top-0 left-0 z-40 h-screen w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 transition-transform ${
@@ -1064,8 +1085,14 @@ export default function AdminPage() {
         {/* Brand / Logo Top Bar */}
         <div className="p-4 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#003296] text-white flex items-center justify-center font-black text-sm">
-              ABD
+            <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-white p-1 shadow-xs border border-slate-700/60 flex items-center justify-center shrink-0">
+              <Image
+                src="/favicon-48x48.png"
+                alt="Anambra Best Door"
+                width={26}
+                height={26}
+                className="rounded-lg object-contain"
+              />
             </div>
             <div>
               <span className="font-bold text-xs text-white block leading-tight">Anambra Best Door</span>
@@ -1352,7 +1379,12 @@ export default function AdminPage() {
 
         {/* Cloudinary Media Picker Modal */}
         {mediaPickerOpen && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setMediaPickerOpen(false);
+            }}
+          >
             <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
               <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
                 <div>
@@ -2481,7 +2513,7 @@ export default function AdminPage() {
                     required
                     value={newEditorEmail}
                     onChange={(e) => setNewEditorEmail(e.target.value)}
-                    placeholder="Staff Email"
+                    placeholder="staff@example.com"
                     className="px-3 py-2 bg-white border border-slate-200 rounded-xl"
                   />
                   <input
@@ -2679,6 +2711,7 @@ export default function AdminPage() {
                     onChange={(e) =>
                       setSiteSettingsForm({ ...siteSettingsForm, salesEmail: e.target.value })
                     }
+                    placeholder="sales@example.com"
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
                   />
                 </div>
