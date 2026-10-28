@@ -50,10 +50,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Determine role based on email matches
-    const role = (cleanEmail === "elijahkator180@gmail.com" || cleanEmail === "admin@anambrabestdoor.com") 
-      ? "admin" 
-      : "user";
+    // Determine role based on environment configuration if set, otherwise default to standard user
+    const configuredAdminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const role = (configuredAdminEmail && cleanEmail === configuredAdminEmail) ? "admin" : "user";
 
     // Create the user in persistent database (awaits bcrypt hashing & persistence)
     const createdUser = await db.createUser({

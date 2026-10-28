@@ -132,7 +132,7 @@ export default function FrankieWidget() {
         timestamp: new Date().toISOString(),
         suggested_actions: [
           { label: "Chat on WhatsApp", action_type: "link", payload: waUrl },
-          { label: "Call Admin Directly", action_type: "call", payload: callUrl },
+          { label: "Call Us Directly", action_type: "call", payload: callUrl },
         ],
       };
       setMessages((prev) => [...prev, fallbackMsg]);
@@ -273,16 +273,14 @@ export default function FrankieWidget() {
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex flex-col ${
-                  msg.role === "user" ? "items-end" : "items-start"
-                }`}
+                className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"
+                  }`}
               >
                 <div
-                  className={`max-w-[88%] p-3 sm:p-3.5 text-xs leading-relaxed ${
-                    msg.role === "user"
+                  className={`max-w-[88%] p-3 sm:p-3.5 text-xs leading-relaxed ${msg.role === "user"
                       ? "bg-[#003296] text-white rounded-xl rounded-tr-xs shadow-xs"
                       : "bg-white text-slate-800 rounded-xl rounded-tl-xs border border-slate-200/90 shadow-xs"
-                  }`}
+                    }`}
                 >
                   <p className="whitespace-pre-line">{msg.content}</p>
                 </div>
@@ -295,13 +293,12 @@ export default function FrankieWidget() {
                         key={idx}
                         type="button"
                         onClick={() => handleActionClick(act)}
-                        className={`text-[11px] font-semibold py-1 px-2.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1 ${
-                          act.action_type === "link"
+                        className={`text-[11px] font-semibold py-1 px-2.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1 ${act.action_type === "link"
                             ? "bg-blue-50 text-[#003296] border-blue-200 hover:bg-blue-100"
                             : act.action_type === "call"
-                            ? "bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100"
-                            : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300"
-                        }`}
+                              ? "bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100"
+                              : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300"
+                          }`}
                       >
                         {act.action_type === "link" && act.payload?.includes("wa.me") ? (
                           <svg className="w-3 h-3 fill-current text-[#25D366] shrink-0" viewBox="0 0 24 24">

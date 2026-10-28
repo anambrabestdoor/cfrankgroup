@@ -45,22 +45,36 @@ export async function GET(req: NextRequest) {
     // Exclude password hashes
     const safeUsers = users.map(({ passwordHash, ...rest }) => rest);
 
-    // Ensure super-admin from environment is included in the directory view
-    const superAdminEmail = (process.env.ADMIN_EMAIL || "anambrabestdoor@gmail.com").trim().toLowerCase();
-    const hasSuperAdmin = safeUsers.some((u) => u.email.toLowerCase() === superAdminEmail);
+    // Primary super-admin email from environment (if configured)
+    const superAdminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
 
-    const allTeam = hasSuperAdmin
-      ? safeUsers
-      : [
+    const hasSuperAdmin = superAdminEmail
+      ? safeUsers.some((u) => u.email && u.email.toLowerCase().trim() === superAdminEmail)
+      : true;
+
+    const baseList = (superAdminEmail && !hasSuperAdmin)
+      ? [
           {
             email: superAdminEmail,
-            name: "Owner / Super Administrator",
-            role: "admin",
+            name: "Owner / Primary Administrator",
+            role: "admin" as const,
             joinDate: "Primary Account",
             isSuperAdmin: true,
           },
           ...safeUsers,
-        ];
+        ]
+      : safeUsers;
+
+    // Mark super admin flags and protect admin roles
+    const allTeam = baseList.map((u) => {
+      const cleanEmail = (u.email || "").toLowerCase().trim();
+      const isSuper = !!(superAdminEmail && cleanEmail === superAdminEmail);
+      return {
+        ...u,
+        role: (u.role === "admin" || isSuper) ? ("admin" as const) : ((u.role as any) || "editor"),
+        isSuperAdmin: isSuper || !!(u as any).isSuperAdmin,
+      };
+    });
 
     return NextResponse.json(allTeam);
   } catch (error) {
@@ -133,15 +147,32 @@ export async function DELETE(req: NextRequest) {
     }
 
     const cleanEmail = email.trim().toLowerCase();
-    const superAdminEmail = (process.env.ADMIN_EMAIL || "anambrabestdoor@gmail.com").trim().toLowerCase();
+    const adminEmail = (admin.email || "").trim().toLowerCase();
 
-    // Protect super administrators from deletion
-    if (
-      cleanEmail === superAdminEmail ||
-      cleanEmail === "anambrabestdoor@gmail.com" ||
-      cleanEmail === "elijahkator180@gmail.com"
-    ) {
-      return NextResponse.json({ error: "Cannot delete the primary super administrator." }, { status: 403 });
+    // 1. Prevent self-deletion: An account cannot remove itself
+    if (adminEmail && cleanEmail === adminEmail) {
+      return NextResponse.json(
+        { error: "You cannot remove your own account from the dashboard." },
+        { status: 400 }
+      );
+    }
+
+    // 2. Protect environment super administrator from deletion
+    const superAdminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    if (superAdminEmail && cleanEmail === superAdminEmail) {
+      return NextResponse.json(
+        { error: "Cannot delete the primary administrator account." },
+        { status: 403 }
+      );
+    }
+
+    // 3. Protect all administrator accounts from deletion
+    const targetUser = await db.getUserByEmail(cleanEmail);
+    if (targetUser && targetUser.role === "admin") {
+      return NextResponse.json(
+        { error: "Administrator accounts cannot be removed. Protected access." },
+        { status: 403 }
+      );
     }
 
     const success = await db.deleteUser(cleanEmail);
@@ -174,10 +205,17 @@ export async function PATCH(req: NextRequest) {
     }
 
     const cleanEmail = email.trim().toLowerCase();
-    const superAdminEmail = (process.env.ADMIN_EMAIL || "anambrabestdoor@gmail.com").trim().toLowerCase();
+    const adminEmail = (admin.email || "").trim().toLowerCase();
+    const superAdminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
 
-    if (cleanEmail === superAdminEmail) {
-      return NextResponse.json({ error: "Cannot modify role of the primary super administrator." }, { status: 403 });
+    // Prevent changing role of primary super administrator
+    if (superAdminEmail && cleanEmail === superAdminEmail) {
+      return NextResponse.json({ error: "Cannot modify role of the primary administrator account." }, { status: 403 });
+    }
+
+    // Prevent demoting yourself from admin
+    if (adminEmail && cleanEmail === adminEmail && role !== "admin") {
+      return NextResponse.json({ error: "You cannot demote your own administrator account." }, { status: 400 });
     }
 
     const success = await db.updateUserRole(cleanEmail, role);

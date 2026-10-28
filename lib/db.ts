@@ -215,19 +215,7 @@ function writeDiskDb(data: Partial<DiskData>) {
 }
 
 // Memory Stores for zero-latency operations
-const MEMORY_USERS = new Map<string, User>([
-  [
-    "anambrabestdoor@gmail.com",
-    {
-      email: "anambrabestdoor@gmail.com",
-      name: "Chidera Frank Okonkwo",
-      role: "admin",
-      joinDate: "2026-10-16",
-      newsletterSubscribed: true,
-      passwordHash: DEFAULT_ADMIN_HASH,
-    },
-  ],
-]);
+const MEMORY_USERS = new Map<string, User>();
 
 // Initialize memory users from disk
 const initialDisk = readDiskDb();
@@ -417,7 +405,8 @@ export const db = {
   async getUserByEmail(email: string): Promise<User | null> {
     if (!email) return null;
     const cleanEmail = email.toLowerCase().trim();
-    const isSuperAdmin = cleanEmail === "anambrabestdoor@gmail.com";
+    const envAdminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const isConfiguredAdmin = !!(envAdminEmail && cleanEmail === envAdminEmail);
 
     // 1. Check memory map
     const memUser = MEMORY_USERS.get(cleanEmail);
@@ -430,22 +419,22 @@ export const db = {
       const user: User = {
         email: cleanEmail,
         name: diskUser.name || cleanEmail.split("@")[0],
-        role: diskUser.role || (isSuperAdmin ? "admin" : "user"),
+        role: diskUser.role || (isConfiguredAdmin ? "admin" : "user"),
         joinDate: diskUser.joinDate || new Date().toISOString().split("T")[0],
         newsletterSubscribed: !!diskUser.newsletterSubscribed,
-        passwordHash: diskUser.passwordHash || (isSuperAdmin ? DEFAULT_ADMIN_HASH : ""),
+        passwordHash: diskUser.passwordHash || (isConfiguredAdmin ? DEFAULT_ADMIN_HASH : ""),
       };
       MEMORY_USERS.set(cleanEmail, user);
       return user;
     }
 
-    // 3. Fallback default admin
-    if (isSuperAdmin) {
+    // 3. Fallback configured admin from environment if matched
+    if (isConfiguredAdmin) {
       const defaultAdmin: User = {
         email: cleanEmail,
-        name: "Chidera Frank Okonkwo",
+        name: "Primary Administrator",
         role: "admin",
-        joinDate: "2026-10-16",
+        joinDate: "Primary Account",
         newsletterSubscribed: true,
         passwordHash: DEFAULT_ADMIN_HASH,
       };
@@ -473,10 +462,13 @@ export const db = {
       passwordHash = await bcrypt.hash(randomPassword, salt);
     }
 
+    const envAdminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const isConfiguredAdmin = !!(envAdminEmail && cleanEmail === envAdminEmail);
+
     const createdUser: User = {
       email: cleanEmail,
       name: newUser.name ? newUser.name.trim() : cleanEmail.split("@")[0],
-      role: cleanEmail === "anambrabestdoor@gmail.com" ? "admin" : (newUser.role || "user"),
+      role: newUser.role || (isConfiguredAdmin ? "admin" : "user"),
       joinDate: newUser.joinDate || new Date().toISOString().split("T")[0],
       newsletterSubscribed: !!newUser.newsletterSubscribed,
       passwordHash,

@@ -29,13 +29,12 @@ export async function POST(req: NextRequest) {
       const derivedName = email.split("@")[0];
       const name = derivedName.charAt(0).toUpperCase() + derivedName.slice(1);
       
-      // Determine role: verified admin emails
-      const isSystemAdmin = 
-        email.toLowerCase() === "elijahkator180@gmail.com" || 
-        email.toLowerCase() === "admin@anambrabestdoor.com";
+      const cleanEmail = email.toLowerCase().trim();
+      const configuredAdminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+      const isSystemAdmin = !!(configuredAdminEmail && cleanEmail === configuredAdminEmail);
 
       user = await db.createUser({
-        email: email.toLowerCase(),
+        email: cleanEmail,
         name,
         role: isSystemAdmin ? "admin" : "user",
         joinDate: new Date().toISOString().split("T")[0],

@@ -1182,9 +1182,8 @@ export default function AdminPage() {
 
       {/* WordPress-Style Left Vertical Sidebar (Anchored below header on mobile) */}
       <aside
-        className={`fixed md:sticky top-14 md:top-0 left-0 z-40 h-[calc(100vh-3.5rem)] md:h-screen w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 transition-transform ${
-          mobileSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
+        className={`fixed md:sticky top-14 md:top-0 left-0 z-40 h-[calc(100vh-3.5rem)] md:h-screen w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 transition-transform ${mobileSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          }`}
       >
         {/* Brand / Logo Top Bar */}
         <div className="p-4 border-b border-slate-800 flex items-center justify-between">
@@ -1220,11 +1219,10 @@ export default function AdminPage() {
               setIsEditing(false);
               setMobileSidebarOpen(false);
             }}
-            className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl font-semibold transition-colors cursor-pointer ${
-              activeTab === "dashboard"
+            className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl font-semibold transition-colors cursor-pointer ${activeTab === "dashboard"
                 ? "bg-[#003296] text-white shadow-xs"
                 : "text-slate-300 hover:bg-slate-800 hover:text-white"
-            }`}
+              }`}
           >
             <LayoutDashboard className="w-4 h-4" />
             <span>Dashboard</span>
@@ -1251,11 +1249,10 @@ export default function AdminPage() {
                     setIsEditing(false);
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                    activeTab === "products" && !isEditing
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${activeTab === "products" && !isEditing
                       ? "bg-slate-800 text-white font-bold"
                       : "text-slate-400 hover:text-white"
-                  }`}
+                    }`}
                 >
                   All Products ({productsList.length})
                 </button>
@@ -1264,11 +1261,10 @@ export default function AdminPage() {
                     handleNewProduct();
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center justify-between ${
-                    isEditing && !editingId
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center justify-between ${isEditing && !editingId
                       ? "bg-slate-800 text-white font-bold"
                       : "text-slate-400 hover:text-white"
-                  }`}
+                    }`}
                 >
                   <span>Add New Product</span>
                   <Plus className="w-3 h-3 text-[#2563EB]" />
@@ -1279,11 +1275,10 @@ export default function AdminPage() {
                     setIsEditing(false);
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                    activeTab === "inventory"
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${activeTab === "inventory"
                       ? "bg-slate-800 text-white font-bold"
                       : "text-slate-400 hover:text-white"
-                  }`}
+                    }`}
                 >
                   Stock & Availability
                 </button>
@@ -1312,11 +1307,10 @@ export default function AdminPage() {
                     setIsEditing(false);
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                    activeTab === "media"
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${activeTab === "media"
                       ? "bg-slate-800 text-white font-bold"
                       : "text-slate-400 hover:text-white"
-                  }`}
+                    }`}
                 >
                   Media Storage
                 </button>
@@ -1345,11 +1339,10 @@ export default function AdminPage() {
                     setIsEditing(false);
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                    activeTab === "delivery"
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${activeTab === "delivery"
                       ? "bg-slate-800 text-white font-bold"
                       : "text-slate-400 hover:text-white"
-                  }`}
+                    }`}
                 >
                   Regional Delivery Schedules
                 </button>
@@ -1379,11 +1372,10 @@ export default function AdminPage() {
                     setIsEditing(false);
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                    activeTab === "team"
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${activeTab === "team"
                       ? "bg-slate-800 text-white font-bold"
                       : "text-slate-400 hover:text-white"
-                  }`}
+                    }`}
                 >
                   All Users ({teamMembers.length})
                 </button>
@@ -1412,11 +1404,10 @@ export default function AdminPage() {
                     setIsEditing(false);
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                    activeTab === "settings"
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${activeTab === "settings"
                       ? "bg-slate-800 text-white font-bold"
                       : "text-slate-400 hover:text-white"
-                  }`}
+                    }`}
                 >
                   Store Info & Addresses
                 </button>
@@ -1426,11 +1417,10 @@ export default function AdminPage() {
                     setIsEditing(false);
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                    activeTab === "cac"
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${activeTab === "cac"
                       ? "bg-slate-800 text-white font-bold"
                       : "text-slate-400 hover:text-white"
-                  }`}
+                    }`}
                 >
                   CAC Legal Verification
                 </button>
@@ -2028,13 +2018,12 @@ export default function AdminPage() {
                       <div className="flex items-center space-x-2">
                         <span className="text-[11px] font-bold text-slate-500">SEO Health:</span>
                         <span
-                          className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold ${
-                            seoScore >= 80
+                          className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold ${seoScore >= 80
                               ? "bg-emerald-100 text-emerald-800"
                               : seoScore >= 50
-                              ? "bg-amber-100 text-amber-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
+                                ? "bg-amber-100 text-amber-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
                         >
                           {seoScore} / 100
                         </span>
@@ -2152,13 +2141,12 @@ export default function AdminPage() {
                         </h3>
                       </div>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-extrabold ${
-                          seoScore >= 80
+                        className={`px-2 py-0.5 rounded-full text-xs font-extrabold ${seoScore >= 80
                             ? "bg-emerald-100 text-emerald-800"
                             : seoScore >= 50
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
+                              ? "bg-amber-100 text-amber-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
                       >
                         {seoScore} / 100
                       </span>
@@ -2359,33 +2347,30 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedStockFilter("all")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
-                    selectedStockFilter === "all"
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${selectedStockFilter === "all"
                       ? "bg-[#003296] text-white shadow-xs"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                  }`}
+                    }`}
                 >
                   All ({totalProductsCount})
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedStockFilter("in_stock")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
-                    selectedStockFilter === "in_stock"
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${selectedStockFilter === "in_stock"
                       ? "bg-emerald-600 text-white shadow-xs"
                       : "bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
-                  }`}
+                    }`}
                 >
                   In Stock ({inStockCount})
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedStockFilter("out_of_stock")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
-                    selectedStockFilter === "out_of_stock"
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${selectedStockFilter === "out_of_stock"
                       ? "bg-amber-600 text-white shadow-xs"
                       : "bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
-                  }`}
+                    }`}
                 >
                   Out of Stock ({outOfStockCount})
                 </button>
@@ -2451,11 +2436,10 @@ export default function AdminPage() {
                         </td>
                         <td className="p-3">
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                              p.stockStatus !== "out_of_stock"
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${p.stockStatus !== "out_of_stock"
                                 ? "bg-emerald-100 text-emerald-800"
                                 : "bg-amber-100 text-amber-800"
-                            }`}
+                              }`}
                           >
                             {p.stockStatus !== "out_of_stock" ? "In Stock" : "Out of Stock"}
                           </span>
@@ -2510,11 +2494,10 @@ export default function AdminPage() {
                         <td className="p-3 text-slate-700 font-semibold">{p.stock} units</td>
                         <td className="p-3">
                           <span
-                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                              p.stockStatus !== "out_of_stock"
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${p.stockStatus !== "out_of_stock"
                                 ? "bg-emerald-100 text-emerald-800"
                                 : "bg-amber-100 text-amber-800"
-                            }`}
+                              }`}
                           >
                             {p.stockStatus !== "out_of_stock" ? "In Stock" : "Out of Stock"}
                           </span>
@@ -2553,21 +2536,19 @@ export default function AdminPage() {
                   <div className="flex border border-slate-200 rounded-xl overflow-hidden text-xs">
                     <button
                       onClick={() => setMediaResourceType("image")}
-                      className={`px-3 py-1.5 font-bold cursor-pointer ${
-                        mediaResourceType === "image"
+                      className={`px-3 py-1.5 font-bold cursor-pointer ${mediaResourceType === "image"
                           ? "bg-[#003296] text-white"
                           : "bg-slate-50 text-slate-600 hover:bg-slate-100"
-                      }`}
+                        }`}
                     >
                       Images
                     </button>
                     <button
                       onClick={() => setMediaResourceType("video")}
-                      className={`px-3 py-1.5 font-bold cursor-pointer ${
-                        mediaResourceType === "video"
+                      className={`px-3 py-1.5 font-bold cursor-pointer ${mediaResourceType === "video"
                           ? "bg-[#003296] text-white"
                           : "bg-slate-50 text-slate-600 hover:bg-slate-100"
-                      }`}
+                        }`}
                     >
                       Videos
                     </button>
@@ -2888,11 +2869,10 @@ export default function AdminPage() {
                         <td className="p-3 text-slate-600">{m.email}</td>
                         <td className="p-3">
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                              m.role === "admin"
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${m.role === "admin"
                                 ? "bg-purple-100 text-purple-800"
                                 : "bg-blue-100 text-[#003296]"
-                            }`}
+                              }`}
                           >
                             {m.role === "admin" ? "Administrator" : "Editor"}
                           </span>
