@@ -16,12 +16,13 @@
     "parentCompany": "CFrank Enterprise",
     "proprietor": "Chidera Frank Okonkwo",
     "cacNumber": "BN 9943925",
-    "address": "No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria",
+    "address": "Shop 8, First Floor, God's Own Plaza W-Line, Building Materials International Market, Ogidi, Anambra State, Nigeria (Opposite Chubby Plaza)",
+    "secondAddress": "No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria",
+    "marketLocation": "God's Own Plaza W-Line & Maraim Plaza, Building Materials International Market, Ogidi, Anambra State",
     "phone": "+2347070070305",
     "whatsappNumber": "2347070070305",
     "salesEmail": "anambrabestdoor@gmail.com",
     "instagramUrl": "https://www.instagram.com/anambrabestdoor/",
-    "jijiShopUrl": "https://jiji.ng/shop/anambrabestdoor",
-    "githubUrl": "https://github.com/anambrabestdoor/anambrabestdoor"
+    "jijiShopUrl": "https://jiji.ng/shop/anambrabestdoor"
   }
 }

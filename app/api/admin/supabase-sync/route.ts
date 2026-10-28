@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured, getSupabaseAdmin } from "@/lib/supabase";
 import { DOOR_PRODUCTS } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
+import { db } from "@/lib/db";
 
 export async function GET() {
   const configured = isSupabaseConfigured();
@@ -93,22 +94,23 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Upsert site settings
+    const currentSettings = await db.getSettings();
     const settingsPayload = {
       id: "global",
-      company_name: DEFAULT_SITE_SETTINGS.companyName,
-      parent_company: DEFAULT_SITE_SETTINGS.parentCompany,
-      cac_number: DEFAULT_SITE_SETTINGS.cacNumber,
-      phone: DEFAULT_SITE_SETTINGS.phone,
-      phone_display: DEFAULT_SITE_SETTINGS.phoneDisplay,
-      whatsapp_number: DEFAULT_SITE_SETTINGS.whatsappNumber,
-      email: DEFAULT_SITE_SETTINGS.salesEmail,
-      address: DEFAULT_SITE_SETTINGS.address,
-      second_address: DEFAULT_SITE_SETTINGS.secondAddress || "",
-      market_location: DEFAULT_SITE_SETTINGS.marketLocation,
-      working_hours: DEFAULT_SITE_SETTINGS.workingHours,
-      jiji_shop_url: DEFAULT_SITE_SETTINGS.jijiShopUrl,
-      whatsapp_inquiry_template: DEFAULT_SITE_SETTINGS.whatsappInquiryTemplate,
-      whatsapp_cart_template: DEFAULT_SITE_SETTINGS.whatsappCartTemplate,
+      company_name: currentSettings.companyName || DEFAULT_SITE_SETTINGS.companyName,
+      parent_company: currentSettings.parentCompany || DEFAULT_SITE_SETTINGS.parentCompany,
+      cac_number: currentSettings.cacNumber || DEFAULT_SITE_SETTINGS.cacNumber,
+      phone: currentSettings.phone || DEFAULT_SITE_SETTINGS.phone,
+      phone_display: currentSettings.phoneDisplay || DEFAULT_SITE_SETTINGS.phoneDisplay,
+      whatsapp_number: currentSettings.whatsappNumber || DEFAULT_SITE_SETTINGS.whatsappNumber,
+      email: currentSettings.salesEmail || DEFAULT_SITE_SETTINGS.salesEmail,
+      address: currentSettings.address || DEFAULT_SITE_SETTINGS.address,
+      second_address: currentSettings.secondAddress || DEFAULT_SITE_SETTINGS.secondAddress || "",
+      market_location: currentSettings.marketLocation || DEFAULT_SITE_SETTINGS.marketLocation,
+      working_hours: currentSettings.workingHours || DEFAULT_SITE_SETTINGS.workingHours,
+      jiji_shop_url: currentSettings.jijiShopUrl || DEFAULT_SITE_SETTINGS.jijiShopUrl,
+      whatsapp_inquiry_template: currentSettings.whatsappInquiryTemplate || DEFAULT_SITE_SETTINGS.whatsappInquiryTemplate,
+      whatsapp_cart_template: currentSettings.whatsappCartTemplate || DEFAULT_SITE_SETTINGS.whatsappCartTemplate,
       updated_at: new Date().toISOString(),
     };
 

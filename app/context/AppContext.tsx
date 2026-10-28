@@ -80,6 +80,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       // LocalStorage error or private browsing fallback
     }
 
+    // Fetch latest authoritative settings from server DB
+    fetch("/api/settings", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((serverSettings) => {
+        if (serverSettings && typeof serverSettings === "object") {
+          setSettings((prev) => {
+            const merged = { ...prev, ...serverSettings };
+            try {
+              localStorage.setItem("abd_site_settings", JSON.stringify(merged));
+            } catch {}
+            return merged;
+          });
+        }
+      })
+      .catch((err) => {
+        console.warn("Settings sync fallback to local cache:", err);
+      });
+
     // Always fetch latest authoritative products from server DB
     fetch("/api/products", { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : null))
@@ -177,6 +195,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
       return updated;
     });
+
+    fetch("/api/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newSettings),
+    }).catch((e) => console.warn("Failed to persist settings to server:", e));
   }, []);
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);

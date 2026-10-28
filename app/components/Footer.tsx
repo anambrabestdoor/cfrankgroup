@@ -131,12 +131,18 @@ export default function Footer() {
                   </div>
                   <div className="flex items-start space-x-2 text-slate-600">
                     <MapPin className="w-4 h-4 text-[#003296] shrink-0 mt-0.5" />
-                    <span className="leading-tight">{settings.address}</span>
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Main Showroom & Store</span>
+                      <span className="leading-tight text-xs">{settings.address}</span>
+                    </div>
                   </div>
                   {settings.secondAddress && (
                     <div className="flex items-start space-x-2 text-slate-600">
                       <Store className="w-4 h-4 text-[#003296] shrink-0 mt-0.5" />
-                      <span className="leading-tight">{settings.secondAddress}</span>
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Branch Showroom & Warehouse</span>
+                        <span className="leading-tight text-xs">{settings.secondAddress}</span>
+                      </div>
                     </div>
                   )}
                   <div className="flex items-center space-x-2 text-slate-500">

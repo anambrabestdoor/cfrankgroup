@@ -20,7 +20,6 @@ export interface SiteSettings {
   instagramUrl: string;
   facebookUrl: string;
   jijiShopUrl: string;
-  githubUrl: string;
   whatsappInquiryTemplate: string;
   whatsappCartTemplate: string;
   serviceAreas: string[];
@@ -40,10 +39,10 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   parentCompany: "CFrank Enterprise",
   proprietor: "Chidera Frank Okonkwo",
   tagline: "Direct Importer of Heavy-Gauge Security Doors & Building Fittings",
-  description: "Anambra Best Door Enterprises is a specialized construction activities and door fittings enterprise operated by CFrank Enterprise (Chidera Frank Okonkwo) at Maraim Plaza, Building Material International Market Ogidi, Anambra State. Supplying premium steel security doors, interior wooden doors, bullet proof doors, HDF doors, sanitary wares, and building fittings nationwide.",
-  address: "No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria",
-  secondAddress: "",
-  marketLocation: "Maraim Plaza, Building Material International Market, Ogidi, Onitsha",
+  description: "Anambra Best Door Enterprises is a specialized construction activities and door fittings enterprise operated by CFrank Enterprise (Chidera Frank Okonkwo) at God's Own Plaza W-Line and Maraim Plaza, Building Materials International Market Ogidi, Anambra State. Supplying premium steel security doors, interior wooden doors, bullet proof doors, HDF doors, sanitary wares, and building fittings nationwide.",
+  address: "Shop 8, First Floor, God's Own Plaza W-Line, Building Materials International Market, Ogidi, Anambra State, Nigeria (Opposite Chubby Plaza)",
+  secondAddress: "No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria",
+  marketLocation: "God's Own Plaza W-Line & Maraim Plaza, Building Materials International Market, Ogidi, Anambra State",
   phone: "+2347070070305",
   phoneDisplay: "+234 707 007 0305",
   whatsappNumber: "2347070070305",
@@ -57,7 +56,6 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   instagramUrl: "https://www.instagram.com/anambrabestdoor/",
   facebookUrl: "https://www.facebook.com/Anambrabestdoor",
   jijiShopUrl: "https://jiji.ng/shop/anambrabestdoor",
-  githubUrl: "https://github.com/anambrabestdoor/anambrabestdoor",
   whatsappInquiryTemplate: "Hello CFrank Enterprise, I would like to inquire about the current price and stock availability for [Door Name] (Size: [Size], Quantity: [Qty]).",
   whatsappCartTemplate: "Hello CFrank Enterprise, I would like to inquire about current price and availability for the following items from your catalogue:\n\n[Items]\n\nPlease confirm availability and delivery terms to my project site.",
   serviceAreas: [

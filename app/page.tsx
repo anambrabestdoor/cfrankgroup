@@ -65,8 +65,8 @@ export default function StorefrontPage() {
       a: "We supply Turkish steel security entrance doors, foreign HDF luxury interior doors, Watson panel doors, waterproof WPC bathroom doors, digital and mechanical door locks, and bathroom sanitary wares.",
     },
     {
-      q: "Where is your warehouse located?",
-      a: "Our warehouse and showroom are at No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State. Customers and site representatives are welcome to visit during business hours.",
+      q: "Where is your warehouse and showroom located?",
+      a: `Our main store and warehouse are located at ${settings.address}${settings.secondAddress ? `, and our branch showroom is at ${settings.secondAddress}` : ""}. Customers and site representatives are welcome to visit during business hours.`,
     },
     {
       q: "Can I inspect the doors before buying?",

@@ -931,10 +931,23 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
     if (file) processVideoFile(file);
   };
 
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     updateSettings(siteSettingsForm);
-    showToast("Settings updated successfully!");
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(siteSettingsForm),
+      });
+      if (res.ok) {
+        showToast("Settings saved to server successfully!");
+      } else {
+        showToast("Settings updated locally.");
+      }
+    } catch {
+      showToast("Settings updated locally.");
+    }
   };
 
   // Products Overview Metrics (Mathematically rhyming guarantee: inStock + outOfStock === total)

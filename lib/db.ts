@@ -82,7 +82,6 @@ export interface Settings {
   cacStatus?: string;
   instagramUrl?: string;
   jijiShopUrl?: string;
-  githubUrl?: string;
   whatsappInquiryTemplate?: string;
   whatsappCartTemplate?: string;
   deliverySummaryHeading?: string;
@@ -513,7 +512,7 @@ export const db = {
         Object.assign(item, fields);
         writeDiskDb(disk);
       }
-    } catch {}
+    } catch { }
 
     return true;
   },
@@ -551,7 +550,7 @@ export const db = {
         disk.newsletters.push(item);
         writeDiskDb(disk);
       }
-    } catch {}
+    } catch { }
 
     return true;
   },
@@ -588,12 +587,13 @@ export const db = {
       allowSignups: true,
       heroTitle: "Heavy-Gauge Steel Security Doors & Building Fittings",
       heroSubtitle: "Direct Importer of Turkish Security Doors, Luxury Room Doors & Sanitary Wares",
-      heroCtaText: "Explore Catalogue",
+      heroCtaText: "Browse Catalogue",
       heroCtaLink: "/shop",
       companyName: DEFAULT_SITE_SETTINGS.companyName,
       parentCompany: DEFAULT_SITE_SETTINGS.parentCompany,
       proprietor: DEFAULT_SITE_SETTINGS.proprietor,
       address: DEFAULT_SITE_SETTINGS.address,
+      secondAddress: DEFAULT_SITE_SETTINGS.secondAddress,
       marketLocation: DEFAULT_SITE_SETTINGS.marketLocation,
       phone: DEFAULT_SITE_SETTINGS.phone,
       phoneDisplay: DEFAULT_SITE_SETTINGS.phoneDisplay,
@@ -605,7 +605,6 @@ export const db = {
       cacStatus: DEFAULT_SITE_SETTINGS.cacStatus,
       instagramUrl: DEFAULT_SITE_SETTINGS.instagramUrl,
       jijiShopUrl: DEFAULT_SITE_SETTINGS.jijiShopUrl,
-      githubUrl: DEFAULT_SITE_SETTINGS.githubUrl,
       whatsappInquiryTemplate: DEFAULT_SITE_SETTINGS.whatsappInquiryTemplate,
       whatsappCartTemplate: DEFAULT_SITE_SETTINGS.whatsappCartTemplate,
       deliverySummaryHeading: DEFAULT_SITE_SETTINGS.deliverySummaryHeading,

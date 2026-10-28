@@ -224,6 +224,85 @@ export default function ContactPage() {
             )}
           </div>
         </div>
+
+        {/* Dedicated Location Sector */}
+        <div className="mt-12 bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
+          <div className="border-b border-slate-100 pb-4">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block mb-1">
+              Location Sector & Warehouse Access
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight">
+              Physical Showrooms, Warehouses & Visitor Directions
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Visiting our physical locations in Ogidi, Anambra State.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+            {/* Primary Headquarters */}
+            <div className="p-5 rounded-xl border border-blue-100 bg-blue-50/40 space-y-3">
+              <div className="flex items-center space-x-2 text-[#003296] font-bold">
+                <MapPin className="w-4 h-4 shrink-0" />
+                <span className="text-sm text-slate-900">Primary Headquarters & Main Store</span>
+              </div>
+              <p className="text-slate-700 font-semibold leading-relaxed">
+                {settings.address}
+              </p>
+              <div className="space-y-1 text-slate-600 text-[11px]">
+                <p>• <strong>Market Sector:</strong> God&apos;s Own Plaza W-Line (Opposite Chubby Plaza)</p>
+                <p>• <strong>Services:</strong> Live door inspection, locks & security hardware testing, sample finish swatches, billing & order dispatch.</p>
+                <p>• <strong>Operating Hours:</strong> {settings.workingHours}</p>
+              </div>
+            </div>
+
+            {/* Secondary Branch / Warehouse */}
+            {settings.secondAddress && (
+              <div className="p-5 rounded-xl border border-slate-200 bg-slate-50/70 space-y-3">
+                <div className="flex items-center space-x-2 text-slate-800 font-bold">
+                  <Store className="w-4 h-4 text-[#003296] shrink-0" />
+                  <span className="text-sm text-slate-900">Branch Showroom & Annex Warehouse</span>
+                </div>
+                <p className="text-slate-700 font-semibold leading-relaxed">
+                  {settings.secondAddress}
+                </p>
+                <div className="space-y-1 text-slate-600 text-[11px]">
+                  <p>• <strong>Market Sector:</strong> Maraim Plaza, Building Materials International Market</p>
+                  <p>• <strong>Services:</strong> Bulk container offloading, heavy-gauge steel inventory, frame assembly, nationwide waybill vehicle loading.</p>
+                  <p>• <strong>Operating Hours:</strong> {settings.workingHours}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Visitor Landmark Guidance */}
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs">
+            <div className="space-y-0.5">
+              <span className="font-bold text-slate-900 block">Need gate directions or finding our plaza?</span>
+              <p className="text-slate-600 text-[11px]">
+                When arriving at Building Materials International Market Ogidi, ask for God&apos;s Own Plaza W-Line (directly opposite Chubby Plaza). Our sales reps can meet you at the market entrance.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <a
+                href={`tel:${settings.phone}`}
+                className="py-2 px-3.5 bg-white border border-slate-300 hover:border-[#003296] text-[#003296] font-bold text-xs rounded-xl flex items-center space-x-1.5 transition-colors"
+              >
+                <Phone className="w-3.5 h-3.5" />
+                <span>Call For Directions</span>
+              </a>
+              <a
+                href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I am currently on my way to your showroom in Ogidi. Please send your live location pin.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-2 px-3.5 bg-[#25D366] hover:bg-[#20BD5A] text-white font-bold text-xs rounded-xl flex items-center space-x-1.5 transition-transform active:scale-95 shadow-xs"
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>Send WhatsApp Live Pin</span>
+              </a>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   );

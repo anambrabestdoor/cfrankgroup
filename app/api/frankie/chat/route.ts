@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
 import { DOOR_PRODUCTS } from "@/app/data/doorsData";
+import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ function buildCatalogContext(): string {
   return items.join("\n");
 }
 
-function buildFrankieSystemPrompt(): string {
+function buildFrankieSystemPrompt(settings: any = DEFAULT_SITE_SETTINGS): string {
   const catalogContext = buildCatalogContext();
 
   return `
@@ -35,10 +36,10 @@ OWNERSHIP & VERIFIED BUSINESS FACTS (GROUND TRUTH WHEN EXPLICITLY ASKED):
 - Sole Proprietor & Owner: Chidera Frank Okonkwo
 - Business Trading Name: Anambra Best Door Enterprises (powered and operated by CFrank Enterprise)
 - CAC Registration Number: BN 9943925 (Registered under Companies and Allied Matters Act, Active status)
-- Physical Warehouse Address: ${DEFAULT_SITE_SETTINGS.address}${DEFAULT_SITE_SETTINGS.secondAddress ? ` | Branch Location: ${DEFAULT_SITE_SETTINGS.secondAddress}` : ""}
-- Contact Phone: ${DEFAULT_SITE_SETTINGS.phoneDisplay}
-- WhatsApp Order Line: ${DEFAULT_SITE_SETTINGS.whatsappNumber} (direct link available in chat)
-- Working Hours: ${DEFAULT_SITE_SETTINGS.workingHours} (Sunday closed)
+- Physical Warehouse Address: ${settings.address}${settings.secondAddress ? ` | Branch Location: ${settings.secondAddress}` : ""}
+- Contact Phone: ${settings.phoneDisplay || settings.phone}
+- WhatsApp Order Line: ${settings.whatsappNumber} (direct link available in chat)
+- Working Hours: ${settings.workingHours} (Sunday closed)
 
 CRITICAL RULES ON IDENTITY & BUSINESS FACTS:
 - You are a sales rep, NOT a co-planner or robotic assistant.
@@ -93,10 +94,10 @@ COMMUNICATION STYLE:
 /**
  * Deterministic fallback engine for trade knowledge when Gemini API key is missing or unavailable.
  */
-function runDeterministicFrankie(message: string): { message: string; suggested_actions?: any[] } {
+function runDeterministicFrankie(message: string, settings: any = DEFAULT_SITE_SETTINGS): { message: string; suggested_actions?: any[] } {
   const q = message.toLowerCase().trim();
-  const waUrl = `https://wa.me/${DEFAULT_SITE_SETTINGS.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like to inquire about door orders and current stock.")}`;
-  const callUrl = `tel:${DEFAULT_SITE_SETTINGS.phone}`;
+  const waUrl = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like to inquire about door orders and current stock.")}`;
+  const callUrl = `tel:${settings.phone}`;
 
   // 1. Off-topic detection (strictly building, construction, doors, sanitary, roofing only)
   const offTopicKeywords = [
@@ -266,7 +267,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   if (q.includes("location") || q.includes("where") || q.includes("warehouse") || q.includes("address") || q.includes("ogidi") || q.includes("onitsha") || q.includes("visit") || q.includes("shop")) {
     return {
       message:
-        `You can inspect doors in person at our showroom & warehouse:\n\n• Primary Location: ${DEFAULT_SITE_SETTINGS.address}${DEFAULT_SITE_SETTINGS.secondAddress ? `\n• Branch Location: ${DEFAULT_SITE_SETTINGS.secondAddress}` : ""}\n• Hours: ${DEFAULT_SITE_SETTINGS.workingHours}\n\nContractors, site engineers, and homeowners are always welcome to inspect lock mechanisms, woodgrain finishes, and steel gauges before dispatch.`,
+        `You can inspect doors in person at our showroom & warehouse:\n\n• Primary Location: ${settings.address}${settings.secondAddress ? `\n• Branch Location: ${settings.secondAddress}` : ""}\n• Hours: ${settings.workingHours}\n\nContractors, site engineers, and homeowners are always welcome to inspect lock mechanisms, woodgrain finishes, and steel gauges before dispatch.`,
       suggested_actions: [
         { label: "Call Sales", action_type: "call", payload: callUrl },
         { label: "WhatsApp Location Pin", action_type: "link", payload: waUrl },
@@ -314,9 +315,15 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
 /**
  * Calls Google Gemini REST API with Frankie's prompt and dynamic catalog context.
  */
-async function callGemini(apiKey: string, model: string, userMessage: string, history: ChatTurn[]): Promise<string | null> {
+async function callGemini(
+  apiKey: string,
+  model: string,
+  userMessage: string,
+  history: ChatTurn[],
+  settings: any = DEFAULT_SITE_SETTINGS
+): Promise<string | null> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-  const systemPrompt = buildFrankieSystemPrompt();
+  const systemPrompt = buildFrankieSystemPrompt(settings);
 
   // Gemini requires strictly alternating roles (user -> model -> user)
   const sanitizedHistory: { role: "user" | "model"; parts: [{ text: string }] }[] = [];
@@ -378,6 +385,11 @@ async function callGemini(apiKey: string, model: string, userMessage: string, hi
 }
 
 export async function POST(req: NextRequest) {
+  let liveSettings: any = DEFAULT_SITE_SETTINGS;
+  try {
+    liveSettings = await db.getSettings();
+  } catch {}
+
   try {
     const body = await req.json();
     const { message, history = [] } = body;
@@ -398,16 +410,16 @@ export async function POST(req: NextRequest) {
     if (geminiKey && geminiKey.trim() !== "") {
       for (const model of modelsToTry) {
         try {
-          const aiResponse = await callGemini(geminiKey, model, message, history);
+          const aiResponse = await callGemini(geminiKey, model, message, history, liveSettings);
           if (aiResponse) {
-            const waUrl = `https://wa.me/${DEFAULT_SITE_SETTINGS.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like to inquire about door orders and current stock.")}`;
-            const callUrl = `tel:${DEFAULT_SITE_SETTINGS.phone}`;
+            const waUrl = `https://wa.me/${liveSettings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I would like to inquire about door orders and current stock.")}`;
+            const callUrl = `tel:${liveSettings.phone}`;
 
             return NextResponse.json({
               message: aiResponse,
               suggested_actions: [
                 { label: "Chat on WhatsApp", action_type: "link", payload: waUrl },
-                { label: "Call Admin", action_type: "call", payload: callUrl },
+                { label: "Call Sales", action_type: "call", payload: callUrl },
               ],
             });
           }
@@ -418,12 +430,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Instant fallback to local deterministic trade engine
-    const fallbackResponse = runDeterministicFrankie(message);
+    const fallbackResponse = runDeterministicFrankie(message, liveSettings);
     return NextResponse.json(fallbackResponse);
   } catch (error: any) {
     console.error("[FRANKIE_API_ERROR]", error);
-    const waUrl = `https://wa.me/${DEFAULT_SITE_SETTINGS.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I need assistance with a door order.")}`;
-    const callUrl = `tel:${DEFAULT_SITE_SETTINGS.phone}`;
+    const waUrl = `https://wa.me/${liveSettings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I need assistance with a door order.")}`;
+    const callUrl = `tel:${liveSettings.phone}`;
 
     return NextResponse.json({
       message:

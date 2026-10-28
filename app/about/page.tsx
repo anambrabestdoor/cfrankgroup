@@ -37,7 +37,7 @@ export default function AboutPage() {
               {settings.companyName} is operated by {settings.parentCompany}
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Operating out of {settings.address}, {settings.parentCompany} (Proprietor: {settings.proprietor || "Chidera Frank Okonkwo"}) supplies residential developers, commercial builders, architects, and private homeowners across Nigeria.
+              Operating out of {settings.address}{settings.secondAddress ? ` (with branch showroom & warehouse at ${settings.secondAddress})` : ""}, {settings.parentCompany} (Proprietor: {settings.proprietor || "Chidera Frank Okonkwo"}) supplies residential developers, commercial builders, architects, and private homeowners across Nigeria.
             </p>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               We specialize in heavy-gauge bullet proof doors, cast ornamental security doors, seasoned Watson interior room doors, and 100% waterproof bathroom solutions with nationwide delivery.
