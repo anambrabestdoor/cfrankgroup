@@ -30,7 +30,7 @@ export default function ContactPage() {
             Contact Anambra Best Door
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
-            Visit our showroom & warehouse or connect directly with our sales desk on WhatsApp for live price quotes, wall measurements, and nationwide delivery schedules.
+            Visit our showroom & warehouse or connect directly with our sales team on WhatsApp for live price quotes, wall measurements, and nationwide delivery schedules.
           </p>
         </div>
       </div>
@@ -45,7 +45,7 @@ export default function ContactPage() {
               </span>
 
               <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Our physical showroom and warehouse facilities provide direct access for contractors, builders, and homeowners to inspect heavy-gauge steel security doors, lock mechanisms, and interior finishes in person before dispatch.
+                Our physical showroom and warehouse facilities provide direct access for contractors, builders, and homeowners to inspect our products, locks, and finishes in person before dispatch.
               </p>
             </div>
 
@@ -93,7 +93,7 @@ export default function ContactPage() {
                   <MessageSquare className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-bold text-emerald-950 block">Instant WhatsApp Sales Desk</span>
+                  <span className="font-bold text-emerald-950 block">Instant WhatsApp Sales</span>
                   <p className="text-emerald-800 text-[11px] mt-0.5">
                     Fast responses for stock confirmation, price lists, and photos.
                   </p>
@@ -148,7 +148,7 @@ export default function ContactPage() {
                 <CheckCircle className="w-12 h-12 text-emerald-600 mx-auto" />
                 <h3 className="text-xl font-bold text-slate-900">Message Dispatched!</h3>
                 <p className="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
-                  Your inquiry has been compiled and sent to our sales desk. A sales representative will assist you promptly.
+                  Your inquiry has been compiled and sent to our sales team. A sales representative will assist you promptly.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
@@ -162,7 +162,7 @@ export default function ContactPage() {
                 <div>
                   <h3 className="text-lg font-bold text-slate-900">Send an Inquiry or Quote Request</h3>
                   <p className="text-slate-500 text-[11px] mt-0.5">
-                    Direct submission to CFrank Enterprise sales desk.
+                    Direct submission to CFrank Enterprise sales team.
                   </p>
                 </div>
 
@@ -202,13 +202,13 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Message or Required Door Specifications *</label>
+                  <label className="font-bold text-slate-700 block mb-1">Message or Required Product Specifications *</label>
                   <textarea
                     required
                     rows={4}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    placeholder="State the door types (Security, Interior, Bathroom), quantity, and preferred dimensions..."
+                    placeholder="State the products, categories, quantity, and preferred specifications..."
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#003296]"
                   />
                 </div>

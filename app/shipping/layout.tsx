@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Delivery & Haulage Policy | Direct Site Waybill Dispatch",
+  title: "Delivery & Shipping Policy | Direct Site Waybill Dispatch",
   description:
-    "Information on our crated waybill delivery across all 36 Nigerian states. Warehouse pickup or heavy haulage dispatch to Lagos, Abuja, Port Harcourt, Asaba, and Enugu.",
+    "Information on our crated waybill delivery across all 36 Nigerian states. Warehouse pickup or direct truck dispatch to Lagos, Abuja, Port Harcourt, Asaba, and Enugu.",
   alternates: {
     canonical: "/shipping",
   },

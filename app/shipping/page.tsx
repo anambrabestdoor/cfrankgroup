@@ -46,7 +46,7 @@ export default function ShippingPage() {
             Warehouse Logistics & Site Delivery
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Direct door and sanitary ware dispatch from our {warehouseLocation} to building contractors, site engineers, and private homeowners across all 36 states.
+            Direct product dispatch from our {warehouseLocation} to building contractors, site engineers, and private homeowners across all 36 states.
           </p>
         </div>
       </div>
@@ -131,7 +131,7 @@ export default function ShippingPage() {
           </div>
 
           <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <span className="text-xs text-slate-500">Need haulage quote for bulk building project?</span>
+            <span className="text-xs text-slate-500">Need a delivery quote for a large building project?</span>
             <a
               href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I want to chat about delivery rates for my project location.")}`}
               target="_blank"
@@ -139,7 +139,7 @@ export default function ShippingPage() {
               className="py-2.5 px-4 bg-[#25D366] hover:bg-[#1fb355] text-white font-bold text-xs rounded-xl flex items-center space-x-2 transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Confirm Haulage on WhatsApp</span>
+              <span>Confirm Delivery on WhatsApp</span>
             </a>
           </div>
         </div>

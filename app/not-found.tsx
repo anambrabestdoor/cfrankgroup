@@ -155,7 +155,7 @@ export default function NotFound() {
               rel="noopener noreferrer"
               className="text-emerald-700 hover:text-emerald-800 font-bold"
             >
-              WhatsApp Desk
+              Chat on WhatsApp
             </a>
           </div>
         </div>

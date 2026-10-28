@@ -2,13 +2,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { AppProvider } from "./context/AppContext";
 import JsonLd from "./components/JsonLd";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import MobileMenuDrawer from "./components/MobileMenuDrawer";
-import CartDrawer from "./components/CartDrawer";
-import SearchOverlay from "./components/SearchOverlay";
-import CacVerificationModal from "./components/CacVerificationModal";
-import FrankieWidget from "./components/FrankieWidget";
+import ConditionalShell from "./components/ConditionalShell";
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://anambrabestdoor.com";
 
@@ -98,18 +92,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased text-slate-900 bg-white font-sans min-h-screen flex flex-col justify-between" suppressHydrationWarning>
         <AppProvider>
-          <div className="flex-1 flex flex-col w-full">
-            <Header />
-            <main className="flex-1 w-full">{children}</main>
-            <Footer />
-          </div>
-
-          {/* Interactive Drawers & Overlays */}
-          <MobileMenuDrawer />
-          <CartDrawer />
-          <SearchOverlay />
-          <CacVerificationModal />
-          <FrankieWidget />
+          <ConditionalShell>{children}</ConditionalShell>
         </AppProvider>
       </body>
     </html>

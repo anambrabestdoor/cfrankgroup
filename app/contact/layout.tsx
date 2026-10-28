@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact & Warehouse Location | Anambra Best Door",
   description:
-    "Visit our physical showroom and warehouse at Maraim Plaza, Building Material International Market, Ogidi. Phone: 0803 521 8890. WhatsApp sales desk and nationwide haulage coordination.",
+    "Visit our physical showroom and warehouse at Maraim Plaza, Building Material International Market, Ogidi. Phone: 0803 521 8890. WhatsApp sales line and nationwide delivery coordination.",
   alternates: {
     canonical: "/contact",
   },

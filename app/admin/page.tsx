@@ -129,6 +129,14 @@ interface CloudinaryAsset {
   resource_type: string;
 }
 
+const getAdminThumbnailUrl = (url: string) => {
+  if (!url) return "";
+  if (url.includes("res.cloudinary.com") && url.includes("/upload/")) {
+    return url.replace("/upload/", "/upload/w_300,h_300,c_fill,q_auto,f_auto/");
+  }
+  return url;
+};
+
 export default function AdminPage() {
   const { settings, updateSettings, products, setProducts } = useApp();
 
@@ -336,7 +344,7 @@ export default function AdminPage() {
   };
 
   const handleDeleteCloudinaryMedia = async (publicId: string, resourceType: string = "image") => {
-    if (!confirm(`Are you sure you want to permanently delete this media file from Cloudinary storage?`)) {
+    if (!confirm(`Are you sure you want to permanently delete this media file?`)) {
       return;
     }
     setDeletingPublicId(publicId);
@@ -347,9 +355,9 @@ export default function AdminPage() {
       );
       if (res.ok) {
         setMediaItems((prev) => prev.filter((m) => m.public_id !== publicId));
-        showToast("File deleted from Cloudinary!");
+        showToast("File deleted from media library!");
       } else {
-        alert("Failed to delete file from Cloudinary.");
+        alert("Failed to delete media file.");
       }
     } catch {
       alert("Network error while deleting media.");
@@ -362,7 +370,7 @@ export default function AdminPage() {
     if (mediaPickerMode === "main_photo") {
       setFormImage(item.url);
       setImageUploadSuccess(true);
-      showToast("Photo selected from Cloudinary library!");
+      showToast("Photo selected from media library!");
     } else {
       setFormGallery((prev) => [...prev, item.url]);
       showToast("Photo added to product gallery!");
@@ -490,7 +498,7 @@ export default function AdminPage() {
       alert("Please enter the email address associated with your admin account.");
       return;
     }
-    setForgotStatus("Reset instructions sent to your registered email and WhatsApp desk.");
+    setForgotStatus("Reset instructions sent to your registered email and WhatsApp line.");
     setTimeout(() => {
       setShowForgotPassword(false);
       setForgotStatus(null);
@@ -744,7 +752,7 @@ export default function AdminPage() {
       if (data.url) {
         setFormImage(data.url);
         setImageUploadSuccess(true);
-        showToast("Photo uploaded to Cloudinary successfully!");
+        showToast("Photo uploaded to media library successfully!");
       }
     } catch (err: any) {
       setImageUploadError(err.message || "Failed to upload image.");
@@ -1046,8 +1054,15 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row font-sans">
       {/* Mobile Top Header */}
-      <div className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800 sticky top-0 z-40">
-        <div className="flex items-center space-x-2">
+      <div className="md:hidden bg-slate-900 text-white px-3 py-2.5 flex items-center justify-between border-b border-slate-800 sticky top-0 z-40 h-14">
+        <div className="flex items-center space-x-2.5">
+          <button
+            onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+            className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white cursor-pointer"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
           <div className="relative w-7 h-7 rounded-lg overflow-hidden bg-white p-0.5 shadow-xs border border-slate-700/60 flex items-center justify-center shrink-0">
             <Image
               src="/favicon-48x48.png"
@@ -1057,28 +1072,30 @@ export default function AdminPage() {
               className="rounded-md object-contain"
             />
           </div>
-          <span className="font-bold text-xs">Anambra Best Door</span>
+          <span className="font-bold text-xs text-white">Anambra Best Door</span>
         </div>
-        <button
-          onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-          className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white"
-          aria-label="Toggle Navigation Menu"
+
+        <Link
+          href="/shop"
+          target="_blank"
+          className="text-[11px] font-semibold text-slate-300 hover:text-white flex items-center space-x-1 px-2.5 py-1 bg-slate-800 rounded-lg"
         >
-          <Menu className="w-5 h-5" />
-        </button>
+          <span>Storefront</span>
+          <ExternalLink className="w-3 h-3 text-[#2563EB]" />
+        </Link>
       </div>
 
-      {/* Mobile Drawer Backdrop */}
+      {/* Mobile Drawer Backdrop (Anchored below header) */}
       {mobileSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-30 md:hidden animate-fade-in"
+          className="fixed inset-x-0 top-14 bottom-0 bg-black/60 z-30 md:hidden animate-fade-in"
           onClick={() => setMobileSidebarOpen(false)}
         />
       )}
 
-      {/* WordPress-Style Left Vertical Sidebar */}
+      {/* WordPress-Style Left Vertical Sidebar (Anchored below header on mobile) */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-40 h-screen w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 transition-transform ${
+        className={`fixed md:sticky top-14 md:top-0 left-0 z-40 h-[calc(100vh-3.5rem)] md:h-screen w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 transition-transform ${
           mobileSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
@@ -1214,7 +1231,7 @@ export default function AdminPage() {
                       : "text-slate-400 hover:text-white"
                   }`}
                 >
-                  Cloudinary Storage
+                  Media Storage
                 </button>
               </div>
             )}
@@ -1377,7 +1394,7 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Cloudinary Media Picker Modal */}
+        {/* Media Picker Modal */}
         {mediaPickerOpen && (
           <div
             className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in"
@@ -1392,7 +1409,7 @@ export default function AdminPage() {
                     {mediaPickerMode === "main_photo" ? "Select Main Product Photo" : "Add Photos to Gallery"}
                   </h3>
                   <p className="text-[11px] text-slate-500">
-                    Click any uploaded photo from your Cloudinary warehouse library
+                    Click any uploaded photo from your media library
                   </p>
                 </div>
                 <button
@@ -1407,12 +1424,12 @@ export default function AdminPage() {
                 {loadingMedia ? (
                   <div className="py-16 text-center text-xs text-slate-500 flex flex-col items-center justify-center space-y-2">
                     <Loader2 className="w-6 h-6 animate-spin text-[#003296]" />
-                    <span>Loading Cloudinary warehouse media...</span>
+                    <span>Loading media files...</span>
                   </div>
                 ) : mediaItems.length === 0 ? (
                   <div className="py-16 text-center text-xs text-slate-500 space-y-2">
                     <ImageIcon className="w-8 h-8 text-slate-300 mx-auto stroke-1" />
-                    <p className="font-bold text-slate-700">No media found in Cloudinary library</p>
+                    <p className="font-bold text-slate-700">No media files found</p>
                     <p className="text-slate-400">Upload product photos from your device using the upload box.</p>
                   </div>
                 ) : (
@@ -1425,7 +1442,7 @@ export default function AdminPage() {
                         className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 hover:border-[#003296] hover:ring-2 hover:ring-[#003296]/30 group transition-all cursor-pointer bg-slate-100"
                       >
                         <Image
-                          src={item.url}
+                          src={getAdminThumbnailUrl(item.url)}
                           alt={item.public_id}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform"
@@ -1441,7 +1458,7 @@ export default function AdminPage() {
 
               <div className="p-3 border-t border-slate-200 bg-slate-50 flex justify-between items-center text-xs">
                 <span className="text-slate-500 text-[11px]">
-                  Showing {mediaItems.length} photos from Cloudinary CDN
+                  Showing {mediaItems.length} media files
                 </span>
                 <button
                   type="button"
@@ -1557,8 +1574,8 @@ export default function AdminPage() {
           {/* ========================================================================= */}
           {isEditing && (
             <form onSubmit={handleSaveProduct} className="space-y-6">
-              {/* Top Action Header */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200">
+              {/* Sticky Top Action Header */}
+              <div className="sticky top-0 z-20 bg-slate-100/95 backdrop-blur-xs py-3 border-b border-slate-200/90 flex flex-wrap items-center justify-between gap-3 shadow-2xs -mt-2 mb-4">
                 <div className="flex items-center space-x-2">
                   <button
                     type="button"
@@ -1582,10 +1599,10 @@ export default function AdminPage() {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 cursor-pointer"
+                    className="px-5 py-2 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer"
                   >
                     <Save className="w-3.5 h-3.5" />
-                    <span>Publish / Save Changes</span>
+                    <span>{editingId ? "Update Product" : "Publish Product"}</span>
                   </button>
                 </div>
               </div>
@@ -1738,14 +1755,14 @@ export default function AdminPage() {
                     </div>
                   </div>
 
-                  {/* Product Photos & Cloudinary Library Picker */}
+                  {/* Product Photos & Media Picker */}
                   <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-4 shadow-xs">
                     <div className="border-b border-slate-100 pb-2">
                       <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                         Main Product Photo
                       </h3>
                       <p className="text-[11px] text-slate-400">
-                        Upload from device or pick directly from your Cloudinary warehouse library
+                        Upload from device or pick directly from your media library
                       </p>
                     </div>
 
@@ -1779,7 +1796,7 @@ export default function AdminPage() {
                           className="w-full py-2.5 px-3 bg-blue-50 hover:bg-blue-100 text-[#003296] border border-blue-200 text-xs font-bold rounded-xl flex items-center justify-center space-x-2 cursor-pointer"
                         >
                           <FolderOpen className="w-4 h-4" />
-                          <span>Choose from Cloudinary Library</span>
+                          <span>Choose from Media Library</span>
                         </button>
 
                         <button
@@ -1812,7 +1829,7 @@ export default function AdminPage() {
                             type="text"
                             value={formImage}
                             onChange={(e) => setFormImage(e.target.value)}
-                            placeholder="https://res.cloudinary.com/..."
+                            placeholder="https://..."
                             className="w-full px-3 py-1.5 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg text-slate-600"
                           />
                         </div>
@@ -2039,6 +2056,33 @@ export default function AdminPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Bottom Persistent Action Bar */}
+              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                <div className="text-xs text-slate-500">
+                  {editingId ? (
+                    <span>Editing: <strong className="text-slate-900">{formName || "Untitled Product"}</strong></span>
+                  ) : (
+                    <span>Creating new catalogue item</span>
+                  )}
+                </div>
+                <div className="flex items-center space-x-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>{editingId ? "Update Product" : "Publish Product"}</span>
+                  </button>
+                </div>
+              </div>
             </form>
           )}
 
@@ -2212,7 +2256,7 @@ export default function AdminPage() {
           )}
 
           {/* ========================================================================= */}
-          {/* VIEW: CLOUDINARY MEDIA LIBRARY                                            */}
+          {/* VIEW: MEDIA LIBRARY                                                       */}
           {/* ========================================================================= */}
           {activeTab === "media" && !isEditing && (
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 space-y-5 shadow-xs">
@@ -2220,7 +2264,7 @@ export default function AdminPage() {
                 <div className="flex items-center space-x-2">
                   <ImageIcon className="w-5 h-5 text-[#003296]" />
                   <h2 className="text-lg font-black text-slate-900">
-                    Cloudinary Media Library ({mediaItems.length})
+                    Media Library ({mediaItems.length})
                   </h2>
                 </div>
 
@@ -2251,7 +2295,7 @@ export default function AdminPage() {
                   <button
                     onClick={() => fetchCloudinaryMedia(mediaResourceType)}
                     className="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 cursor-pointer"
-                    title="Refresh from Cloudinary"
+                    title="Refresh Media"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${loadingMedia ? "animate-spin" : ""}`} />
                   </button>
@@ -2261,7 +2305,7 @@ export default function AdminPage() {
               {loadingMedia ? (
                 <div className="py-20 text-center text-xs text-slate-500 flex flex-col items-center justify-center space-y-2">
                   <Loader2 className="w-8 h-8 animate-spin text-[#003296]" />
-                  <span>Fetching media files from Cloudinary storage...</span>
+                  <span>Fetching files from media storage...</span>
                 </div>
               ) : mediaItems.length === 0 ? (
                 <div className="py-16 text-center text-xs text-slate-500 space-y-2">
@@ -2283,7 +2327,7 @@ export default function AdminPage() {
                             <span className="text-[10px] font-bold uppercase">{item.format} video</span>
                           </div>
                         ) : (
-                          <Image src={item.url} alt={item.public_id} fill className="object-cover" />
+                          <Image src={getAdminThumbnailUrl(item.url)} alt={item.public_id} fill className="object-cover" />
                         )}
                       </div>
 
@@ -2313,7 +2357,7 @@ export default function AdminPage() {
                             disabled={deletingPublicId === item.public_id}
                             onClick={() => handleDeleteCloudinaryMedia(item.public_id, item.resource_type)}
                             className="p-1 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 cursor-pointer disabled:opacity-50"
-                            title="Delete from Cloudinary"
+                            title="Delete Media File"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -2658,7 +2702,7 @@ export default function AdminPage() {
                     onChange={(e) =>
                       setSiteSettingsForm({ ...siteSettingsForm, secondAddress: e.target.value })
                     }
-                    placeholder="e.g. Asaba Haulage Yard or Onitsha Main Market Annex"
+                    placeholder="e.g. Asaba Delivery Park or Onitsha Main Market Annex"
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
                   />
                 </div>
@@ -2677,7 +2721,7 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">WhatsApp Sales Desk Number</label>
+                  <label className="font-bold text-slate-700 block mb-1">WhatsApp Sales Number</label>
                   <input
                     type="text"
                     required

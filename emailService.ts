@@ -302,7 +302,7 @@ export class EmailService {
                   Thank you for your order, ${escapeHtml(order.customerName)}.
                 </h1>
                 <p style="font-size: 13px; line-height: 1.6; color: #475569; margin: 0;">
-                  Your door order has been recorded. Our depot team at Maraim Plaza, Ogidi, will prepare your items, conduct pre-dispatch inspection photos/videos, and coordinate waybill delivery to your project site.
+                  Your door order has been recorded. Our warehouse team at Maraim Plaza, Ogidi, will prepare your items, conduct pre-dispatch inspection photos/videos, and coordinate waybill delivery to your project site.
                 </p>
               </td>
             </tr>
@@ -332,7 +332,7 @@ export class EmailService {
                       Delivery Site Address
                     </td>
                     <td style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: bold; padding-bottom: 5px; text-align: right;">
-                      Depot Pickup / Waybill
+                      Warehouse Pickup / Waybill
                     </td>
                   </tr>
                   <tr>
@@ -429,7 +429,7 @@ export class EmailService {
                   ANAMBRA BEST DOOR
                 </div>
                 <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
-                  Depot Dispatch & Waybill Logistics
+                  Warehouse Dispatch & Waybill Logistics
                 </div>
               </td>
             </tr>
@@ -481,7 +481,7 @@ export class EmailService {
             <tr>
               <td style="padding: 25px 40px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
                 <p style="font-size: 12px; color: #64748b; margin: 0; line-height: 1.6;">
-                  For dispatch inquiries or driver phone contacts, message our Ogidi depot desk directly on WhatsApp at <a href="https://wa.me/2347070070305" style="color: #003296; font-weight: bold;">+234 707 007 0305</a>.
+                  For dispatch inquiries or driver phone contacts, message our Ogidi warehouse desk directly on WhatsApp at <a href="https://wa.me/2347070070305" style="color: #003296; font-weight: bold;">+234 707 007 0305</a>.
                 </p>
               </td>
             </tr>

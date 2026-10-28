@@ -58,7 +58,7 @@ export default function CheckoutPage() {
               Review Your Product Inquiries
             </h1>
             <p className="text-xs text-slate-500 mt-1">
-              We do not collect automated online card payments. Your order is sent directly to our sales desk on WhatsApp to confirm real-time stock availability, verify dimensions, and calculate nationwide waybill delivery.
+              We do not collect automated online card payments. Your order is sent directly to our sales team on WhatsApp to confirm real-time stock availability, verify dimensions, and calculate nationwide delivery.
             </p>
           </div>
 
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
               className="w-full py-3.5 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-transform active:scale-95 disabled:opacity-50 text-xs sm:text-sm cursor-pointer"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Forward Inquiries to WhatsApp Sales Desk</span>
+              <span>Send Order to WhatsApp Sales</span>
             </button>
           </form>
 

@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useApp } from "@/app/context/AppContext";
-import { X, ChevronDown, ShoppingCart, MessageSquare, Instagram, Store, BadgeCheck } from "lucide-react";
+import { X, ChevronDown, ShoppingCart, MessageSquare, Instagram, Store } from "lucide-react";
 
 export default function MobileMenuDrawer() {
-  const { mobileMenuOpen, setMobileMenuOpen, setCacModalOpen, settings, cartCount, setCartOpen } = useApp();
+  const { mobileMenuOpen, setMobileMenuOpen, settings, cartCount, setCartOpen } = useApp();
   const [productsOpen, setProductsOpen] = useState(false);
 
   if (!mobileMenuOpen) return null;
@@ -225,22 +225,6 @@ export default function MobileMenuDrawer() {
               <Store className="w-4 h-4" />
             </a>
           </div>
-        </div>
-
-        {/* CAC Notice */}
-        <div className="pt-1">
-          <button
-            type="button"
-            onClick={() => {
-              setMobileMenuOpen(false);
-              setCacModalOpen(true);
-            }}
-            className="inline-flex items-center space-x-1.5 text-[11px] text-slate-500 hover:text-[#003296]"
-          >
-            <BadgeCheck className="w-3.5 h-3.5 text-[#003296]" />
-            <span>CAC BN: {settings.cacNumber}</span>
-            <span className="underline font-semibold text-[#003296]">View Extract</span>
-          </button>
         </div>
       </div>
 

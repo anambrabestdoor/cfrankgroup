@@ -26,7 +26,7 @@ export default function FAQPage() {
       id: "faq-3",
       question: "How does nationwide waybill delivery work?",
       answer:
-        "Once your order is confirmed with our sales desk on WhatsApp, your doors are thoroughly inspected, protective bubble-wrapped, corner-guarded, and crated. We dispatch via verified heavy-haul haulage services from Onitsha to major transport hubs in Lagos, Abuja, Port Harcourt, Asaba, Enugu, and all Nigerian states.",
+        "Once your order is confirmed with our sales team on WhatsApp, your products are thoroughly inspected, protective bubble-wrapped, corner-guarded, and crated. We dispatch via verified transport park logistics from Onitsha to major hubs in Lagos, Abuja, Port Harcourt, Asaba, Enugu, and all Nigerian states.",
     },
     {
       id: "faq-4",

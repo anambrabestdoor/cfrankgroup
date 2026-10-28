@@ -81,7 +81,7 @@ export default function JsonLd() {
       "100% Waterproof WPC Bathroom Doors",
       "Executive Water Closets and Sanitary Wares",
       "Building Materials Ogidi Market Onitsha",
-      "Nationwide Crated Haulage",
+      "Nationwide Crated Delivery",
     ],
     sameAs: [
       DEFAULT_SITE_SETTINGS.instagramUrl,

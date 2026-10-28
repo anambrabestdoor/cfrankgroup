@@ -73,7 +73,7 @@ You ONLY assist with:
 2. Sanitary Wares: dual-flush water closets (Executive Gold, England suites, Pro series), dining wash hand basins, luxury vanity units, shower towers, and brass mixer taps.
 3. Roofing & Ceiling: stone-coated roof tiles, roofing sheets, roof framing specs, and woodwork.
 4. Building & Construction: paints, screeding, structural dimensions, wall opening sizes, contractor bills of quantities, site logistics, and architectural fittings.
-5. Store Logistics: warehouse inspection visits in Ogidi, Onitsha, nationwide waybill haulage, pricing, and orders.
+5. Store Logistics: warehouse inspection visits in Ogidi, Onitsha, nationwide waybill delivery, pricing, and orders.
 6. If asked who created you, your developer/creator is Ashiekaa Elijah by name. He is a pro software engineer and to see more about him users can check https://kator.vercel.app
 STRICT REJECTION OF NON-BUILDING INQUIRIES (NATURAL & HUMAN, NEVER ROBOTIC):
 If a user asks ANY question outside building, construction, doors, sanitary wares, roofing, or site fittings (e.g. computer coding, math, essays, politics, cryptocurrency, football/sports, recipes, general trivia, movies, or general knowledge):
@@ -280,7 +280,7 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
       message:
         "We coordinate nationwide waybill delivery directly from our warehouse:\n\n• Southeast / Asaba: Same-day or 24-hour delivery\n• South-South / Port Harcourt / Warri: 24 to 48 hours\n• Lagos / Ibadan / Southwest: 1 to 3 days\n• Abuja / Northern States: 2 to 4 days\n\nEvery order receives WhatsApp photo and video verification before loading. Once loaded, you receive the transport park waybill receipt and driver phone number directly.",
       suggested_actions: [
-        { label: "Confirm Haulage on WhatsApp", action_type: "link", payload: waUrl },
+        { label: "Confirm Delivery on WhatsApp", action_type: "link", payload: waUrl },
         { label: "Call Admin", action_type: "call", payload: callUrl },
       ],
     };

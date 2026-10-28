@@ -617,21 +617,21 @@ export default function StorefrontPage() {
               </div>
             </div>
 
-            {/* 6. Registered Business Badge Card */}
+            {/* 6. Direct Warehouse Pricing Card */}
             <div className="bg-[#003296] text-white rounded-xl p-6 shadow-sm flex flex-col justify-between space-y-3">
               <div className="space-y-2">
                 <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-white/15 text-blue-100 text-[10px] font-bold uppercase tracking-wider">
-                  <span>Verified Legal Entity</span>
+                  <span>Direct Import Pricing</span>
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                  CFrank Enterprise (BN: {settings.cacNumber})
+                  Direct Warehouse Rates
                 </h3>
                 <p className="text-xs text-blue-100/90 leading-relaxed">
-                  Registered with the Corporate Affairs Commission for specialized building completion and construction activities.
+                  Transparent trade pricing directly from our stock warehouse without middleman or agent markups.
                 </p>
               </div>
               <div className="pt-2 text-xs text-blue-200">
-                <span>Anambra State, Nigeria</span>
+                <span>Wholesale & Single-Unit Orders</span>
               </div>
             </div>
           </div>

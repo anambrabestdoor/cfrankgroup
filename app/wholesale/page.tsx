@@ -75,14 +75,14 @@ export default function WholesalePage() {
           </div>
           <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-xs space-y-2">
             <Truck className="w-7 h-7 mx-auto text-[#003296]" />
-            <h3 className="font-bold text-sm text-slate-900">Dedicated Site Haulage</h3>
+            <h3 className="font-bold text-sm text-slate-900">Direct Site Delivery</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
               Consolidated trailer and truckway loads directly dispatched to your construction site anywhere in Nigeria.
             </p>
           </div>
           <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-xs space-y-2">
             <MessageSquare className="w-7 h-7 mx-auto text-[#003296]" />
-            <h3 className="font-bold text-sm text-slate-900">Direct Sales Desk Contact</h3>
+            <h3 className="font-bold text-sm text-slate-900">Dedicated Project Support</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
               Dedicated corporate account manager for project bills of quantities (BOQ) and custom specification architectural schedules.
             </p>
@@ -95,7 +95,7 @@ export default function WholesalePage() {
               <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
               <h3 className="text-2xl font-bold text-slate-900">Contractor Quote Request Received</h3>
               <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                Our wholesale sales desk at {settings.address} will review your bill of quantities and contact you via phone and email within 4 business hours.
+                Our wholesale project team at {settings.address} will review your bill of quantities and contact you via phone and email within 4 business hours.
               </p>
               <div className="pt-3">
                 <a
