@@ -8,20 +8,22 @@ import { Search, X, ChevronRight } from "lucide-react";
 import { DOOR_PRODUCTS } from "@/app/data/doorsData";
 
 export default function SearchOverlay() {
-  const { searchOpen, setSearchOpen } = useApp();
+  const { searchOpen, setSearchOpen, products } = useApp();
   const [query, setQuery] = useState("");
 
   const filteredProducts = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.toLowerCase();
-    return DOOR_PRODUCTS.filter(
+    const list = products && products.length > 0 ? products : DOOR_PRODUCTS;
+    return list.filter(
       (p) =>
-        p.name.toLowerCase().includes(q) ||
+        p.active !== false &&
+        (p.name.toLowerCase().includes(q) ||
         p.categoryLabel.toLowerCase().includes(q) ||
-        p.shortDescription.toLowerCase().includes(q) ||
-        Object.values(p.specifications).some((val) => val.toLowerCase().includes(q))
+        p.shortDescription?.toLowerCase().includes(q) ||
+        (p.specifications && Object.values(p.specifications).some((val) => val.toLowerCase().includes(q))))
     ).slice(0, 6);
-  }, [query]);
+  }, [query, products]);
 
   if (!searchOpen) return null;
 

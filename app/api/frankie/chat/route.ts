@@ -263,12 +263,12 @@ function runDeterministicFrankie(message: string): { message: string; suggested_
   }
 
   // 9. Location & Warehouse Visit
-  if (q.includes("location") || q.includes("where") || q.includes("warehouse") || q.includes("depot") || q.includes("address") || q.includes("ogidi") || q.includes("onitsha") || q.includes("visit") || q.includes("shop")) {
+  if (q.includes("location") || q.includes("where") || q.includes("warehouse") || q.includes("address") || q.includes("ogidi") || q.includes("onitsha") || q.includes("visit") || q.includes("shop")) {
     return {
       message:
         `You can inspect doors in person at our showroom & warehouse:\n\n• Primary Location: ${DEFAULT_SITE_SETTINGS.address}${DEFAULT_SITE_SETTINGS.secondAddress ? `\n• Branch Location: ${DEFAULT_SITE_SETTINGS.secondAddress}` : ""}\n• Hours: ${DEFAULT_SITE_SETTINGS.workingHours}\n\nContractors, site engineers, and homeowners are always welcome to inspect lock mechanisms, woodgrain finishes, and steel gauges before dispatch.`,
       suggested_actions: [
-        { label: "Call Sales Desk", action_type: "call", payload: callUrl },
+        { label: "Call Sales", action_type: "call", payload: callUrl },
         { label: "WhatsApp Location Pin", action_type: "link", payload: waUrl },
       ],
     };

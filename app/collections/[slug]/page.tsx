@@ -155,6 +155,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+import { db } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
+
 export default async function CollectionPage({ params }: PageProps) {
   const { slug } = await params;
   const collection = COLLECTIONS[slug] || {
@@ -164,8 +168,10 @@ export default async function CollectionPage({ params }: PageProps) {
     categoryKey: undefined,
   };
 
-  const filtered = DOOR_PRODUCTS.filter((p) => {
-    if (!p || !p.active) return false;
+  const allProducts = await db.getProducts();
+
+  const filtered = allProducts.filter((p) => {
+    if (!p || p.active === false) return false;
     if (collection.categoryKey) {
       return p.category === collection.categoryKey;
     }

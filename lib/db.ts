@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
-import { DOOR_PRODUCTS } from "@/app/data/doorsData";
+import { DOOR_PRODUCTS, DoorProduct } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
 
 export interface User {
@@ -26,34 +26,15 @@ export interface CartItemData {
   category: string;
 }
 
-export interface Product {
-  id: string;
-  name: string;
+export type Product = DoorProduct & {
+  rating?: number;
+  reviewsCount?: number;
   subtitle?: string;
-  description: string;
-  price: number;
-  originalPrice: number;
-  priceOnRequest?: boolean;
-  group?: "doors" | "sanitary";
-  rating: number;
-  reviewsCount: number;
-  image: string;
-  category: string;
-  subcategory: string;
-  badge?: string | null;
-  active: boolean;
-  stock: number;
   ingredients?: string[];
   skinConcerns?: string[];
   handle?: string;
-  featured?: boolean;
-  kendallFav?: boolean;
-  slug?: string;
-  categoryLabel?: string;
-  stockStatus?: string;
-  shortDescription?: string;
   sizes?: string[];
-}
+};
 
 export interface OrderItem {
   productId: string;
@@ -160,7 +141,8 @@ const DB_FILE_PATH = path.join(process.cwd(), "db.json");
 
 interface DiskData {
   users: User[];
-  products: Product[];
+  products: DoorProduct[];
+  deletedProductIds?: string[];
   orders: Order[];
   settings?: Settings;
   reviews?: Review[];
@@ -177,6 +159,7 @@ function readDiskDb(): DiskData {
       return {
         users: Array.isArray(parsed.users) ? parsed.users : [],
         products: Array.isArray(parsed.products) ? parsed.products : [],
+        deletedProductIds: Array.isArray(parsed.deletedProductIds) ? parsed.deletedProductIds : [],
         orders: Array.isArray(parsed.orders) ? parsed.orders : [],
         settings: parsed.settings,
         reviews: Array.isArray(parsed.reviews) ? parsed.reviews : [],
@@ -197,6 +180,7 @@ function writeDiskDb(data: Partial<DiskData>) {
     const updated = {
       users: data.users !== undefined ? data.users : current.users,
       products: data.products !== undefined ? data.products : current.products,
+      deletedProductIds: data.deletedProductIds !== undefined ? data.deletedProductIds : current.deletedProductIds,
       orders: data.orders !== undefined ? data.orders : current.orders,
       settings: data.settings !== undefined ? data.settings : current.settings,
       reviews: data.reviews !== undefined ? data.reviews : current.reviews,
@@ -239,58 +223,34 @@ if (initialDisk.users && initialDisk.users.length > 0) {
   });
 }
 
-// Convert catalogue products from doorsData to Product interface
-const CATALOGUE_PRODUCTS: Product[] = DOOR_PRODUCTS.map((d) => ({
-  id: d.id,
-  name: d.name,
-  subtitle: d.shortDescription,
-  description: d.description,
-  price: d.price || 0,
-  originalPrice: d.originalPrice || d.price || 0,
-  rating: 5.0,
-  reviewsCount: 18,
-  image: d.image,
-  category: d.category,
-  subcategory: d.categoryLabel,
-  badge: d.badge || null,
-  active: d.active !== false,
-  stock: d.stock || 20,
-  slug: d.slug,
-  categoryLabel: d.categoryLabel,
-  stockStatus: d.stockStatus,
-  shortDescription: d.shortDescription,
-  sizes: ["3ft x 7ft (900mm x 2100mm)", "4ft x 7ft (1200mm x 2100mm)"],
-}));
-
-const MEMORY_PRODUCTS = new Map<string, Product>();
-CATALOGUE_PRODUCTS.forEach((p) => MEMORY_PRODUCTS.set(p.id, p));
-
-if (initialDisk.products && initialDisk.products.length > 0) {
-  initialDisk.products.forEach((p) => MEMORY_PRODUCTS.set(p.id, p));
-}
-
 const MEMORY_NEWSLETTERS = new Map<string, Newsletter>();
 const MEMORY_VERIFICATION_CODES = new Map<string, { code: string; expiresAt: number }>();
 const MEMORY_WHOLESALE: WholesaleApplication[] = initialDisk.wholesale || [];
 
 export const db = {
   // --- PRODUCTS MANAGEMENT ---
-  async getProducts(): Promise<Product[]> {
-    const productMap = new Map<string, Product>();
+  async getProducts(): Promise<DoorProduct[]> {
+    const productMap = new Map<string, DoorProduct>();
 
     // 1. Seed with bundled catalogue products
-    CATALOGUE_PRODUCTS.forEach((p) => productMap.set(p.id, p));
+    DOOR_PRODUCTS.forEach((p) => productMap.set(p.id, p));
 
     // 2. Overlay disk DB custom additions or modifications
     try {
       const disk = readDiskDb();
+      const deleted = new Set(disk.deletedProductIds || []);
+
       if (disk.products && disk.products.length > 0) {
         disk.products.forEach((p) => {
-          if (p && p.id) {
-            productMap.set(p.id, { ...productMap.get(p.id), ...p });
+          if (p && p.id && !deleted.has(p.id)) {
+            const existing = productMap.get(p.id);
+            productMap.set(p.id, { ...(existing || {}), ...p });
           }
         });
       }
+
+      // 3. Filter out any explicitly deleted product IDs
+      deleted.forEach((id) => productMap.delete(id));
     } catch (e) {
       console.warn("[DB] Error reading disk DB in getProducts:", e);
     }
@@ -298,63 +258,66 @@ export const db = {
     return Array.from(productMap.values());
   },
 
-  async getProductById(id: string): Promise<Product | null> {
+  async getProductById(id: string): Promise<DoorProduct | null> {
     const all = await this.getProducts();
-    return all.find((p) => p.id === id || p.slug === id) || null;
+    const query = id.toLowerCase().trim();
+    return (
+      all.find(
+        (p) =>
+          p.id.toLowerCase() === query ||
+          (p.slug && p.slug.toLowerCase() === query)
+      ) || null
+    );
   },
 
-  async createProduct(product: Omit<Product, "id">): Promise<Product> {
-    const docId = `prod-${Date.now()}`;
-    const newProd: Product = { ...product, id: docId };
-    MEMORY_PRODUCTS.set(docId, newProd);
-
-    try {
-      const disk = readDiskDb();
-      if (!disk.products) disk.products = [];
-      disk.products.unshift(newProd);
-      writeDiskDb(disk);
-    } catch (e) {
-      console.warn("[DB] Error saving product to disk:", e);
-    }
-
-    return newProd;
-  },
-
-  async updateProduct(id: string, updatedFields: Partial<Omit<Product, "id">>): Promise<Product | null> {
+  async saveProduct(product: DoorProduct): Promise<DoorProduct> {
     const disk = readDiskDb();
-    const existing = MEMORY_PRODUCTS.get(id);
+    if (!disk.products) disk.products = [];
+    if (!disk.deletedProductIds) disk.deletedProductIds = [];
 
-    let updated: Product | null = null;
-    if (existing) {
-      updated = { ...existing, ...updatedFields };
-      MEMORY_PRODUCTS.set(id, updated);
+    // Remove from deleted list if re-added
+    disk.deletedProductIds = disk.deletedProductIds.filter(
+      (id) => id !== product.id && id !== product.slug
+    );
+
+    const idx = disk.products.findIndex((p) => p.id === product.id);
+    if (idx >= 0) {
+      disk.products[idx] = { ...disk.products[idx], ...product };
+    } else {
+      disk.products.unshift(product);
     }
 
-    try {
-      if (!disk.products) disk.products = [];
-      const idx = disk.products.findIndex((p) => p.id === id);
-      if (idx >= 0) {
-        disk.products[idx] = { ...disk.products[idx], ...updatedFields };
-        if (!updated) updated = disk.products[idx];
-      } else if (updated) {
-        disk.products.push(updated);
-      }
-      writeDiskDb(disk);
-    } catch (e) {
-      console.warn("[DB] Error updating product on disk:", e);
-    }
+    writeDiskDb(disk);
+    return product;
+  },
 
-    return updated;
+  async createProduct(product: Omit<DoorProduct, "id"> | DoorProduct): Promise<DoorProduct> {
+    const docId = ("id" in product && product.id) ? product.id : `prod-${Date.now()}`;
+    const newProd: DoorProduct = { ...product, id: docId } as DoorProduct;
+    return await this.saveProduct(newProd);
+  },
+
+  async updateProduct(id: string, updatedFields: Partial<DoorProduct>): Promise<DoorProduct | null> {
+    const all = await this.getProducts();
+    const existing = all.find((p) => p.id === id || p.slug === id);
+    if (!existing) return null;
+
+    const merged: DoorProduct = { ...existing, ...updatedFields, id: existing.id };
+    await this.saveProduct(merged);
+    return merged;
   },
 
   async deleteProduct(id: string): Promise<boolean> {
-    MEMORY_PRODUCTS.delete(id);
     try {
       const disk = readDiskDb();
+      if (!disk.deletedProductIds) disk.deletedProductIds = [];
+      if (!disk.deletedProductIds.includes(id)) {
+        disk.deletedProductIds.push(id);
+      }
       if (disk.products) {
         disk.products = disk.products.filter((p) => p.id !== id);
-        writeDiskDb(disk);
       }
+      writeDiskDb(disk);
       return true;
     } catch {
       return false;

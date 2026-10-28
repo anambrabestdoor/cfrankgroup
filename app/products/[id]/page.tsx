@@ -4,9 +4,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DOOR_PRODUCTS, DoorProduct } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
+import { db } from "@/lib/db";
 import { isSupabaseConfigured, getSupabase } from "@/lib/supabase";
 import { generateGeoKeywords, generateGeoDescription } from "@/lib/geoKeywords";
 import ProductDetailClient from "./ProductDetailClient";
+
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -15,6 +18,9 @@ interface PageProps {
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://anambrabestdoor.com";
 
 async function fetchProduct(id: string): Promise<DoorProduct | undefined> {
+  const fromDb = await db.getProductById(id);
+  if (fromDb) return fromDb;
+
   const local = DOOR_PRODUCTS.find((p) => p.slug === id || p.id === id);
   if (local) return local;
 
@@ -129,7 +135,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const relatedProducts = DOOR_PRODUCTS.filter(
+  const allProducts = await db.getProducts();
+  const relatedProducts = allProducts.filter(
     (p) => p.id !== product.id && (p.category === product.category || p.featured)
   ).slice(0, 4);
 

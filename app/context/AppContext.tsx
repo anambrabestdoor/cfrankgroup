@@ -71,7 +71,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         const savedProducts = localStorage.getItem("abd_products");
         if (savedProducts) {
           const parsed = JSON.parse(savedProducts);
-          if (Array.isArray(parsed)) {
+          if (Array.isArray(parsed) && parsed.length > 0) {
             setProducts(parsed.filter((p): p is DoorProduct => Boolean(p && typeof p === "object" && p.id)));
           }
         }
@@ -79,6 +79,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // LocalStorage error or private browsing fallback
     }
+
+    // Always fetch latest authoritative products from server DB
+    fetch("/api/products", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((serverProducts) => {
+        if (Array.isArray(serverProducts) && serverProducts.length > 0) {
+          setProducts(serverProducts);
+          try {
+            localStorage.setItem("abd_products", JSON.stringify(serverProducts));
+          } catch {}
+        }
+      })
+      .catch((err) => {
+        console.warn("Products sync fallback to local cache:", err);
+      });
   }, []);
 
   // Sync cart to localStorage

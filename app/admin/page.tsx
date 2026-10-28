@@ -177,6 +177,13 @@ export default function AdminPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Sync productsList with latest products from context
+  useEffect(() => {
+    if (products && products.length > 0) {
+      setProductsList(products);
+    }
+  }, [products]);
+
   // Team & Role Management State
   const [currentUser, setCurrentUser] = useState<{ email: string; role: "admin" | "editor" } | null>(null);
   const [teamMembers, setTeamMembers] = useState<Array<{
@@ -675,11 +682,23 @@ export default function AdminPage() {
       setProductsList(updated);
       setProducts(updated);
       showToast("Product updated successfully!");
+
+      fetch("/api/products", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newProd),
+      }).catch((err) => console.error("Failed to update product on server:", err));
     } else {
       const updated = [newProd, ...productsList];
       setProductsList(updated);
       setProducts(updated);
       showToast("New product created and published!");
+
+      fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newProd),
+      }).catch((err) => console.error("Failed to persist new product to server:", err));
     }
 
     setIsEditing(false);
@@ -691,6 +710,10 @@ export default function AdminPage() {
       setProductsList(updated);
       setProducts(updated);
       showToast("Product deleted.");
+
+      fetch(`/api/products?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      }).catch((err) => console.error("Failed to delete product on server:", err));
     }
   };
 
@@ -705,17 +728,27 @@ export default function AdminPage() {
   };
 
   const handleToggleSoldOut = (id: string) => {
+    let changedProd: DoorProduct | null = null;
     const updated: DoorProduct[] = productsList.map((p) => {
       if (p.id === id) {
         const nextStatus: DoorProduct["stockStatus"] =
           p.stockStatus === "in_stock" ? "out_of_stock" : "in_stock";
-        return { ...p, stockStatus: nextStatus };
+        changedProd = { ...p, stockStatus: nextStatus };
+        return changedProd;
       }
       return p;
     });
     setProductsList(updated);
     setProducts(updated);
     showToast("Stock status updated.");
+
+    if (changedProd) {
+      fetch("/api/products", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(changedProd),
+      }).catch((err) => console.error("Failed to update stock status on server:", err));
+    }
   };
 
   // Upload helpers

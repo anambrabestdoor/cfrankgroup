@@ -1,8 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { verifyAdminToken, ADMIN_COOKIE_NAME } from "@/lib/adminAuth";
+
+export const dynamic = "force-dynamic";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
+}
+
+async function verifyAdminAuth(req: NextRequest) {
+  const token =
+    req.cookies.get(ADMIN_COOKIE_NAME)?.value ||
+    req.cookies.get("token")?.value ||
+    req.headers.get("authorization")?.replace("Bearer ", "");
+
+  if (!token) return null;
+
+  const adminSession = await verifyAdminToken(token);
+  if (adminSession) return adminSession;
+
+  try {
+    const dbPayload = db.verifyToken(token);
+    if (dbPayload && (dbPayload.role === "admin" || dbPayload.role === "editor")) {
+      return dbPayload;
+    }
+  } catch {}
+
+  return null;
 }
 
 export async function GET(req: NextRequest, { params }: RouteParams) {
@@ -12,7 +36,12 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     if (!product) {
       return NextResponse.json({ error: "Product not found." }, { status: 404 });
     }
-    return NextResponse.json(product);
+    return NextResponse.json(product, {
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+      },
+    });
   } catch (error) {
     console.error("Product GET ID error:", error);
     return NextResponse.json({ error: "Failed to fetch product." }, { status: 500 });
@@ -22,14 +51,9 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 export async function PUT(req: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const token = req.cookies.get("token")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    const payload = db.verifyToken(token);
-    if (!payload || payload.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden. Admin access required." }, { status: 403 });
+    const auth = await verifyAdminAuth(req);
+    if (!auth) {
+      return NextResponse.json({ error: "Unauthorized. Admin access required." }, { status: 401 });
     }
 
     const body = await req.json();
@@ -48,14 +72,9 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const token = req.cookies.get("token")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    const payload = db.verifyToken(token);
-    if (!payload || payload.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden. Admin access required." }, { status: 403 });
+    const auth = await verifyAdminAuth(req);
+    if (!auth) {
+      return NextResponse.json({ error: "Unauthorized. Admin access required." }, { status: 401 });
     }
 
     const deleted = await db.deleteProduct(id);
@@ -69,4 +88,3 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: "Failed to delete product." }, { status: 500 });
   }
 }
-
