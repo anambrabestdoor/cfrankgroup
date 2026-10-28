@@ -175,6 +175,7 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedStockFilter, setSelectedStockFilter] = useState<"all" | "in_stock" | "out_of_stock">("all");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Sync productsList with latest products from context
@@ -903,6 +904,15 @@ export default function AdminPage() {
     showToast("Settings updated successfully!");
   };
 
+  // Products Overview Metrics (Mathematically rhyming guarantee: inStock + outOfStock === total)
+  const totalProductsCount = productsList.length;
+  const outOfStockCount = useMemo(() => {
+    return productsList.filter((p) => p.stockStatus === "out_of_stock").length;
+  }, [productsList]);
+  const inStockCount = useMemo(() => {
+    return Math.max(0, totalProductsCount - outOfStockCount);
+  }, [totalProductsCount, outOfStockCount]);
+
   const filteredProducts = useMemo(() => {
     return productsList.filter((p) => {
       const matchSearch =
@@ -911,9 +921,13 @@ export default function AdminPage() {
         (p.subcategory && p.subcategory.toLowerCase().includes(searchQuery.toLowerCase()));
       const matchCategory =
         selectedCategory === "all" || p.category === selectedCategory;
-      return matchSearch && matchCategory;
+      const matchStock =
+        selectedStockFilter === "all" ||
+        (selectedStockFilter === "in_stock" && p.stockStatus !== "out_of_stock") ||
+        (selectedStockFilter === "out_of_stock" && p.stockStatus === "out_of_stock");
+      return matchSearch && matchCategory && matchStock;
     });
-  }, [productsList, searchQuery, selectedCategory]);
+  }, [productsList, searchQuery, selectedCategory, selectedStockFilter]);
 
   const discountPercent = useMemo(() => {
     if (formPriceMode !== "show_price") return 0;
@@ -1558,47 +1572,74 @@ export default function AdminPage() {
                 </p>
               </div>
 
-              {/* Stats Cards */}
+              {/* Stats Cards (Mathematically Rhyming Overview) */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedStockFilter("all");
+                    setActiveTab("products");
+                  }}
+                  className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1 text-left hover:border-[#003296] transition-colors cursor-pointer group"
+                >
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block group-hover:text-[#003296]">
                     Total Products
                   </span>
                   <span className="text-3xl font-black text-[#003296] block">
-                    {productsList.length}
+                    {totalProductsCount}
                   </span>
-                  <span className="text-[11px] text-slate-400">Across all building categories</span>
-                </div>
+                  <span className="text-[11px] text-slate-400">Total catalog items</span>
+                </button>
 
-                <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedStockFilter("in_stock");
+                    setActiveTab("products");
+                  }}
+                  className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1 text-left hover:border-emerald-500 transition-colors cursor-pointer group"
+                >
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block group-hover:text-emerald-600">
                     In Stock
                   </span>
                   <span className="text-3xl font-black text-emerald-600 block">
-                    {productsList.filter((p) => p.stockStatus === "in_stock").length}
+                    {inStockCount}
                   </span>
-                  <span className="text-[11px] text-slate-400">Ready for warehouse loading</span>
-                </div>
+                  <span className="text-[11px] text-slate-400">Ready in warehouse / available</span>
+                </button>
 
-                <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Out of Stock / Sold
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedStockFilter("out_of_stock");
+                    setActiveTab("products");
+                  }}
+                  className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1 text-left hover:border-amber-500 transition-colors cursor-pointer group"
+                >
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block group-hover:text-amber-600">
+                    Out of Stock
                   </span>
                   <span className="text-3xl font-black text-amber-600 block">
-                    {productsList.filter((p) => p.stockStatus === "out_of_stock").length}
+                    {outOfStockCount}
                   </span>
-                  <span className="text-[11px] text-slate-400">Requires re-stocking</span>
-                </div>
+                  <span className="text-[11px] text-slate-400">
+                    {outOfStockCount === 0 ? "All items currently in stock" : "Requires restocking"}
+                  </span>
+                </button>
 
-                <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("team")}
+                  className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1 text-left hover:border-slate-400 transition-colors cursor-pointer group"
+                >
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block group-hover:text-slate-900">
                     Staff & Editors
                   </span>
                   <span className="text-3xl font-black text-slate-900 block">
                     {teamMembers.length || 1}
                   </span>
                   <span className="text-[11px] text-slate-400">Authorized portal users</span>
-                </div>
+                </button>
               </div>
 
               {/* Quick Actions Bar */}
@@ -2312,6 +2353,44 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* Quick Status Filter Tabs (Mathematically Rhyming Overview) */}
+              <div className="flex flex-wrap items-center gap-2 pt-1 border-b border-slate-100 pb-3">
+                <span className="text-xs font-bold text-slate-500 mr-1">Filter Stock:</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedStockFilter("all")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                    selectedStockFilter === "all"
+                      ? "bg-[#003296] text-white shadow-xs"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
+                  All ({totalProductsCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedStockFilter("in_stock")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                    selectedStockFilter === "in_stock"
+                      ? "bg-emerald-600 text-white shadow-xs"
+                      : "bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
+                  }`}
+                >
+                  In Stock ({inStockCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedStockFilter("out_of_stock")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                    selectedStockFilter === "out_of_stock"
+                      ? "bg-amber-600 text-white shadow-xs"
+                      : "bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
+                  }`}
+                >
+                  Out of Stock ({outOfStockCount})
+                </button>
+              </div>
+
               {/* Filters Bar */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1">
@@ -2373,12 +2452,12 @@ export default function AdminPage() {
                         <td className="p-3">
                           <span
                             className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                              p.stockStatus === "in_stock"
+                              p.stockStatus !== "out_of_stock"
                                 ? "bg-emerald-100 text-emerald-800"
                                 : "bg-amber-100 text-amber-800"
                             }`}
                           >
-                            {p.stockStatus === "in_stock" ? "In Stock" : "Out of Stock"}
+                            {p.stockStatus !== "out_of_stock" ? "In Stock" : "Out of Stock"}
                           </span>
                         </td>
                         <td className="p-3 text-right space-x-1">
@@ -2432,12 +2511,12 @@ export default function AdminPage() {
                         <td className="p-3">
                           <span
                             className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                              p.stockStatus === "in_stock"
+                              p.stockStatus !== "out_of_stock"
                                 ? "bg-emerald-100 text-emerald-800"
                                 : "bg-amber-100 text-amber-800"
                             }`}
                           >
-                            {p.stockStatus === "in_stock" ? "Available" : "Sold Out"}
+                            {p.stockStatus !== "out_of_stock" ? "In Stock" : "Out of Stock"}
                           </span>
                         </td>
                         <td className="p-3 text-right">
@@ -2446,7 +2525,7 @@ export default function AdminPage() {
                             onClick={() => handleToggleSoldOut(p.id)}
                             className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-lg cursor-pointer"
                           >
-                            Mark {p.stockStatus === "in_stock" ? "Sold Out" : "In Stock"}
+                            Mark {p.stockStatus !== "out_of_stock" ? "Out of Stock" : "In Stock"}
                           </button>
                         </td>
                       </tr>

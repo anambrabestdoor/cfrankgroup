@@ -185,7 +185,7 @@ export const DOOR_PRODUCTS: DoorProduct[] = [
     image: "/products/hdf-construction-on-demand.jpeg",
     gallery: ["/products/hdf-construction-on-demand.jpeg"],
     badge: "Contractor Bulk",
-    stockStatus: "made_to_order",
+    stockStatus: "in_stock",
     stock: 50,
     shortDescription: "Custom-sized HDF flush and panel door construction for bulk building projects and commercial developments.",
     description: "Tailored on-demand fabrication for real estate developers, contractors, and builders. Available in custom heights, widths, and veneer textures with rapid fulfillment.",
@@ -934,7 +934,7 @@ export const DOOR_PRODUCTS: DoorProduct[] = [
     focusKeyphrase: "V Star Medium Pro",
     featured: false,
     active: true,
-  },,
+  },
   {
     id: "prod-027",
     slug: "harmony-toilet-set",

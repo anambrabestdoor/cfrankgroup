@@ -41,11 +41,39 @@ const isVideoUrl = (url: string) => {
   );
 };
 
+export const isDoorProduct = (p: { group?: string; category?: string; name?: string }) => {
+  if (p.group === "doors") return true;
+  if (p.group && p.group !== "doors") return false;
+
+  const doorCategories = [
+    "security-doors",
+    "interior-doors",
+    "bathroom-doors",
+    "hdf-doors",
+    "luxury-doors",
+  ];
+  if (doorCategories.includes(p.category || "")) return true;
+
+  const nonDoorCategories = [
+    "sanitary",
+    "sanitary-fittings",
+    "paint",
+    "roof-tiles",
+    "bathrooms",
+    "real-estate",
+    "careers",
+  ];
+  if (nonDoorCategories.includes(p.category || "")) return false;
+
+  return Boolean(p.category && p.category.toLowerCase().includes("door"));
+};
+
 export default function ProductDetailClient({
   product,
   relatedProducts,
 }: ProductDetailClientProps) {
   const { addToCart, settings } = useApp();
+  const isDoor = isDoorProduct(product);
 
   // Combine product image, gallery array, and video(s)
   const rawMediaList: MediaItem[] = [];
@@ -92,8 +120,8 @@ export default function ProductDetailClient({
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const activeMedia: MediaItem | undefined = mediaList[currentMediaIndex] || mediaList[0];
 
-  const [selectedSize, setSelectedSize] = useState<string>("Standard 3ft x 7ft");
-  const [selectedOrientation, setSelectedOrientation] = useState<string>("Right Inward");
+  const [selectedSize, setSelectedSize] = useState<string>(isDoor ? "Standard 3ft x 7ft" : "");
+  const [selectedOrientation, setSelectedOrientation] = useState<string>(isDoor ? "Right Inward" : "");
   const [quantity, setQuantity] = useState(1);
   const [addedNotice, setAddedNotice] = useState(false);
 
@@ -110,8 +138,8 @@ export default function ProductDetailClient({
       productName: product.name,
       price: product.price && product.price > 0 ? product.price : undefined,
       quantity,
-      size: selectedSize,
-      orientation: selectedOrientation,
+      size: isDoor ? selectedSize : undefined,
+      orientation: isDoor ? selectedOrientation : undefined,
       targetPhone: settings.whatsappNumber,
       inquiryTemplate: settings.whatsappInquiryTemplate,
     });
@@ -121,31 +149,47 @@ export default function ProductDetailClient({
   const handleAddToCart = () => {
     addToCart(product, {
       quantity,
-      size: selectedSize,
-      orientation: selectedOrientation,
+      size: isDoor ? selectedSize : undefined,
+      orientation: isDoor ? selectedOrientation : undefined,
     });
     setAddedNotice(true);
     setTimeout(() => setAddedNotice(false), 2500);
   };
 
-  // Dynamic specification fallbacks
+  // Dynamic specification fallbacks adaptive to category
   const specMaterial =
     product.specifications?.Material ||
-    (product.category === "security-doors"
-      ? "Armoured Steel"
-      : product.category === "bathroom-doors"
-      ? "Waterproof WPC"
-      : "HDF Wooden Board");
+    product.specifications?.Ceramic ||
+    product.specifications?.Glass ||
+    product.specifications?.Finish ||
+    (isDoor
+      ? product.category === "security-doors"
+        ? "Armoured Steel"
+        : product.category === "bathroom-doors"
+        ? "Waterproof WPC"
+        : "HDF Wooden Board"
+      : "Vitreous Ceramic / Brass");
 
-  const specHardware =
-    product.specifications?.["Locking Mechanism"] ||
-    product.specifications?.Hardware ||
-    "Mortise Lockset Included";
+  const specHardwareOrType = isDoor
+    ? product.specifications?.["Locking Mechanism"] ||
+      product.specifications?.Hardware ||
+      "Mortise Lockset Included"
+    : product.specifications?.["Flush Type"] ||
+      product.specifications?.["Valve"] ||
+      product.specifications?.["Bowl Technology"] ||
+      product.specifications?.Configuration ||
+      product.subcategory ||
+      "Standard Fit";
 
-  const specAcoustic =
-    product.specifications?.Infill ||
-    product.specifications?.Core ||
-    "Sound Dampening Core";
+  const specAcousticOrFeature = isDoor
+    ? product.specifications?.Infill ||
+      product.specifications?.Core ||
+      "Sound Dampening Core"
+    : product.specifications?.Installation ||
+      product.specifications?.Drainage ||
+      product.specifications?.Seat ||
+      product.badge ||
+      "Quality Assured";
 
   return (
     <div className="bg-[#F8FAFC] py-6 sm:py-10">
@@ -308,21 +352,33 @@ export default function ProductDetailClient({
               </div>
 
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center space-x-2">
-                <Lock className="w-4 h-4 text-[#003296] shrink-0" />
+                {isDoor ? (
+                  <Lock className="w-4 h-4 text-[#003296] shrink-0" />
+                ) : (
+                  <Package className="w-4 h-4 text-[#003296] shrink-0" />
+                )}
                 <div className="min-w-0">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Hardware</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    {isDoor ? "Hardware" : "Configuration"}
+                  </span>
                   <span className="text-xs font-bold text-slate-800 truncate block">
-                    {specHardware}
+                    {specHardwareOrType}
                   </span>
                 </div>
               </div>
 
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center space-x-2">
-                <VolumeX className="w-4 h-4 text-[#003296] shrink-0" />
+                {isDoor ? (
+                  <VolumeX className="w-4 h-4 text-[#003296] shrink-0" />
+                ) : (
+                  <Check className="w-4 h-4 text-[#003296] shrink-0" />
+                )}
                 <div className="min-w-0">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Acoustic</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    {isDoor ? "Acoustic" : "Feature"}
+                  </span>
                   <span className="text-xs font-bold text-slate-800 truncate block">
-                    {specAcoustic}
+                    {specAcousticOrFeature}
                   </span>
                 </div>
               </div>
@@ -400,59 +456,63 @@ export default function ProductDetailClient({
               </div>
             </div>
 
-            {/* Standardized Dimension Pill Buttons */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-900 block">
-                Select Door Dimension / Opening Size:
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {["Standard 3ft x 7ft", "4ft x 7ft (1.5 Leaf)", "4.5ft x 7ft (Double)", "Custom Opening"].map(
-                  (s) => {
-                    const isSelected = selectedSize === s;
+            {/* Standardized Dimension Pill Buttons - DOORS ONLY */}
+            {isDoor && (
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-900 block">
+                  Select Door Dimension / Opening Size:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {["Standard 3ft x 7ft", "4ft x 7ft (1.5 Leaf)", "4.5ft x 7ft (Double)", "Custom Opening"].map(
+                    (s) => {
+                      const isSelected = selectedSize === s;
+                      return (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => setSelectedSize(s)}
+                          className={`h-11 px-3 text-xs font-bold rounded-xl border flex items-center justify-center text-center transition-colors cursor-pointer ${
+                            isSelected
+                              ? "border-[#003296] bg-[#003296] text-white shadow-xs"
+                              : "border-slate-200 text-slate-700 bg-white hover:border-slate-300 hover:bg-slate-50"
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      );
+                    }
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Standardized Opening Orientation Pill Buttons - DOORS ONLY */}
+            {isDoor && (
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-900 block">
+                  Opening Orientation:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {["Right Inward", "Left Inward", "Right Outward", "Left Outward"].map((o) => {
+                    const isSelected = selectedOrientation === o;
                     return (
                       <button
-                        key={s}
+                        key={o}
                         type="button"
-                        onClick={() => setSelectedSize(s)}
+                        onClick={() => setSelectedOrientation(o)}
                         className={`h-11 px-3 text-xs font-bold rounded-xl border flex items-center justify-center text-center transition-colors cursor-pointer ${
                           isSelected
                             ? "border-[#003296] bg-[#003296] text-white shadow-xs"
                             : "border-slate-200 text-slate-700 bg-white hover:border-slate-300 hover:bg-slate-50"
                         }`}
                       >
-                        {s}
+                        {o}
                       </button>
                     );
-                  }
-                )}
+                  })}
+                </div>
               </div>
-            </div>
-
-            {/* Standardized Opening Orientation Pill Buttons */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-900 block">
-                Opening Orientation:
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {["Right Inward", "Left Inward", "Right Outward", "Left Outward"].map((o) => {
-                  const isSelected = selectedOrientation === o;
-                  return (
-                    <button
-                      key={o}
-                      type="button"
-                      onClick={() => setSelectedOrientation(o)}
-                      className={`h-11 px-3 text-xs font-bold rounded-xl border flex items-center justify-center text-center transition-colors cursor-pointer ${
-                        isSelected
-                          ? "border-[#003296] bg-[#003296] text-white shadow-xs"
-                          : "border-slate-200 text-slate-700 bg-white hover:border-slate-300 hover:bg-slate-50"
-                      }`}
-                    >
-                      {o}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            )}
 
             {/* Primary Action Buttons (Directly below option selectors) */}
             <div className="space-y-2.5 pt-1">
@@ -531,7 +591,7 @@ export default function ProductDetailClient({
           <div className="space-y-4 pt-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-slate-900">
-                Related Doors & Architectural Fittings
+                {isDoor ? "Related Doors & Architectural Fittings" : "Related Products & Architectural Fittings"}
               </h2>
               <Link href="/shop" className="text-xs font-bold text-[#003296] hover:underline">
                 View All

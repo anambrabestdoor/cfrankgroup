@@ -130,18 +130,29 @@ export function buildWhatsAppOrderUrl(params: {
   } else if (params.productName) {
     const rawTemplate = params.inquiryTemplate || DEFAULT_SITE_SETTINGS.whatsappInquiryTemplate;
     const name = params.productName || "Product";
-    const size = params.size || "Standard Spec";
     const qty = String(params.quantity || 1);
 
-    text = rawTemplate
+    let text = rawTemplate
       .replace(/\[Door Name\]/gi, name)
       .replace(/\[Product Name\]/gi, name)
-      .replace(/\[Size\]/gi, size)
       .replace(/\[Quantity\]/gi, qty)
       .replace(/\[Qty\]/gi, qty)
       .replace(/\[Market Location\]/gi, DEFAULT_SITE_SETTINGS.marketLocation);
 
-    if (params.orientation) {
+    if (params.size && params.size.trim().length > 0) {
+      text = text.replace(/\[Size\]/gi, params.size);
+    } else {
+      // Cleanly remove size segment when inquiring about non-door products
+      text = text
+        .replace(/\(Size:\s*\[Size\],\s*/gi, "(")
+        .replace(/\(Size:\s*\[Size\]\)/gi, "")
+        .replace(/Size:\s*\[Size\],?\s*/gi, "")
+        .replace(/\[Size\]/gi, "")
+        .replace(/\(\s*\)/g, "")
+        .replace(/\s\s+/g, " ");
+    }
+
+    if (params.orientation && params.orientation.trim().length > 0) {
       text += `\nOpening Orientation: ${params.orientation}`;
     }
     if (params.additionalNotes) {

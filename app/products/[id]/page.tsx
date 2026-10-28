@@ -136,9 +136,24 @@ export default async function ProductDetailPage({ params }: PageProps) {
   }
 
   const allProducts = await db.getProducts();
-  const relatedProducts = allProducts.filter(
-    (p) => p.id !== product.id && (p.category === product.category || p.featured)
-  ).slice(0, 4);
+  const isDoor =
+    product.group === "doors" ||
+    ["security-doors", "interior-doors", "bathroom-doors", "hdf-doors", "luxury-doors"].includes(
+      product.category
+    );
+
+  const relatedProducts = allProducts
+    .filter((p) => {
+      if (p.id === product.id) return false;
+      if (p.category === product.category) return true;
+      const pIsDoor =
+        p.group === "doors" ||
+        ["security-doors", "interior-doors", "bathroom-doors", "hdf-doors", "luxury-doors"].includes(
+          p.category
+        );
+      return isDoor ? pIsDoor : !pIsDoor;
+    })
+    .slice(0, 4);
 
   const priceValidUntil =
     product.priceValidUntil ||
