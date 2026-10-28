@@ -137,7 +137,25 @@ export interface WholesaleApplication {
 
 const JWT_SECRET = process.env.JWT_SECRET || "anambra-best-door-cfrank-secret-2026-key";
 const DEFAULT_ADMIN_HASH = bcrypt.hashSync("admin123", 10);
-const DB_FILE_PATH = path.join(process.cwd(), "db.json");
+function getDbFilePath(): string {
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    const tmpPath = path.join("/tmp", "db.json");
+    if (!fs.existsSync(tmpPath)) {
+      try {
+        const bundledPath = path.join(process.cwd(), "db.json");
+        if (fs.existsSync(bundledPath)) {
+          fs.copyFileSync(bundledPath, tmpPath);
+        } else {
+          fs.writeFileSync(tmpPath, JSON.stringify({ users: [], products: [], orders: [] }), "utf-8");
+        }
+      } catch (err) {
+        console.warn("[DB] Could not initialize /tmp/db.json:", err);
+      }
+    }
+    return tmpPath;
+  }
+  return path.join(process.cwd(), "db.json");
+}
 
 interface DiskData {
   users: User[];
@@ -153,8 +171,9 @@ interface DiskData {
 
 function readDiskDb(): DiskData {
   try {
-    if (fs.existsSync(DB_FILE_PATH)) {
-      const raw = fs.readFileSync(DB_FILE_PATH, "utf-8");
+    const filePath = getDbFilePath();
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, "utf-8");
       const parsed = JSON.parse(raw);
       return {
         users: Array.isArray(parsed.users) ? parsed.users : [],
@@ -176,6 +195,7 @@ function readDiskDb(): DiskData {
 
 function writeDiskDb(data: Partial<DiskData>) {
   try {
+    const filePath = getDbFilePath();
     const current = readDiskDb();
     const updated = {
       users: data.users !== undefined ? data.users : current.users,
@@ -188,7 +208,7 @@ function writeDiskDb(data: Partial<DiskData>) {
       newsletters: data.newsletters !== undefined ? data.newsletters : current.newsletters,
       wholesale: data.wholesale !== undefined ? data.wholesale : current.wholesale,
     };
-    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(updated, null, 2), "utf-8");
+    fs.writeFileSync(filePath, JSON.stringify(updated, null, 2), "utf-8");
   } catch (e) {
     console.warn("[DB] Error writing to db.json disk file:", e);
   }
