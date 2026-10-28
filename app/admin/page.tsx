@@ -923,15 +923,55 @@ export default function AdminPage() {
     return 0;
   }, [formPrice, formOriginalPrice, formPriceMode]);
 
+  // SEO Health Checks (Yoast Style)
+  const seoChecks = useMemo(() => {
+    const checks: Array<{ label: string; status: "good" | "warning" | "bad"; note: string }> = [];
+    const kp = focusKeyphrase.toLowerCase().trim();
+
+    if (!kp) {
+      checks.push({ label: "Focus Keyphrase", status: "bad", note: "Set a focus keyphrase to analyze content." });
+    } else if (seoTitle.toLowerCase().includes(kp)) {
+      checks.push({ label: "Keyphrase in SEO Title", status: "good", note: "The keyphrase appears in the SEO title." });
+    } else {
+      checks.push({ label: "Keyphrase in SEO Title", status: "warning", note: "Consider adding your keyphrase to the SEO title." });
+    }
+
+    if (seoTitle.length >= 25 && seoTitle.length <= 65) {
+      checks.push({ label: "SEO Title Length", status: "good", note: `${seoTitle.length} characters (Optimal for Google search).` });
+    } else if (seoTitle.length === 0) {
+      checks.push({ label: "SEO Title Length", status: "warning", note: "No custom title set (default title will be used)." });
+    } else {
+      checks.push({ label: "SEO Title Length", status: "warning", note: `${seoTitle.length} characters (Recommended: 30-60 characters).` });
+    }
+
+    if (seoDescription.length >= 80 && seoDescription.length <= 160) {
+      checks.push({ label: "Meta Description Length", status: "good", note: `${seoDescription.length} characters (Well summarized).` });
+    } else if (seoDescription.length === 0) {
+      checks.push({ label: "Meta Description Length", status: "bad", note: "No meta description provided. Search engines will guess." });
+    } else {
+      checks.push({ label: "Meta Description Length", status: "warning", note: `${seoDescription.length} characters (Recommended: 100-155 characters).` });
+    }
+
+    if (formImage || formGallery.length > 0) {
+      checks.push({ label: "Product Photography", status: "good", note: "Primary image asset configured." });
+    } else {
+      checks.push({ label: "Product Photography", status: "bad", note: "No product image assigned." });
+    }
+
+    if (formJijiUrl && formJijiUrl.startsWith("http")) {
+      checks.push({ label: "Jiji.ng Link", status: "good", note: "Genuine cross-channel listing attached." });
+    } else {
+      checks.push({ label: "Jiji.ng Link", status: "warning", note: "Add Jiji listing URL to boost marketplace trust." });
+    }
+
+    return checks;
+  }, [focusKeyphrase, seoTitle, seoDescription, formImage, formGallery, formJijiUrl]);
+
   const seoScore = useMemo(() => {
-    let score = 0;
-    if (formName.trim().length >= 5) score += 20;
-    if (seoTitle.trim().length >= 15 && seoTitle.trim().length <= 65) score += 25;
-    if (seoDescription.trim().length >= 50 && seoDescription.trim().length <= 160) score += 25;
-    if (focusKeyphrase.trim().length >= 3) score += 15;
-    if (formImage.trim() || formGallery.length > 0) score += 15;
-    return score;
-  }, [formName, seoTitle, seoDescription, focusKeyphrase, formImage, formGallery]);
+    if (seoChecks.length === 0) return 50;
+    const goodCount = seoChecks.filter((c) => c.status === "good").length;
+    return Math.round((goodCount / seoChecks.length) * 100);
+  }, [seoChecks]);
 
   // Loading Screen
   if (isCheckingAuth) {
@@ -1934,9 +1974,94 @@ export default function AdminPage() {
                       <p className="text-xs text-slate-400 text-center py-4">No gallery photos added yet.</p>
                     )}
                   </div>
+
+                  {/* Search Engine Optimization (SEO) & Google SERP Preview */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-4 shadow-xs">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <div className="flex items-center space-x-2">
+                        <Globe className="w-4 h-4 text-[#003296]" />
+                        <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                          Search Engine Optimization (SEO)
+                        </h3>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-[11px] font-bold text-slate-500">SEO Health:</span>
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold ${
+                            seoScore >= 80
+                              ? "bg-emerald-100 text-emerald-800"
+                              : seoScore >= 50
+                              ? "bg-amber-100 text-amber-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {seoScore} / 100
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3.5">
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          Focus Keyphrase
+                        </label>
+                        <input
+                          type="text"
+                          value={focusKeyphrase}
+                          onChange={(e) => setFocusKeyphrase(e.target.value)}
+                          placeholder="e.g. Bullet Proof Door Onitsha"
+                          className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                        />
+                      </div>
+
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-xs font-bold text-slate-700">Custom SEO Title</label>
+                          <span className="text-[10px] text-slate-400">{seoTitle.length} / 65 characters</span>
+                        </div>
+                        <input
+                          type="text"
+                          value={seoTitle}
+                          onChange={(e) => setSeoTitle(e.target.value)}
+                          placeholder="e.g. Bullet Proof Door in Onitsha Nigeria | Anambra Best Door"
+                          className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                        />
+                      </div>
+
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-xs font-bold text-slate-700">Meta Description</label>
+                          <span className="text-[10px] text-slate-400">{seoDescription.length} / 160 characters</span>
+                        </div>
+                        <textarea
+                          rows={2}
+                          value={seoDescription}
+                          onChange={(e) => setSeoDescription(e.target.value)}
+                          placeholder="Concise factual description for Google SERP snippet..."
+                          className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                        />
+                      </div>
+
+                      {/* Google SERP Preview Box */}
+                      <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
+                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">
+                          Google Search Snippet Preview
+                        </span>
+                        <p className="text-xs font-medium text-[#1a0dab] truncate">
+                          {seoTitle || `${formName || "Product"} | Anambra Best Door`}
+                        </p>
+                        <p className="text-[11px] text-[#006621] truncate font-mono">
+                          https://anambrabestdoor.com/products/{formSlug || "door-model"}
+                        </p>
+                        <p className="text-[11px] text-slate-600 line-clamp-2">
+                          {seoDescription || formShortDesc || "Direct warehouse supply of genuine security doors and building fittings in Ogidi, Anambra State."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Right Column: Category, Pricing, Stock, Jiji */}
+                {/* Right Column: Category, SEO Health, Pricing, Stock, Jiji */}
                 <div className="lg:col-span-4 space-y-6">
                   {/* Category Selection */}
                   <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-3 shadow-xs">
@@ -1976,10 +2101,54 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  {/* Pricing Mode */}
+                  {/* SEO Health Checklist Card (Matching Yoast / RankMath UI) */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-3.5 shadow-xs">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <div className="flex items-center space-x-2">
+                        <Globe className="w-4 h-4 text-[#003296]" />
+                        <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                          SEO Optimization
+                        </h3>
+                      </div>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-extrabold ${
+                          seoScore >= 80
+                            ? "bg-emerald-100 text-emerald-800"
+                            : seoScore >= 50
+                            ? "bg-amber-100 text-amber-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {seoScore} / 100
+                      </span>
+                    </div>
+
+                    <div className="space-y-2 text-xs">
+                      {seoChecks.map((check, idx) => (
+                        <div key={idx} className="flex items-start space-x-2">
+                          {check.status === "good" ? (
+                            <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                          ) : check.status === "warning" ? (
+                            <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                          ) : (
+                            <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                          )}
+                          <div className="leading-tight">
+                            <span className="font-semibold text-slate-800 mr-1.5">{check.label}:</span>
+                            <span className="text-slate-500 text-[11px]">{check.note}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Pricing & Inventory */}
                   <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-3 shadow-xs">
-                    <label className="text-xs font-bold text-slate-900 block">
-                      Pricing Display Mode
+                    <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">
+                      Pricing & Inventory
+                    </h3>
+                    <label className="text-xs font-bold text-slate-900 block pt-1">
+                      Price Display Setting
                     </label>
                     <div className="space-y-2 text-xs">
                       <label className="flex items-center space-x-2 cursor-pointer">
