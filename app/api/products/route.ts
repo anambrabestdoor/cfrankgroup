@@ -94,19 +94,25 @@ export async function POST(req: NextRequest) {
       active,
     } = body;
 
-    if (!name || (!image && (!gallery || gallery.length === 0)) || !category) {
+    if (!name || !category) {
       return NextResponse.json(
-        { error: "Missing required fields (name, image, category)." },
+        { error: "Missing required fields (name and category are required)." },
         { status: 400 }
       );
     }
 
     const cleanSlug =
-      slug ||
-      name
+      (slug || name)
         .toLowerCase()
+        .trim()
         .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
+        .replace(/(^-|-$)/g, "") || `door-${Date.now()}`;
+
+    const fallbackImage = "/products/security-steel-door.jpg";
+    const primaryImage =
+      (image && typeof image === "string" && image.trim()) ||
+      (Array.isArray(gallery) && gallery.length > 0 && gallery[0]) ||
+      fallbackImage;
 
     const newProduct: DoorProduct = {
       id: id || `door-${Date.now()}`,
@@ -121,8 +127,8 @@ export async function POST(req: NextRequest) {
       priceOnRequest: priceOnRequest !== false,
       priceMode: priceMode || (price ? "show_price" : "blank"),
       priceValidUntil: priceValidUntil || undefined,
-      image: image || (gallery && gallery.length > 0 ? gallery[0] : ""),
-      gallery: Array.isArray(gallery) && gallery.length > 0 ? gallery : [image],
+      image: primaryImage,
+      gallery: Array.isArray(gallery) && gallery.length > 0 ? gallery : [primaryImage],
       video: video || undefined,
       videos: Array.isArray(videos) ? videos : (video ? [video] : undefined),
       badge: badge || undefined,

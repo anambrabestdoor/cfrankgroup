@@ -670,7 +670,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
   };
 
   // Save product
-  const handleSaveProduct = (e: React.FormEvent) => {
+  const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim()) {
       alert("Product name is required.");
@@ -680,6 +680,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
     const catObj = CATEGORIES.find((c) => c.id === formCategory);
     const categoryLabel = catObj ? catObj.name : "Doors";
     const cleanSlug = slugify(formSlug) || slugify(formName) || `door-${Date.now()}`;
+    const cleanImage = formImage.trim() || (formGallery.length > 0 ? formGallery[0] : "/products/security-steel-door.jpg");
 
     const newProd: DoorProduct = {
       id: editingId || `door-${Date.now()}`,
@@ -694,8 +695,8 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
       priceOnRequest: formPriceMode === "price_on_request",
       priceMode: formPriceMode,
       priceValidUntil: formPriceMode === "show_price" && formPriceValidUntil.trim() ? formPriceValidUntil.trim() : undefined,
-      image: formImage.trim() || (formGallery.length > 0 ? formGallery[0] : ""),
-      gallery: formGallery.length > 0 ? formGallery : (formImage.trim() ? [formImage.trim()] : []),
+      image: cleanImage,
+      gallery: formGallery.length > 0 ? formGallery : [cleanImage],
       video: formVideo.trim() || undefined,
       videos: formVideo.trim() ? [formVideo.trim()] : undefined,
       badge: formBadge,
@@ -715,39 +716,66 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
       const updated = productsList.map((p) => (p.id === editingId ? newProd : p));
       setProductsList(updated);
       setProducts(updated);
-      showToast("Product updated successfully!");
 
-      fetch("/api/products", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newProd),
-      }).catch((err) => console.error("Failed to update product on server:", err));
+      try {
+        const res = await fetch("/api/products", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newProd),
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to update product on server.");
+        }
+        showToast("Product updated and synced successfully!");
+      } catch (err: any) {
+        console.error("Failed to update product on server:", err);
+        alert(`Server sync notice: ${err.message || "Failed to update product."}`);
+      }
     } else {
       const updated = [newProd, ...productsList];
       setProductsList(updated);
       setProducts(updated);
-      showToast("New product created and published!");
 
-      fetch("/api/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newProd),
-      }).catch((err) => console.error("Failed to persist new product to server:", err));
+      try {
+        const res = await fetch("/api/products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newProd),
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to publish product on server.");
+        }
+        showToast("New product published and synced to cloud!");
+      } catch (err: any) {
+        console.error("Failed to persist new product to server:", err);
+        alert(`Server sync notice: ${err.message || "Failed to save product to database."}`);
+      }
     }
 
     setIsEditing(false);
   };
 
-  const handleDeleteProduct = (id: string) => {
+  const handleDeleteProduct = async (id: string) => {
     if (confirm("Are you sure you want to remove this product from catalogue?")) {
       const updated = productsList.filter((p) => p.id !== id);
       setProductsList(updated);
       setProducts(updated);
-      showToast("Product deleted.");
 
-      fetch(`/api/products?id=${encodeURIComponent(id)}`, {
-        method: "DELETE",
-      }).catch((err) => console.error("Failed to delete product on server:", err));
+      try {
+        const res = await fetch(`/api/products?id=${encodeURIComponent(id)}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to delete product on server.");
+        }
+        showToast("Product deleted successfully.");
+      } catch (err: any) {
+        console.error("Failed to delete product on server:", err);
+        alert(`Delete notice: ${err.message || "Failed to delete product."}`);
+      }
     }
   };
 
@@ -761,7 +789,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
     }
   };
 
-  const handleToggleSoldOut = (id: string) => {
+  const handleToggleSoldOut = async (id: string) => {
     let changedProd: DoorProduct | null = null;
     const updated: DoorProduct[] = productsList.map((p) => {
       if (p.id === id) {
@@ -777,11 +805,15 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
     showToast("Stock status updated.");
 
     if (changedProd) {
-      fetch("/api/products", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(changedProd),
-      }).catch((err) => console.error("Failed to update stock status on server:", err));
+      try {
+        await fetch("/api/products", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(changedProd),
+        });
+      } catch (err) {
+        console.error("Failed to update stock status on server:", err);
+      }
     }
   };
 

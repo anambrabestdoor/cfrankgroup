@@ -55,11 +55,15 @@ function ShopContent() {
       // Search query
       if (searchQuery.trim() !== "") {
         const q = searchQuery.toLowerCase();
-        const matchesName = product.name.toLowerCase().includes(q);
-        const matchesDesc = product.shortDescription.toLowerCase().includes(q);
-        const matchesSub = product.subcategory?.toLowerCase().includes(q);
-        const matchesSpec = Object.values(product.specifications).some((val) =>
-          val.toLowerCase().includes(q)
+        const matchesName = (product.name || "").toLowerCase().includes(q);
+        const matchesDesc = (product.shortDescription || product.description || "").toLowerCase().includes(q);
+        const matchesSub = (product.subcategory || "").toLowerCase().includes(q);
+        const specs =
+          product.specifications && typeof product.specifications === "object"
+            ? Object.values(product.specifications)
+            : [];
+        const matchesSpec = specs.some(
+          (val) => typeof val === "string" && val.toLowerCase().includes(q)
         );
         if (!matchesName && !matchesDesc && !matchesSub && !matchesSpec) return false;
       }

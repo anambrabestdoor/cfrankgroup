@@ -15,11 +15,22 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart, settings } = useApp();
 
+  if (!product) return null;
+
+  const safeName = product.name || "Quality Door";
+  const safeCategoryLabel = product.categoryLabel || product.category || "Building Materials";
+  const safeSlug = product.slug || product.id || "shop";
+  const safeImage =
+    product.image && typeof product.image === "string" && product.image.trim() !== ""
+      ? product.image.trim()
+      : "/products/security-steel-door.jpg";
+  const isExternal = safeImage.startsWith("http://") || safeImage.startsWith("https://");
+
   const handleQuickWhatsApp = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const url = buildWhatsAppOrderUrl({
-      productName: product.name,
+      productName: safeName,
       price: product.price && product.price > 0 ? product.price : undefined,
       quantity: 1,
       targetPhone: settings.whatsappNumber,
@@ -37,11 +48,12 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group relative bg-white border border-slate-200/90 rounded-xl overflow-hidden hover-card-elevate flex flex-col justify-between">
       {/* Product Image Link */}
-      <Link href={`/products/${product.slug}`} className="block relative w-full aspect-[4/5] bg-slate-100 overflow-hidden">
+      <Link href={`/products/${safeSlug}`} className="block relative w-full aspect-[4/5] bg-slate-100 overflow-hidden">
         <Image
-          src={product.image}
-          alt={`${product.name} - ${product.categoryLabel} by CFrank Enterprise`}
+          src={safeImage}
+          alt={`${safeName} - ${safeCategoryLabel} by CFrank Enterprise`}
           fill
+          unoptimized={isExternal}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
@@ -57,8 +69,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Quick Add Button on Hover / Mobile touch */}
         <button
           onClick={handleQuickAdd}
-          aria-label={`Add ${product.name} to cart`}
-          className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full bg-white/95 text-slate-900 flex items-center justify-center shadow-md hover:bg-[#003296] hover:text-white transition-colors"
+          aria-label={`Add ${safeName} to cart`}
+          className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full bg-white/95 text-slate-900 flex items-center justify-center shadow-md hover:bg-[#003296] hover:text-white transition-colors cursor-pointer"
         >
           <Plus className="w-4 h-4" />
         </button>
@@ -66,12 +78,12 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       {/* Card Content & Details */}
       <div className="p-3.5 sm:p-4 flex flex-col flex-1 justify-between">
-        <Link href={`/products/${product.slug}`} className="block mb-2 group-hover:text-[#003296] transition-colors">
+        <Link href={`/products/${safeSlug}`} className="block mb-2 group-hover:text-[#003296] transition-colors">
           <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-0.5">
-            {product.categoryLabel}
+            {safeCategoryLabel}
           </span>
           <h3 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 leading-snug">
-            {product.name}
+            {safeName}
           </h3>
         </Link>
 

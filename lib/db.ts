@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { DOOR_PRODUCTS, DoorProduct } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
+import { isSupabaseConfigured, getSupabaseAdmin } from "@/lib/supabase";
 
 export interface User {
   email: string;
@@ -242,7 +243,7 @@ export const db = {
     // 1. Seed with bundled catalogue products
     DOOR_PRODUCTS.forEach((p) => productMap.set(p.id, p));
 
-    // 2. Overlay disk DB custom additions or modifications
+    // 2. Overlay disk DB custom additions or modifications (local/fallback)
     try {
       const disk = readDiskDb();
       const deleted = new Set(disk.deletedProductIds || []);
@@ -256,33 +257,150 @@ export const db = {
         });
       }
 
-      // 3. Filter out any explicitly deleted product IDs
+      // Filter out explicitly deleted product IDs
       deleted.forEach((id) => productMap.delete(id));
     } catch (e) {
       console.warn("[DB] Error reading disk DB in getProducts:", e);
+    }
+
+    // 3. Query Supabase (authoritative store for serverless production)
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = getSupabaseAdmin();
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!error && Array.isArray(data) && data.length > 0) {
+          data.forEach((row) => {
+            if (row && row.id) {
+              const mapped: DoorProduct = {
+                id: row.id,
+                slug: row.slug || row.id,
+                name: row.name || "Untitled Product",
+                group: row.group || undefined,
+                subcategory: row.subcategory || undefined,
+                category: row.category || "security-doors",
+                categoryLabel: row.category_label || (row.category ? row.category.replace(/-/g, " ").toUpperCase() : "Doors"),
+                price: row.price ? Number(row.price) : undefined,
+                originalPrice: row.original_price ? Number(row.original_price) : undefined,
+                priceOnRequest: row.price_on_request ?? false,
+                priceMode: row.price_mode || (row.price ? "show_price" : "blank"),
+                priceValidUntil: row.price_valid_until || undefined,
+                image: row.image || "/products/security-steel-door.jpg",
+                gallery: Array.isArray(row.gallery) && row.gallery.length > 0 ? row.gallery : [row.image || "/products/security-steel-door.jpg"],
+                video: row.video || undefined,
+                videos: Array.isArray(row.videos) ? row.videos : (row.video ? [row.video] : undefined),
+                badge: row.badge || undefined,
+                stockStatus: (row.stock_status as any) || "in_stock",
+                stock: row.stock !== undefined ? Number(row.stock) : 10,
+                shortDescription: row.short_description || "",
+                description: row.description || "",
+                specifications: (row.specifications && typeof row.specifications === "object") ? row.specifications : {},
+                features: Array.isArray(row.features) ? row.features : [],
+                jijiUrl: row.jiji_url || "https://jiji.ng/shop/anambrabestdoor",
+                seoTitle: row.seo_title || `${row.name} | Anambra Best Door`,
+                seoDescription: row.seo_description || row.short_description || "",
+                focusKeyphrase: row.focus_keyphrase || row.name,
+                featured: row.featured ?? false,
+                active: row.active ?? true,
+              };
+
+              if (mapped.active === false) {
+                productMap.delete(mapped.id);
+              } else {
+                productMap.set(mapped.id, mapped);
+              }
+            }
+          });
+        }
+      } catch (err) {
+        console.warn("[DB] Supabase getProducts fetch error, falling back to disk/seed:", err);
+      }
     }
 
     return Array.from(productMap.values());
   },
 
   async getProductById(id: string): Promise<DoorProduct | null> {
-    const all = await this.getProducts();
-    const query = id.toLowerCase().trim();
-    return (
-      all.find(
+    const rawId = (id || "").trim();
+    if (!rawId) return null;
+    const query = decodeURIComponent(rawId).toLowerCase().trim();
+
+    // 1. Authoritative Supabase query first if configured (critical on Vercel)
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = getSupabaseAdmin();
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .or(`slug.ilike.${query},id.ilike.${query},slug.eq.${rawId},id.eq.${rawId}`)
+          .maybeSingle();
+
+        if (data && !error) {
+          return {
+            id: data.id,
+            slug: data.slug || data.id,
+            name: data.name,
+            group: data.group || undefined,
+            subcategory: data.subcategory || undefined,
+            category: data.category,
+            categoryLabel: data.category_label || data.category,
+            price: data.price ? Number(data.price) : undefined,
+            originalPrice: data.original_price ? Number(data.original_price) : undefined,
+            priceOnRequest: data.price_on_request ?? false,
+            priceMode: data.price_mode || "blank",
+            image: data.image || "/products/security-steel-door.jpg",
+            gallery: Array.isArray(data.gallery) && data.gallery.length > 0 ? data.gallery : [data.image || "/products/security-steel-door.jpg"],
+            video: data.video || undefined,
+            videos: data.videos || (data.video ? [data.video] : undefined),
+            badge: data.badge || undefined,
+            stockStatus: data.stock_status || "in_stock",
+            stock: data.stock !== undefined ? Number(data.stock) : 10,
+            shortDescription: data.short_description || "",
+            description: data.description || "",
+            specifications: (data.specifications && typeof data.specifications === "object") ? data.specifications : {},
+            features: Array.isArray(data.features) ? data.features : [],
+            jijiUrl: data.jiji_url || "https://jiji.ng/shop/anambrabestdoor",
+            seoTitle: data.seo_title || `${data.name} | Anambra Best Door`,
+            seoDescription: data.seo_description || data.short_description || "",
+            focusKeyphrase: data.focus_keyphrase || data.name,
+            featured: data.featured ?? false,
+            active: data.active ?? true,
+          };
+        }
+      } catch (err) {
+        console.warn("[DB] Supabase getProductById query error:", err);
+      }
+    }
+
+    // 2. Check disk DB
+    try {
+      const disk = readDiskDb();
+      const diskMatch = disk.products?.find(
         (p) =>
           p.id.toLowerCase() === query ||
           (p.slug && p.slug.toLowerCase() === query)
-      ) || null
+      );
+      if (diskMatch) return diskMatch;
+    } catch {}
+
+    // 3. Fallback to bundled catalogue
+    const local = DOOR_PRODUCTS.find(
+      (p) =>
+        p.id.toLowerCase() === query ||
+        (p.slug && p.slug.toLowerCase() === query)
     );
+    return local || null;
   },
 
   async saveProduct(product: DoorProduct): Promise<DoorProduct> {
+    // 1. Save to local disk DB
     const disk = readDiskDb();
     if (!disk.products) disk.products = [];
     if (!disk.deletedProductIds) disk.deletedProductIds = [];
 
-    // Remove from deleted list if re-added
     disk.deletedProductIds = disk.deletedProductIds.filter(
       (id) => id !== product.id && id !== product.slug
     );
@@ -293,20 +411,65 @@ export const db = {
     } else {
       disk.products.unshift(product);
     }
-
     writeDiskDb(disk);
+
+    // 2. Save to Supabase (permanent cloud persistence)
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = getSupabaseAdmin();
+
+        let dbStockStatus = "in_stock";
+        if (product.stockStatus === "out_of_stock") dbStockStatus = "out_of_stock";
+        else if (product.stockStatus === "made_to_order" || (product.stockStatus as string) === "pre_order") dbStockStatus = "pre_order";
+
+        const cleanImage = product.image && product.image.trim() !== "" ? product.image.trim() : "/products/security-steel-door.jpg";
+        const cleanGallery = Array.isArray(product.gallery) && product.gallery.length > 0 ? product.gallery : [cleanImage];
+
+        const row = {
+          id: product.id,
+          name: product.name,
+          slug: product.slug,
+          category: product.category,
+          category_label: product.categoryLabel,
+          price: product.price ? Number(product.price) : 0,
+          original_price: product.originalPrice ? Number(product.originalPrice) : 0,
+          price_on_request: product.priceOnRequest !== false,
+          image: cleanImage,
+          gallery: cleanGallery,
+          badge: product.badge || null,
+          stock_status: dbStockStatus,
+          stock: product.stock !== undefined ? Number(product.stock) : 10,
+          short_description: product.shortDescription || "",
+          description: product.description || "",
+          features: Array.isArray(product.features) ? product.features : [],
+          specifications: (product.specifications && typeof product.specifications === "object") ? product.specifications : {},
+          jiji_url: product.jijiUrl || null,
+          active: product.active !== false,
+          updated_at: new Date().toISOString(),
+        };
+
+        const { error } = await supabase.from("products").upsert(row, { onConflict: "id" });
+        if (error) {
+          console.error("[DB] Supabase saveProduct error:", error.message);
+        } else {
+          console.log(`[DB] Successfully synced product '${product.name}' (${product.id}) to Supabase!`);
+        }
+      } catch (err) {
+        console.error("[DB] Supabase saveProduct failed:", err);
+      }
+    }
+
     return product;
   },
 
   async createProduct(product: Omit<DoorProduct, "id"> | DoorProduct): Promise<DoorProduct> {
-    const docId = ("id" in product && product.id) ? product.id : `prod-${Date.now()}`;
+    const docId = ("id" in product && product.id) ? product.id : `door-${Date.now()}`;
     const newProd: DoorProduct = { ...product, id: docId } as DoorProduct;
     return await this.saveProduct(newProd);
   },
 
   async updateProduct(id: string, updatedFields: Partial<DoorProduct>): Promise<DoorProduct | null> {
-    const all = await this.getProducts();
-    const existing = all.find((p) => p.id === id || p.slug === id);
+    const existing = await this.getProductById(id);
     if (!existing) return null;
 
     const merged: DoorProduct = { ...existing, ...updatedFields, id: existing.id };
@@ -325,6 +488,16 @@ export const db = {
         disk.products = disk.products.filter((p) => p.id !== id);
       }
       writeDiskDb(disk);
+
+      if (isSupabaseConfigured()) {
+        try {
+          const supabase = getSupabaseAdmin();
+          await supabase.from("products").delete().eq("id", id);
+          console.log(`[DB] Successfully deleted product ${id} from Supabase.`);
+        } catch (err) {
+          console.warn("[DB] Supabase deleteProduct error:", err);
+        }
+      }
       return true;
     } catch {
       return false;
@@ -614,10 +787,42 @@ export const db = {
       preDispatchInspectionNote: DEFAULT_SITE_SETTINGS.preDispatchInspectionNote,
     };
 
-    if (disk.settings) {
-      return { ...defaults, ...disk.settings };
+    let result = disk.settings ? { ...defaults, ...disk.settings } : defaults;
+
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = getSupabaseAdmin();
+        const { data, error } = await supabase
+          .from("site_settings")
+          .select("*")
+          .eq("id", "global")
+          .maybeSingle();
+
+        if (data && !error) {
+          result = {
+            ...result,
+            companyName: data.company_name || result.companyName,
+            parentCompany: data.parent_company || result.parentCompany,
+            cacNumber: data.cac_number || result.cacNumber,
+            phone: data.phone || result.phone,
+            phoneDisplay: data.phone_display || result.phoneDisplay,
+            whatsappNumber: data.whatsapp_number || result.whatsappNumber,
+            salesEmail: data.email || result.salesEmail,
+            address: data.address || result.address,
+            secondAddress: data.second_address !== undefined ? data.second_address : result.secondAddress,
+            marketLocation: data.market_location || result.marketLocation,
+            workingHours: data.working_hours || result.workingHours,
+            jijiShopUrl: data.jiji_shop_url || result.jijiShopUrl,
+            whatsappInquiryTemplate: data.whatsapp_inquiry_template || result.whatsappInquiryTemplate,
+            whatsappCartTemplate: data.whatsapp_cart_template || result.whatsappCartTemplate,
+          };
+        }
+      } catch (err) {
+        console.warn("[DB] Supabase getSettings error:", err);
+      }
     }
-    return defaults;
+
+    return result;
   },
 
   async updateSettings(updatedSettings: Partial<Settings>): Promise<Settings> {
@@ -626,6 +831,35 @@ export const db = {
     const disk = readDiskDb();
     disk.settings = merged;
     writeDiskDb(disk);
+
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = getSupabaseAdmin();
+        const payload = {
+          id: "global",
+          company_name: merged.companyName,
+          parent_company: merged.parentCompany,
+          cac_number: merged.cacNumber,
+          phone: merged.phone,
+          phone_display: merged.phoneDisplay,
+          whatsapp_number: merged.whatsappNumber,
+          email: merged.salesEmail,
+          address: merged.address,
+          second_address: merged.secondAddress || "",
+          market_location: merged.marketLocation,
+          working_hours: merged.workingHours,
+          jiji_shop_url: merged.jijiShopUrl,
+          whatsapp_inquiry_template: merged.whatsappInquiryTemplate,
+          whatsapp_cart_template: merged.whatsappCartTemplate,
+          updated_at: new Date().toISOString(),
+        };
+        await supabase.from("site_settings").upsert(payload, { onConflict: "id" });
+        console.log("[DB] Successfully synced site settings to Supabase!");
+      } catch (err) {
+        console.warn("[DB] Supabase updateSettings error:", err);
+      }
+    }
+
     return merged;
   },
 

@@ -5,7 +5,6 @@ import { notFound } from "next/navigation";
 import { DOOR_PRODUCTS, DoorProduct } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
 import { db } from "@/lib/db";
-import { isSupabaseConfigured, getSupabase } from "@/lib/supabase";
 import { generateGeoKeywords, generateGeoDescription } from "@/lib/geoKeywords";
 import ProductDetailClient from "./ProductDetailClient";
 
@@ -18,59 +17,19 @@ interface PageProps {
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://anambrabestdoor.com";
 
 async function fetchProduct(id: string): Promise<DoorProduct | undefined> {
-  const fromDb = await db.getProductById(id);
+  const cleanId = (id || "").trim();
+  if (!cleanId) return undefined;
+
+  const fromDb = await db.getProductById(cleanId);
   if (fromDb) return fromDb;
 
-  const local = DOOR_PRODUCTS.find((p) => p.slug === id || p.id === id);
-  if (local) return local;
-
-  if (isSupabaseConfigured()) {
-    try {
-      const supabase = getSupabase();
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .or(`slug.eq.${id},id.eq.${id}`)
-        .maybeSingle();
-
-      if (data && !error) {
-        return {
-          id: data.id,
-          slug: data.slug,
-          name: data.name,
-          group: data.group || undefined,
-          subcategory: data.subcategory || undefined,
-          category: data.category,
-          categoryLabel: data.category_label || data.category,
-          price: data.price ? Number(data.price) : undefined,
-          originalPrice: data.original_price ? Number(data.original_price) : undefined,
-          priceOnRequest: data.price_on_request ?? false,
-          priceMode: data.price_mode || "blank",
-          image: data.image || "",
-          gallery: Array.isArray(data.gallery) && data.gallery.length > 0 ? data.gallery : (data.image ? [data.image] : []),
-          video: data.video || undefined,
-          videos: data.videos || (data.video ? [data.video] : undefined),
-          badge: data.badge || undefined,
-          stockStatus: data.stock_status || "in_stock",
-          stock: data.stock !== undefined ? Number(data.stock) : 10,
-          shortDescription: data.short_description || "",
-          description: data.description || "",
-          specifications: data.specifications || {},
-          features: Array.isArray(data.features) ? data.features : [],
-          jijiUrl: data.jiji_url || "https://jiji.ng/shop/anambrabestdoor",
-          seoTitle: data.seo_title || `${data.name} | Anambra Best Door`,
-          seoDescription: data.seo_description || data.short_description || "",
-          focusKeyphrase: data.focus_keyphrase || data.name,
-          featured: data.featured ?? false,
-          active: data.active ?? true,
-        };
-      }
-    } catch {
-      // Supabase offline or read failure fallback
-    }
-  }
-
-  return undefined;
+  const query = decodeURIComponent(cleanId).toLowerCase().trim();
+  const local = DOOR_PRODUCTS.find(
+    (p) =>
+      p.id.toLowerCase() === query ||
+      (p.slug && p.slug.toLowerCase() === query)
+  );
+  return local || undefined;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
