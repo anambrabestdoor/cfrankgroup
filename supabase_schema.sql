@@ -67,26 +67,28 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
   id TEXT PRIMARY KEY DEFAULT 'global',
   company_name TEXT NOT NULL DEFAULT 'Anambra Best Door',
   parent_company TEXT NOT NULL DEFAULT 'CFrank Enterprise',
-  cac_number TEXT NOT NULL DEFAULT 'BN 2818981',
-  phone TEXT NOT NULL DEFAULT '+2348032766854',
-  phone_display TEXT NOT NULL DEFAULT '+234 803 276 6854',
-  whatsapp_number TEXT NOT NULL DEFAULT '2348032766854',
-  email TEXT NOT NULL DEFAULT 'sales@anambrabestdoor.ng',
-  address TEXT NOT NULL DEFAULT 'No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria',
-  second_address TEXT DEFAULT '',
-  market_location TEXT NOT NULL DEFAULT 'Maraim Plaza, Building Material International Market Ogidi, Anambra State',
+  proprietor_name TEXT NOT NULL DEFAULT 'Chidera Frank Okonkwo',
+  cac_number TEXT NOT NULL DEFAULT 'BN 9943925',
+  phone TEXT NOT NULL DEFAULT '+2347070070305',
+  phone_display TEXT NOT NULL DEFAULT '+234 707 007 0305',
+  whatsapp_number TEXT NOT NULL DEFAULT '2347070070305',
+  email TEXT NOT NULL DEFAULT 'anambrabestdoor@gmail.com',
+  address TEXT NOT NULL DEFAULT 'Shop 8, First Floor, God''s Own Plaza W-Line, Building Materials International Market, Ogidi, Anambra State, Nigeria (Opposite Chubby Plaza)',
+  second_address TEXT DEFAULT 'No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria',
+  market_location TEXT NOT NULL DEFAULT 'God''s Own Plaza W-Line & Maraim Plaza, Building Materials International Market, Ogidi, Anambra State',
   working_hours TEXT NOT NULL DEFAULT 'Mon - Sat: 8:00 AM - 5:30 PM',
   delivery_info TEXT NOT NULL DEFAULT 'Nationwide waybill delivery across all 36 states',
-  jiji_shop_url TEXT NOT NULL DEFAULT 'https://jiji.ng/shop/cfrankenterprise',
+  jiji_shop_url TEXT NOT NULL DEFAULT 'https://jiji.ng/shop/anambrabestdoor',
   whatsapp_inquiry_template TEXT NOT NULL DEFAULT 'Hello CFrank Enterprise, I would like to inquire about the current price and stock availability for [Door Name] (Size: [Size], Quantity: [Qty]).',
   whatsapp_cart_template TEXT NOT NULL DEFAULT 'Hello CFrank Enterprise, I would like to place an order inquiry for the following items from your catalogue:\n\n[Items]\n\nPlease advise on current pricing, stock availability, and waybill delivery terms.',
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- Ensure second_address and newly added columns exist if table was created previously
-ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS second_address TEXT DEFAULT '';
+-- Ensure all columns exist for existing deployments
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS second_address TEXT DEFAULT 'No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria';
 ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS working_hours TEXT DEFAULT 'Mon - Sat: 8:00 AM - 5:30 PM';
-ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS market_location TEXT DEFAULT 'Maraim Plaza, Building Material International Market Ogidi, Anambra State';
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS market_location TEXT DEFAULT 'God''s Own Plaza W-Line & Maraim Plaza, Building Materials International Market, Ogidi, Anambra State';
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS proprietor_name TEXT DEFAULT 'Chidera Frank Okonkwo';
 
 -- Enable RLS on site_settings
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
@@ -147,6 +149,7 @@ INSERT INTO public.site_settings (
   id,
   company_name,
   parent_company,
+  proprietor_name,
   cac_number,
   phone,
   phone_display,
@@ -164,23 +167,34 @@ INSERT INTO public.site_settings (
   'global',
   'Anambra Best Door',
   'CFrank Enterprise',
-  'BN 2818981',
-  '+2348032766854',
-  '+234 803 276 6854',
-  '2348032766854',
-  'sales@anambrabestdoor.ng',
+  'Chidera Frank Okonkwo',
+  'BN 9943925',
+  '+2347070070305',
+  '+234 707 007 0305',
+  '2347070070305',
+  'anambrabestdoor@gmail.com',
+  'Shop 8, First Floor, God''s Own Plaza W-Line, Building Materials International Market, Ogidi, Anambra State, Nigeria (Opposite Chubby Plaza)',
   'No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria',
-  '',
-  'Maraim Plaza, Building Material International Market Ogidi, Anambra State',
+  'God''s Own Plaza W-Line & Maraim Plaza, Building Materials International Market, Ogidi, Anambra State',
   'Mon - Sat: 8:00 AM - 5:30 PM',
   'Nationwide waybill delivery across all 36 states',
-  'https://jiji.ng/shop/cfrankenterprise',
+  'https://jiji.ng/shop/anambrabestdoor',
   'Hello CFrank Enterprise, I would like to inquire about the current price and stock availability for [Door Name] (Size: [Size], Quantity: [Qty]).',
   'Hello CFrank Enterprise, I would like to place an order inquiry for the following items from your catalogue:\n\n[Items]\n\nPlease advise on current pricing, stock availability, and waybill delivery terms.'
 ) ON CONFLICT (id) DO UPDATE SET
-  whatsapp_inquiry_template = EXCLUDED.whatsapp_inquiry_template,
-  whatsapp_cart_template = EXCLUDED.whatsapp_cart_template,
+  company_name = EXCLUDED.company_name,
+  parent_company = EXCLUDED.parent_company,
+  proprietor_name = EXCLUDED.proprietor_name,
+  cac_number = EXCLUDED.cac_number,
+  phone = EXCLUDED.phone,
+  phone_display = EXCLUDED.phone_display,
+  whatsapp_number = EXCLUDED.whatsapp_number,
+  email = EXCLUDED.email,
   address = EXCLUDED.address,
   second_address = EXCLUDED.second_address,
   market_location = EXCLUDED.market_location,
+  working_hours = EXCLUDED.working_hours,
+  jiji_shop_url = EXCLUDED.jiji_shop_url,
+  whatsapp_inquiry_template = EXCLUDED.whatsapp_inquiry_template,
+  whatsapp_cart_template = EXCLUDED.whatsapp_cart_template,
   updated_at = NOW();
