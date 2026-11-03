@@ -2,14 +2,54 @@ name: Supabase Keepalive Ping
 
 on:
   schedule:
-    # Run at 08:00 UTC every 2 days
-    - cron: '0 8 */2 * *'
+    # Run daily at 06:00 UTC — well within the 7-day inactivity window
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Keepalive Route
+      # 1) Direct Supabase REST query — works even if Vercel is down
+      - name: Direct Supabase Keepalive Query
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          curl -s -f "https://anambrabestdoor.com/api/cron/keepalive" || echo "Keepalive ping sent."
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY secrets — add them in GitHub repo Settings > Secrets"
+            exit 1
+          fi
+
+          echo "Pinging Supabase directly at $(date -u)..."
+          HTTP_STATUS=$(curl -s -o /tmp/sb_response.json -w "%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/products?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
+
+          echo "Supabase response status: $HTTP_STATUS"
+          cat /tmp/sb_response.json
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "::error::Supabase direct ping failed with HTTP $HTTP_STATUS"
+            exit 1
+          fi
+
+          echo "Supabase direct keepalive succeeded."
+
+      # 2) Also ping the Vercel endpoint as a secondary check
+      - name: Ping Vercel Keepalive Route
+        continue-on-error: true
+        run: |
+          echo "Pinging Vercel keepalive endpoint..."
+          HTTP_STATUS=$(curl -s -o /tmp/vercel_response.json -w "%{http_code}" \
+            "https://anambrabestdoor.com/api/cron/keepalive")
+
+          echo "Vercel response status: $HTTP_STATUS"
+          cat /tmp/vercel_response.json
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "::warning::Vercel keepalive endpoint returned HTTP $HTTP_STATUS — site may be down"
+          else
+            echo "Vercel keepalive also succeeded."
+          fi
