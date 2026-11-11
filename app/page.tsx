@@ -22,12 +22,16 @@ import {
   BadgeCheck,
   MapPin,
   ExternalLink,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+import ProtectedDocumentViewer from "@/app/components/ProtectedDocumentViewer";
 
 export default function StorefrontPage() {
   const { settings, products, setCacModalOpen } = useApp();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [activeCategoryFilter, setActiveCategoryFilter] = useState<string>("all");
+  const [complianceDoc, setComplianceDoc] = useState<"cac" | "scuml">("cac");
 
   // Filter products for catalog preview
   const previewProducts = useMemo(() => {
@@ -409,21 +413,21 @@ export default function StorefrontPage() {
         </div>
       </section>
 
-      {/* 5. CAC Corporate Affairs Commission Verification Section */}
+      {/* 5. Statutory Compliance & Corporate Standing Section (CAC + SCUML Dual Slider) */}
       <section className="bg-white py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-y border-[#E5E3DC]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-8 space-y-4">
+          <div className="lg:col-span-7 space-y-4">
             <div className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">
               <BadgeCheck className="w-4 h-4 text-emerald-600" />
-              <span>Verified Legal Entity</span>
+              <span>Verified Legal Entity & Statutory Compliance</span>
             </div>
 
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#121518]">
-              Registered Corporate Standing under CAMA 2020
+              Registered Corporate Standing & Statutory Compliance
             </h2>
 
             <p className="text-xs sm:text-sm text-[#4A4A4A] leading-relaxed max-w-2xl">
-              {brand.name} operates with full legal certification from the Corporate Affairs Commission under Business Number <strong>{brand.cacNumber}</strong>. We encourage all commercial clients and private buyers to verify our status online.
+              {brand.name} operates with full statutory certification under the Corporate Affairs Commission (CAMA 2020 Business Number <strong>{brand.cacNumber}</strong>) and the Special Control Unit Against Money Laundering (SCUML RN: <strong>SC 041603036</strong>). All commercial clients and private buyers can verify our certified documentation.
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -431,35 +435,105 @@ export default function StorefrontPage() {
                 onClick={() => setCacModalOpen(true)}
                 className="px-5 py-2.5 bg-[#121518] hover:bg-[#22262B] text-white text-xs font-bold rounded-lg inline-flex items-center gap-2 transition-colors cursor-pointer"
               >
-                <span>View Certified Status Extract</span>
+                <span>View Certified CAC Extract</span>
                 <ExternalLink className="w-3.5 h-3.5 text-[#F3661B]" />
               </button>
+
+              <Link
+                href="/about"
+                className="px-5 py-2.5 bg-[#FBF9F5] hover:bg-[#E5E3DC] text-[#121518] text-xs font-semibold rounded-lg border border-[#E5E3DC] inline-flex items-center gap-2 transition-colors"
+              >
+                <span>Corporate Background & SCUML</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
 
               <a
                 href="https://search.cac.gov.ng"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 bg-[#FBF9F5] hover:bg-[#E5E3DC] text-[#121518] text-xs font-semibold rounded-lg border border-[#E5E3DC] inline-flex items-center gap-2 transition-colors"
+                className="px-4 py-2.5 bg-transparent hover:text-[#F3661B] text-[#73787E] text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"
               >
-                <span>Verify on CAC Public Portal</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Verify at CAC portal</span>
+                <ExternalLink className="w-3 h-3" />
               </a>
             </div>
           </div>
 
-          <div
-            onClick={() => setCacModalOpen(true)}
-            className="lg:col-span-4 relative aspect-[4/3] rounded-md overflow-hidden border border-[#E5E3DC] bg-[#FBF9F5] shadow-sm cursor-pointer group"
-          >
-            <Image
-              src="/cac-status-report-page1.jpeg"
-              alt="CAC Registration Extract"
-              fill
-              className="object-contain p-2 group-hover:scale-102 transition-transform duration-300"
-              sizes="(max-width: 1024px) 100vw, 33vw"
-            />
-            <div className="absolute bottom-2 right-2 bg-[#121518]/90 text-white text-[10px] font-semibold px-2 py-0.5 rounded">
-              Click to preview
+          {/* Dual Compliance Document Slider / Switcher */}
+          <div className="lg:col-span-5 space-y-3">
+            {/* Slider Switcher Tabs */}
+            <div className="flex items-center justify-between p-1 bg-[#FBF9F5] border border-[#E5E3DC] rounded-lg text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setComplianceDoc("cac")}
+                className={`flex-1 py-1.5 px-2 rounded-md transition-colors text-center cursor-pointer ${
+                  complianceDoc === "cac"
+                    ? "bg-[#121518] text-white shadow-xs"
+                    : "text-[#4A4A4A] hover:text-[#121518]"
+                }`}
+              >
+                CAC Registration
+              </button>
+              <button
+                type="button"
+                onClick={() => setComplianceDoc("scuml")}
+                className={`flex-1 py-1.5 px-2 rounded-md transition-colors text-center cursor-pointer ${
+                  complianceDoc === "scuml"
+                    ? "bg-[#121518] text-white shadow-xs"
+                    : "text-[#4A4A4A] hover:text-[#121518]"
+                }`}
+              >
+                SCUML Certificate
+              </button>
+            </div>
+
+            {/* Document Display with Protected Viewer */}
+            <div className="relative">
+              {complianceDoc === "cac" ? (
+                <div onClick={() => setCacModalOpen(true)} className="cursor-pointer">
+                  <ProtectedDocumentViewer
+                    src={settings.cacCertificateUrl || "/cac-status-report-page1.jpeg"}
+                    alt="CAC Legal Status Report - Anambra Best Door Enterprises"
+                    aspectRatio="aspect-[4/3]"
+                    badgeText="CAC BN: 9943925"
+                    watermarkText="CFRANK GROUP • OFFICIAL CAC EXTRACT • VERIFICATION COPY"
+                    onExpand={() => setCacModalOpen(true)}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <ProtectedDocumentViewer
+                    src="/scuml-certificate.jpg"
+                    alt="SCUML Anti-Money Laundering Certificate - Anambra Best Door Enterprises"
+                    aspectRatio="aspect-[4/3]"
+                    badgeText="SCUML RN: SC 041603036"
+                    watermarkText="CFRANK GROUP • OFFICIAL SCUML COMPLIANCE • NOT FOR RE-USE"
+                  />
+                </div>
+              )}
+
+              {/* Slider Prev / Next Controls */}
+              <div className="flex items-center justify-between pt-2 text-[11px] text-[#73787E]">
+                <button
+                  type="button"
+                  onClick={() => setComplianceDoc((prev) => (prev === "cac" ? "scuml" : "cac"))}
+                  className="inline-flex items-center gap-1 hover:text-[#121518] cursor-pointer"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <span>Previous</span>
+                </button>
+                <span className="font-mono text-[10px] uppercase tracking-wider font-semibold">
+                  {complianceDoc === "cac" ? "1 of 2: Corporate Affairs (CAC)" : "2 of 2: Anti-Money Laundering (SCUML)"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setComplianceDoc((prev) => (prev === "cac" ? "scuml" : "cac"))}
+                  className="inline-flex items-center gap-1 hover:text-[#121518] cursor-pointer"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
