@@ -1,129 +1,164 @@
-# Anambra Best Door — CFrank Enterprise
+# CFrank Group
 
-E-commerce storefront for Anambra Best Door (CFrank Enterprise), built with Next.js, Supabase, Cloudinary, and Tailwind CSS. Deployed on Vercel.
+Digital commerce platform and architectural building supplies procurement portal for **CFrank Group**, featuring security doors, stone-coated roof tiles, smart biometric locksets, and luxury sanitary wares.
 
-**Live site:** [anambrabestdoor.com](https://anambrabestdoor.com)
+- **Corporate Brand:** CFrank Group
+- **Registered Operating Property:** Anambra Best Door Enterprises
+- **CAC Registration:** BN 9943925 (Corporate Affairs Commission)
+- **Anti-Money Laundering Compliance:** SCUML RN: SC 041603036 (Special Control Unit Against Money Laundering / EFCC)
+- **Headquarters:** No. 16/17 Maraim Plaza, Building Materials International Market, Ogidi, Anambra State, Nigeria
 
 ---
 
 ## Tech Stack
 
 - **Framework:** Next.js 16 (App Router, Turbopack)
-- **Database:** Supabase (PostgreSQL)
-- **Image hosting:** Cloudinary
-- **Email:** Resend
-- **AI assistant:** Gemini API (Frankie chatbot)
-- **Auth:** JWT with bcrypt
+- **Database & Auth:** Supabase (PostgreSQL with Row Level Security)
+- **Asset Storage:** Cloudinary (Namespaced to `cfrank_group/`)
+- **Email:** Resend API
+- **AI Assistant:** Google Gemini API (Frankie Assistant)
 - **Styling:** Tailwind CSS 4
-- **Deployment:** Vercel (Hobby plan)
+- **Hosting & CI/CD:** Vercel + GitHub Actions
 
 ---
 
 ## Getting Started
 
 ```bash
-# Install dependencies
+# 1. Install dependencies
 npm install
 
-# Start dev server
+# 2. Run local development server
 npm run dev
+
+# 3. Type check & production build test
+npx tsc --noEmit
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
 ## Environment Variables
 
-Copy `.env.local.example` or create `.env.local` with these keys:
+Create `.env.local` in the project root:
 
-| Variable | Description |
-|----------|-------------|
-| `NEXT_PUBLIC_APP_URL` | Public site URL (`http://localhost:3000` for dev) |
-| `NEXT_PUBLIC_SITE_URL` | Same as above |
-| `NODE_ENV` | `development` or `production` |
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-side only) |
-| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name |
-| `CLOUDINARY_API_KEY` | Cloudinary API key |
-| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
-| `RESEND_API_KEY` | Resend email API key |
-| `RESEND_FROM_EMAIL` | Sender email address |
-| `RESEND_REPLY_TO_EMAIL` | Reply-to email address |
-| `ADMIN_NOTIFICATION_EMAIL` | Email for admin notifications |
-| `GEMINI_API_KEY` | Google Gemini API key (for Frankie chatbot) |
-| `GEMINI_MODEL` | Gemini model name |
-| `JWT_SECRET` | Secret for signing auth tokens |
-| `ADMIN_EMAIL` | Admin login email |
-| `ADMIN_PASSWORD` | Admin login password |
+```env
+# -------------------------------------------------------------------------
+# Application URLs
+# -------------------------------------------------------------------------
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NODE_ENV=development
+
+# -------------------------------------------------------------------------
+# Supabase Database (Dedicated CFrank Group Project)
+# -------------------------------------------------------------------------
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-public-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-secret-key
+
+# -------------------------------------------------------------------------
+# Cloudinary (Can reuse existing account — namespaced to cfrank_group/)
+# -------------------------------------------------------------------------
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# -------------------------------------------------------------------------
+# Resend Email API
+# -------------------------------------------------------------------------
+RESEND_API_KEY=re_your_api_key
+RESEND_FROM_EMAIL="CFrank Group <orders@cfrankgroup.com>"
+RESEND_REPLY_TO_EMAIL="info@cfrankgroup.com"
+ADMIN_NOTIFICATION_EMAIL=info@cfrankgroup.com
+
+# -------------------------------------------------------------------------
+# AI Assistant (Google Gemini)
+# -------------------------------------------------------------------------
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-2.5-flash
+
+# -------------------------------------------------------------------------
+# Admin Dashboard Authentication
+# -------------------------------------------------------------------------
+JWT_SECRET=super-secure-random-jwt-secret-min-32-chars-long
+ADMIN_EMAIL=admin@cfrankgroup.com
+ADMIN_PASSWORD=YourSecurePassword2026!
+```
 
 ---
 
-## Supabase Setup
+## Supabase Database Setup & Keepalive Guide
 
-### Database Schema
+### 1. Database Initialization
+1. Create a **separate, dedicated Supabase project** for CFrank Group at [supabase.com](https://supabase.com). *(Do not share the database with Anambra Best Door so company settings and orders remain independent).*
+2. Open the **SQL Editor** in your Supabase Dashboard.
+3. Paste the contents of [`supabase_schema.sql`](supabase_schema.sql) and click **Run**.
+4. Retrieve your **Project URL**, **anon key**, and **service_role key** from **Project Settings → API**.
+5. Log into the admin portal (`/admin` → Settings → **Database Health**), click **"Ping Supabase"**, then click **"Sync Catalogue to Supabase"** to populate all products and settings with one click.
 
-The full schema is in [`supabase_schema.sql`](supabase_schema.sql). Run it in the Supabase SQL Editor to set up all tables and seed data.
+---
 
-### Keepalive (Preventing Free-Tier Pause)
+### 2. Dual Keepalive System (Preventing 7-Day Free-Tier Pause)
 
-Supabase pauses free-tier projects after 7 days of inactivity. This project has two keepalive mechanisms:
+Supabase pauses free-tier databases after **7 days of inactivity**. To guarantee 100% uptime, this repository employs a **dual daily keepalive system** running across two independent cloud providers.
 
-**1. Vercel Cron** (defined in [`vercel.json`](vercel.json))
+#### Why previous crons failed & how this solves it:
+- **Active PostgreSQL Write Transactions:** Supabase's pause monitor tracks PostgreSQL database engine activity (Write-Ahead Logs and disk I/O). Read-only `HEAD` requests can be satisfied from edge caches without waking the Postgres engine.
+- The keepalive route (`/api/cron/keepalive`) now executes both a **read query** and an **active write transaction**:
+  ```ts
+  await supabase.from("site_settings").update({ updated_at: timestamp }).eq("id", "global");
+  ```
+  This creates an active WAL event and guarantees Supabase registers compute activity.
 
-Runs daily at 12:00 UTC, hitting `/api/cron/keepalive` which makes a lightweight query to the `products` table.
+#### Schedule:
+1. **Cron #1 — Vercel Cron:**
+   - Defined in [`vercel.json`](vercel.json).
+   - Executes daily at **12:00 UTC**, invoking `/api/cron/keepalive`.
+2. **Cron #2 — GitHub Actions:**
+   - Defined in [`.github/workflows/keepalive.yml`](.github/workflows/keepalive.yml).
+   - Executes twice daily at **00:00 UTC** and **12:00 UTC**.
+   - Queries the Supabase REST API directly and pings the production site.
+   - Can be triggered manually on demand via the **Actions** tab on GitHub (**Run workflow** button).
 
-**2. GitHub Actions** (defined in [`.github/workflows/keepalive.yml`](.github/workflows/keepalive.yml))
-
-Runs daily at 06:00 UTC. Queries the Supabase REST API directly — works even if the Vercel deployment is down.
-
-#### Required GitHub Repository Secrets
-
-These must be set for the GitHub Actions keepalive to work:
-
-1. Go to **GitHub repo** → **Settings** → **Secrets and variables** → **Actions**
-2. Click **New repository secret** and add:
+#### Configuring GitHub Actions Secrets:
+To enable the direct GitHub Actions keepalive:
+1. Open your GitHub repository: [https://github.com/anambrabestdoor/cfrankgroup](https://github.com/anambrabestdoor/cfrankgroup)
+2. Go to **Settings** → **Secrets and variables** → **Actions**
+3. Click **New repository secret** and add:
 
 | Secret Name | Where to Find It |
-|-------------|-----------------|
+|---|---|
 | `SUPABASE_URL` | Supabase Dashboard → Settings → API → Project URL |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard → Settings → API → `service_role` key |
-
-Type the secret names manually (don't paste) to avoid hidden characters.
-
----
-
-## Project Structure
-
-```
-app/
-  api/              # API routes (auth, cart, orders, products, cron, etc.)
-  admin/            # Admin dashboard
-  components/       # React components
-  shop/             # Storefront pages
-  ...
-lib/                # Shared utilities (supabase client, auth, db)
-public/             # Static assets
-scripts/            # Build and sync scripts
-.github/workflows/  # GitHub Actions (keepalive)
-supabase_schema.sql # Database schema and seed data
-vercel.json         # Vercel config and cron jobs
-```
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard → Settings → API → `service_role` secret |
+| `SITE_URL` *(Optional)* | Your production URL (e.g. `https://cfrankgroup.com`) |
 
 ---
 
-## Deployment
+## Cloudinary Asset Configuration
 
-Deployed automatically via Vercel on push to `main`.
+You can use your existing Cloudinary credentials. All uploads from this project are strictly namespaced under the **`cfrank_group/`** folder:
+- **Products:** `cfrank_group/products`
+- **Videos:** `cfrank_group/videos`
+- **Site Assets:** `cfrank_group/site`
 
-**Vercel project:** [anambrabestdoor](https://vercel.com/anambra-best-door/anambrabestdoor)
-
-Make sure all environment variables listed above are also set in **Vercel** → **Project Settings** → **Environment Variables**.
+Existing media from previous projects will not be overwritten or modified.
 
 ---
 
-## CAC Registration
+## Legal & Compliance Security
 
-**Business Name:** CFrank Enterprise  
-**CAC BN:** 9943925
+### Document Protection (SCUML & CAC)
+To prevent unauthorized downloads, scraping, and fraudulent reproduction of legal certificates:
+- Documents are rendered using HTML5 `<canvas>` via [`ProtectedDocumentViewer.tsx`](app/components/ProtectedDocumentViewer.tsx) with **no direct `<img>` tags in the DOM**.
+- Context menu (right-click) and drag-and-drop are disabled.
+- An invisible interaction shield overlays the graphics, directing DOM inspection tools to an empty `<div>`.
+- Documents feature a permanently burned forensic anti-tamper watermark:
+  > `VERIFICATION COPY • CFRANK GROUP PROPERTY • ANAMBRA BEST DOOR ENTERPRISES (RN: SC 041603036) • NOT FOR RE-USE`
+- Certificates are suppressed during browser print / PDF export (`@media print`).
+
+### Payment Safety Policy
+All customer-facing order touchpoints (About page, Checkout, Invoice quotes) enforce the strict payment verification notice:
+> *"All bank transfers must be made exclusively to accounts bearing the exact business name **Anambra Best Door Enterprises**. The account must be verified and approved by a verified customer care agent of the company before any transfer is made. Any payment instruction for a different account name is not from us."*
