@@ -3,7 +3,9 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { BadgeCheck } from "lucide-react";
 import { useApp } from "@/app/context/AppContext";
+import { brand } from "@/lib/brand";
 
 export default function Hero() {
   const { settings } = useApp();
@@ -26,6 +28,12 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           {/* Left Column: Architectural Value Proposition & CTAs */}
           <div className="lg:col-span-5 flex flex-col justify-center text-left">
+            {/* Verified Entity Badge */}
+            <div className="inline-flex items-center gap-1.5 py-1 px-3 mb-5 rounded-full bg-[#181C21] border border-[#282E37] text-xs font-semibold text-[#D1D5DB] w-fit">
+              <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>{brand.name}</span>
+            </div>
+
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.08] mb-5">
               Everything to build,
