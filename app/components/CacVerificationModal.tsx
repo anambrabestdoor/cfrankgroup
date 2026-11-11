@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useApp } from "@/app/context/AppContext";
 import { X, CheckCircle, ExternalLink, BadgeCheck, Building2, Copy, Check } from "lucide-react";
 import { brand } from "@/lib/brand";
+import ProtectedDocumentViewer from "@/app/components/ProtectedDocumentViewer";
 
 export default function CacVerificationModal() {
   const { cacModalOpen, setCacModalOpen, settings } = useApp();
@@ -126,21 +127,15 @@ export default function CacVerificationModal() {
                     </div>
                   </div>
 
-        {/* Certificate Image Frame */}
-        <div className="relative rounded-md border border-[#E5E3DC] bg-[#FBF9F5] overflow-hidden shadow-inner flex items-center justify-center min-h-[220px] sm:min-h-[380px] max-h-[460px]">
-          <Image
-            src={currentImage}
-            alt={`Corporate Affairs Commission Status Report - Page ${activePage}`}
-            width={720}
-            height={1280}
-            className="w-full h-auto max-h-[450px] object-contain"
-            priority
-          />
-          <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-[#121518] text-white text-[9px] sm:text-[10px] font-medium rounded-xs flex items-center gap-1 shadow-md">
-            <CheckCircle className="w-3 h-3 text-[#F3661B]" />
-            <span>Certified CAC Extract</span>
-          </div>
-        </div>
+        {/* Certificate Image Frame (Tamper-Protected) */}
+        <ProtectedDocumentViewer
+          src={currentImage}
+          alt={`Corporate Affairs Commission Status Report - Page ${activePage}`}
+          aspectRatio="aspect-[3/4]"
+          badgeText="CAC Certified Extract"
+          watermarkText="CFRANK GROUP • OFFICIAL CAC STATUS REPORT • VERIFICATION COPY ONLY"
+          className="max-h-[460px] mx-auto"
+        />
 
         {/* Verification Notice */}
         <div className="p-2.5 sm:p-3 rounded-md bg-[#FBF9F5] border border-[#E5E3DC] flex items-start gap-2 text-xs text-[#4A4A4A]">

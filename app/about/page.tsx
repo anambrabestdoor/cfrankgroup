@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useApp } from "@/app/context/AppContext";
 import { brand, colors } from "@/lib/brand";
+import ProtectedDocumentViewer from "@/app/components/ProtectedDocumentViewer";
 import {
   Building2,
   BadgeCheck,
@@ -150,17 +151,14 @@ export default function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <div className="lg:col-span-5 relative aspect-[4/3] rounded-lg overflow-hidden border border-[#E5E3DC] bg-[#FBF9F5] shadow-sm">
-              <Image
+            <div className="lg:col-span-5">
+              <ProtectedDocumentViewer
                 src="/scuml-certificate.jpg"
                 alt="SCUML Certificate of Registration - Anambra Best Door Enterprises"
-                fill
-                className="object-contain p-2"
-                sizes="(max-width: 1024px) 100vw, 40vw"
+                aspectRatio="aspect-[4/3]"
+                badgeText="SCUML RN: SC 041603036"
+                watermarkText="CFRANK GROUP • OFFICIAL VERIFICATION COPY • NOT VALID FOR THIRD PARTY RE-USE"
               />
-              <div className="absolute bottom-2 right-2 px-2.5 py-1 bg-[#121518]/90 text-white text-[10px] font-bold rounded flex items-center gap-1 shadow-sm">
-                <span>SCUML RN: SC 041603036</span>
-              </div>
             </div>
 
             <div className="lg:col-span-7 space-y-4">
@@ -215,20 +213,15 @@ export default function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            <div
-              onClick={() => setCacModalOpen(true)}
-              className="lg:col-span-5 relative aspect-[3/4] rounded-lg overflow-hidden border border-[#E5E3DC] bg-[#FBF9F5] cursor-pointer group shadow-sm flex items-center justify-center"
-            >
-              <Image
+            <div className="lg:col-span-5 cursor-pointer" onClick={() => setCacModalOpen(true)}>
+              <ProtectedDocumentViewer
                 src={settings.cacCertificateUrl || "/cac-status-report-page1.jpeg"}
                 alt="CAC Legal Status Report"
-                fill
-                className="object-contain p-2 group-hover:scale-102 transition-transform duration-300"
-                sizes="(max-width: 1024px) 100vw, 40vw"
+                aspectRatio="aspect-[3/4]"
+                badgeText="CAC Certified Extract"
+                watermarkText="CFRANK GROUP • OFFICIAL CAC STATUS REPORT • VERIFICATION COPY ONLY"
+                onExpand={() => setCacModalOpen(true)}
               />
-              <div className="absolute bottom-2 right-2 px-2.5 py-1 bg-[#121518]/90 text-white text-[10px] font-bold rounded flex items-center gap-1 shadow-sm">
-                <span>Certified CAC Extract</span>
-              </div>
             </div>
 
             <div className="lg:col-span-7 space-y-4">
