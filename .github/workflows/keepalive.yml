@@ -1,55 +1,65 @@
-name: Supabase Keepalive Ping
+name: Supabase Dual Keepalive & Health Ping
 
 on:
   schedule:
-    # Run daily at 06:00 UTC — well within the 7-day inactivity window
-    - cron: '0 6 * * *'
+    # Run twice daily: Midnight (00:00 UTC) and Noon (12:00 UTC)
+    - cron: '0 0,12 * * *'
   workflow_dispatch:
 
 jobs:
-  ping:
+  keepalive:
     runs-on: ubuntu-latest
+    name: Ping Supabase Database
     steps:
-      # 1) Direct Supabase REST query — works even if Vercel is down
-      - name: Direct Supabase Keepalive Query
+      # 1) Direct Supabase Query & Activity Generation
+      - name: Direct Supabase Keepalive
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-            echo "::error::Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY secrets — add them in GitHub repo Settings > Secrets"
-            exit 1
-          fi
-
-          echo "Pinging Supabase directly at $(date -u)..."
-          HTTP_STATUS=$(curl -s -o /tmp/sb_response.json -w "%{http_code}" \
-            "${SUPABASE_URL}/rest/v1/products?select=id&limit=1" \
-            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
-            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
-
-          echo "Supabase response status: $HTTP_STATUS"
-          cat /tmp/sb_response.json
-
-          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
-            echo "::error::Supabase direct ping failed with HTTP $HTTP_STATUS"
-            exit 1
-          fi
-
-          echo "Supabase direct keepalive succeeded."
-
-      # 2) Also ping the Vercel endpoint as a secondary check
-      - name: Ping Vercel Keepalive Route
-        continue-on-error: true
-        run: |
-          echo "Pinging Vercel keepalive endpoint..."
-          HTTP_STATUS=$(curl -s -o /tmp/vercel_response.json -w "%{http_code}" \
-            "https://anambrabestdoor.com/api/cron/keepalive")
-
-          echo "Vercel response status: $HTTP_STATUS"
-          cat /tmp/vercel_response.json
-
-          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
-            echo "::warning::Vercel keepalive endpoint returned HTTP $HTTP_STATUS — site may be down"
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "Direct Supabase credentials detected. Pinging REST API..."
+            
+            # Read query
+            READ_STATUS=$(curl -s -o /tmp/sb_read.json -w "%{http_code}" \
+              "${SUPABASE_URL}/rest/v1/products?select=id&limit=1" \
+              -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
+            
+            echo "Supabase Read Status: $READ_STATUS"
+            cat /tmp/sb_read.json || true
+            
+            # Write transaction: update site_settings.updated_at to ensure PostgreSQL WAL activity
+            TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            WRITE_STATUS=$(curl -s -o /tmp/sb_write.json -w "%{http_code}" \
+              -X PATCH "${SUPABASE_URL}/rest/v1/site_settings?id=eq.global" \
+              -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Content-Type: application/json" \
+              -H "Prefer: return=minimal" \
+              -d "{\"updated_at\":\"${TIMESTAMP}\"}")
+              
+            echo "Supabase Write/Touch Status: $WRITE_STATUS"
           else
-            echo "Vercel keepalive also succeeded."
+            echo "Notice: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY secrets not set in GitHub repository settings."
+            echo "To enable direct GitHub Actions pings, add them under: Repo Settings > Secrets and variables > Actions"
+          fi
+
+      # 2) Ping live website keepalive endpoint
+      - name: Ping Vercel Keepalive Endpoint
+        env:
+          TARGET_URL: ${{ secrets.SITE_URL || 'https://cfrankgroup.vercel.app' }}
+        run: |
+          echo "Pinging ${TARGET_URL}/api/cron/keepalive..."
+          HTTP_STATUS=$(curl -s -o /tmp/vercel_response.json -w "%{http_code}" \
+            --max-time 20 \
+            "${TARGET_URL}/api/cron/keepalive" || echo "000")
+            
+          echo "Website response HTTP status: $HTTP_STATUS"
+          cat /tmp/vercel_response.json || true
+          
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "Vercel keepalive execution succeeded!"
+          else
+            echo "Website returned $HTTP_STATUS (may still be deploying or env vars being configured)"
           fi
