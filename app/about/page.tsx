@@ -56,7 +56,7 @@ export default function AboutPage() {
             <p className="text-xs sm:text-sm text-[#4A4A4A] leading-relaxed">
               Rather than acting as intermediary brokers, the group maintains direct factory relationships with steel and wood fabricators across Turkey and global industrial centers. By housing inventory in physical warehouses and conducting multi-point quality checks prior to dispatch, we provide developers, architects, and private builders with certified structural products that perform reliably over decades.
             </p>
-            <div className="pt-2 flex items-center gap-3">
+            <div className="pt-2 flex flex-wrap items-center gap-3">
               <Link
                 href="/shop"
                 className="py-2.5 px-4 bg-[#121518] hover:bg-[#22262B] text-white text-xs font-bold rounded-lg inline-flex items-center gap-2 transition-colors"
@@ -64,6 +64,15 @@ export default function AboutPage() {
                 <span>Browse Product Catalogue</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#F3661B]" />
               </Link>
+              <a
+                href={`https://wa.me/${settings.whatsappNumber || brand.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Group, I found you on your website and would like to inquire about your products and services.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-2.5 px-4 bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold rounded-lg inline-flex items-center gap-2 transition-colors"
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>Chat on WhatsApp</span>
+              </a>
             </div>
           </div>
 
@@ -122,6 +131,64 @@ export default function AboutPage() {
               <p className="text-xs text-[#4A4A4A] leading-relaxed">
                 Doors are delivered as unified sets complete with matching sub-frames, architraves, hinges, and calibrated multi-point locksets to minimize on-site carpentry adjustments.
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* SCUML Compliance Section */}
+        <section className="bg-white rounded-xl border border-[#E5E3DC] p-6 sm:p-8 space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E5E3DC] pb-4">
+            <div>
+              <div className="flex items-center gap-2 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-1">
+                <BadgeCheck className="w-4 h-4" />
+                <span>Anti-Money Laundering Compliance</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#121518]">
+                SCUML Certificate of Registration
+              </h2>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="lg:col-span-5 relative aspect-[4/3] rounded-lg overflow-hidden border border-[#E5E3DC] bg-[#FBF9F5] shadow-sm">
+              <Image
+                src="/scuml-certificate.jpg"
+                alt="SCUML Certificate of Registration - Anambra Best Door Enterprises"
+                fill
+                className="object-contain p-2"
+                sizes="(max-width: 1024px) 100vw, 40vw"
+              />
+              <div className="absolute bottom-2 right-2 px-2.5 py-1 bg-[#121518]/90 text-white text-[10px] font-bold rounded flex items-center gap-1 shadow-sm">
+                <span>SCUML RN: SC 041603036</span>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 space-y-4">
+              <div className="p-4 rounded-lg bg-[#FBF9F5] border border-[#E5E3DC] space-y-3 text-xs">
+                <div>
+                  <span className="text-[#73787E] block text-[10px] uppercase font-bold tracking-wider">Issuing Authority</span>
+                  <span className="font-bold text-[#121518] text-sm">Special Control Unit Against Money Laundering (SCUML)</span>
+                </div>
+                <div>
+                  <span className="text-[#73787E] block text-[10px] uppercase font-bold tracking-wider">Registered Entity</span>
+                  <span className="font-semibold text-[#121518]">Anambra Best Door Enterprises</span>
+                </div>
+                <div>
+                  <span className="text-[#73787E] block text-[10px] uppercase font-bold tracking-wider">Registration Number</span>
+                  <span className="font-mono font-bold text-[#121518] text-sm">SC 041603036</span>
+                </div>
+                <div>
+                  <span className="text-[#73787E] block text-[10px] uppercase font-bold tracking-wider">Legal Basis</span>
+                  <span className="text-[#4A4A4A] leading-relaxed block">Section 17(2)(a) of the Money Laundering (Prevention and Prohibition) Act, 2022</span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-lg border border-amber-200 bg-amber-50/60 space-y-2 text-xs">
+                <span className="font-bold text-[#121518] text-[11px] uppercase tracking-wide block">Payment Account Notice</span>
+                <p className="text-[#4A4A4A] leading-relaxed">
+                  All bank transfers must be made exclusively to accounts bearing the exact business name <span className="font-bold text-[#121518]">Anambra Best Door Enterprises</span>. The account must be verified and approved by a verified customer care agent of the company before any transfer is made. Any payment instruction for a different account name is not from us.
+                </p>
+              </div>
             </div>
           </div>
         </section>

@@ -161,7 +161,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
 
   // WordPress-Style Navigation State
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "products" | "inventory" | "media" | "delivery" | "team" | "settings" | "cac" | "orders"
+    "dashboard" | "products" | "inventory" | "media" | "delivery" | "team" | "settings" | "cac" | "orders" | "database"
   >("dashboard");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [navDropdowns, setNavDropdowns] = useState<Record<string, boolean>>({
@@ -1289,7 +1289,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
           target="_blank"
           className="text-[11px] font-semibold text-slate-300 hover:text-white flex items-center space-x-1 px-2.5 py-1 bg-slate-800 rounded-lg"
         >
-          <span>Storefront</span>
+          <span>Shop</span>
           <ExternalLink className="w-3 h-3 text-[#2563EB]" />
         </Link>
       </div>
@@ -1574,6 +1574,20 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                 >
                   CAC Legal Verification
                 </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("database");
+                    setIsEditing(false);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                    activeTab === "database"
+                      ? "bg-slate-800 text-white font-bold"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  Database Health
+                </button>
               </div>
             )}
           </div>
@@ -1588,7 +1602,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
           >
             <div className="flex items-center space-x-2">
               <ExternalLink className="w-3.5 h-3.5 text-[#2563EB]" />
-              <span className="font-semibold">View Storefront</span>
+              <span className="font-semibold">View Shop</span>
             </div>
             <span className="text-[10px] bg-slate-900 px-1.5 py-0.5 rounded text-slate-400">Live</span>
           </Link>
@@ -1819,7 +1833,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                     className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center space-x-1.5"
                   >
                     <ExternalLink className="w-4 h-4 text-slate-600" />
-                    <span>View Public Storefront</span>
+                    <span>View Shop</span>
                   </Link>
                 </div>
               </div>
@@ -3383,6 +3397,132 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                   <div className="relative aspect-[4/5] w-full rounded-lg overflow-hidden bg-slate-200">
                     <Image src="/cac-proprietor-page2.jpeg" alt="CAC Proprietor Particulars" fill className="object-cover" />
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* VIEW: DATABASE HEALTH                                                     */}
+          {/* ========================================================================= */}
+          {activeTab === "database" && !isEditing && (
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Database Health</h1>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Supabase connection status, keepalive schedule, and catalogue sync.
+                </p>
+              </div>
+
+              {/* Status Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Supabase Status</span>
+                  {supabaseSyncStatus.loading ? (
+                    <span className="text-sm font-bold text-slate-500">Checking...</span>
+                  ) : supabaseSyncStatus.error ? (
+                    <span className="text-sm font-bold text-red-600">Not Connected</span>
+                  ) : supabaseSyncStatus.message ? (
+                    <span className="text-sm font-bold text-emerald-600">Connected</span>
+                  ) : (
+                    <span className="text-sm font-bold text-slate-400">Not Checked</span>
+                  )}
+                </div>
+                <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Keepalive Schedule</span>
+                  <span className="text-sm font-bold text-slate-900">Daily at 12:00 UTC</span>
+                  <span className="text-[11px] text-slate-500 block">via Vercel Cron</span>
+                </div>
+                <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Bundled Catalogue</span>
+                  <span className="text-sm font-bold text-slate-900">
+                    {products.length} products
+                  </span>
+                  <span className="text-[11px] text-slate-500 block">local fallback always active</span>
+                </div>
+              </div>
+
+              {/* Status Message */}
+              {(supabaseSyncStatus.message || supabaseSyncStatus.error) && (
+                <div className={`p-4 rounded-xl border text-xs ${supabaseSyncStatus.error ? "bg-red-50 border-red-200 text-red-700" : "bg-emerald-50 border-emerald-200 text-emerald-800"}`}>
+                  {supabaseSyncStatus.error || supabaseSyncStatus.message}
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs space-y-4">
+                <h3 className="text-sm font-bold text-slate-900">Actions</h3>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={async () => {
+                      setSupabaseSyncStatus({ loading: true, message: null, error: null });
+                      try {
+                        const res = await fetch("/api/admin/supabase-sync");
+                        const data = await res.json();
+                        if (data.connected) {
+                          setSupabaseSyncStatus({
+                            loading: false,
+                            message: data.message || "Supabase is connected.",
+                            error: null,
+                          });
+                        } else {
+                          setSupabaseSyncStatus({
+                            loading: false,
+                            message: null,
+                            error: data.message || data.error || "Supabase not configured or not reachable.",
+                          });
+                        }
+                      } catch (e: any) {
+                        setSupabaseSyncStatus({ loading: false, message: null, error: e?.message || "Request failed." });
+                      }
+                    }}
+                    disabled={supabaseSyncStatus.loading}
+                    className="inline-flex items-center space-x-1.5 px-4 py-2.5 bg-slate-900 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    <Database className="w-3.5 h-3.5" />
+                    <span>{supabaseSyncStatus.loading ? "Pinging..." : "Ping Supabase"}</span>
+                  </button>
+
+                  <button
+                    onClick={async () => {
+                      setSupabaseSyncStatus({ loading: true, message: "Syncing catalogue to Supabase...", error: null });
+                      try {
+                        const res = await fetch("/api/admin/supabase-sync", { method: "POST" });
+                        const data = await res.json();
+                        setSupabaseSyncStatus({
+                          loading: false,
+                          message: data.message || (data.success ? "Sync complete." : null),
+                          error: data.success ? null : (data.error || "Sync failed."),
+                        });
+                      } catch (e: any) {
+                        setSupabaseSyncStatus({ loading: false, message: null, error: e?.message || "Sync request failed." });
+                      }
+                    }}
+                    disabled={supabaseSyncStatus.loading}
+                    className="inline-flex items-center space-x-1.5 px-4 py-2.5 bg-[#F3661B] hover:bg-[#d45a16] text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${supabaseSyncStatus.loading ? "animate-spin" : ""}`} />
+                    <span>{supabaseSyncStatus.loading ? "Syncing..." : "Sync Catalogue to Supabase"}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Setup Instructions */}
+              <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs space-y-4">
+                <h3 className="text-sm font-bold text-slate-900">Supabase Setup</h3>
+                <div className="space-y-3 text-xs text-slate-700">
+                  <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 font-mono text-[11px] space-y-1">
+                    <p className="text-slate-400 font-sans font-bold text-[10px] uppercase mb-1">Required environment variables</p>
+                    <p>NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co</p>
+                    <p>NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key</p>
+                    <p>SUPABASE_SERVICE_ROLE_KEY=your-service-role-key</p>
+                  </div>
+                  <ol className="space-y-2 pl-4 list-decimal text-[11px] leading-relaxed text-slate-600">
+                    <li>Create a project at <span className="font-semibold text-slate-800">supabase.com</span> and copy the URL and keys above.</li>
+                    <li>Add these to <span className="font-mono bg-slate-100 px-1 rounded">.env.local</span> for local dev, and to Vercel Dashboard under <span className="font-semibold">Project Settings &rarr; Environment Variables</span> for production.</li>
+                    <li>Run <span className="font-mono bg-slate-100 px-1 rounded">supabase_schema.sql</span> (in the project root) in your Supabase SQL Editor to create the required tables.</li>
+                    <li>Redeploy on Vercel after adding the env vars, then use the "Ping Supabase" button above to verify the connection.</li>
+                  </ol>
                 </div>
               </div>
             </div>

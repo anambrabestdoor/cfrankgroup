@@ -233,7 +233,7 @@ export default function StorefrontPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E5E3DC] pb-4">
             <div className="space-y-1">
               <span className="text-xs font-bold uppercase tracking-wider text-[#F3661B]">
-                Unified Storefront
+                Shop & Warehouse Inventory
               </span>
               <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#121518]">
                 Warehouse Inventory & Sourcing
@@ -297,7 +297,7 @@ export default function StorefrontPage() {
               href="/shop"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#121518] hover:bg-[#22262B] text-white text-xs font-bold rounded-lg transition-colors"
             >
-              <span>Explore Complete Unified Catalogue</span>
+              <span>Explore All Products</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

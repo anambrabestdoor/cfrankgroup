@@ -121,7 +121,7 @@ export default function CheckoutPage() {
           className="inline-flex items-center space-x-1.5 text-xs text-[#6B7280] hover:text-[#121518] font-semibold"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Continue Shopping in Unified Shop</span>
+          <span>Continue to Shop</span>
         </Link>
 
         {submittedOrder ? (
@@ -265,6 +265,16 @@ export default function CheckoutPage() {
                       />
                     </div>
                   </div>
+                </div>
+
+                {/* Payment Safety Notice */}
+                <div className="p-3.5 rounded-lg border border-amber-200 bg-amber-50/60 text-xs space-y-1.5">
+                  <div className="flex items-start gap-2">
+                    <span className="font-bold text-[#121518] text-[11px] uppercase tracking-wide shrink-0">Payment Accounts</span>
+                  </div>
+                  <p className="text-[#4A4A4A] leading-relaxed text-[11px]">
+                    All bank transfers must be made exclusively to accounts bearing the exact business name <span className="font-bold text-[#121518]">Anambra Best Door Enterprises</span>. Any payment instruction for a different account name is not from us. Confirm account details with a Customer Care Agent before transferring.
+                  </p>
                 </div>
 
                 <div className="pt-2">

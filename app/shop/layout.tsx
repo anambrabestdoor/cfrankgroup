@@ -4,7 +4,7 @@ import { brand } from "@/lib/brand";
 export const metadata: Metadata = {
   title: `Catalogue & Store | ${brand.name}`,
   description:
-    `Explore the unified catalogue of ${brand.name}, featuring security doors, interior room doors, sanitary wares, and building fittings with nationwide delivery.`,
+    `Explore products from ${brand.name}, featuring security doors, interior room doors, sanitary wares, and building fittings with nationwide delivery.`,
   alternates: {
     canonical: "/shop",
   },

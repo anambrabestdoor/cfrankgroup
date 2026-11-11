@@ -382,7 +382,7 @@ export default function ShopPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#FBF9F5] flex items-center justify-center p-12 text-xs text-[#73787E]">
-          Loading CFrank Group Unified Shop...
+          Loading CFrank Group Products...
         </div>
       }
     >
