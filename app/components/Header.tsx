@@ -42,11 +42,18 @@ export default function Header() {
         <Link href="/" className="flex items-center space-x-2.5 shrink-0">
           <div className="relative h-9 w-40 sm:h-11 sm:w-52">
             <Image
-              src={settings.logoUrl || "/cfranklogo.png"}
+              src={settings.logoUrl?.trim() ? settings.logoUrl.trim() : "/cfranklogo.png"}
               alt={`${brand.name} Logo`}
               fill
               className="object-contain object-left"
               priority
+              onError={(e) => {
+                // If custom logoUrl fails or 404s, seamlessly fallback to local asset
+                const target = e.target as HTMLImageElement;
+                if (target && !target.src.includes("/cfranklogo.png")) {
+                  target.src = "/cfranklogo.png";
+                }
+              }}
             />
           </div>
         </Link>

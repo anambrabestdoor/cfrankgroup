@@ -800,6 +800,10 @@ export const db = {
       jijiShopUrl: DEFAULT_SITE_SETTINGS.jijiShopUrl,
       whatsappInquiryTemplate: DEFAULT_SITE_SETTINGS.whatsappInquiryTemplate,
       whatsappCartTemplate: DEFAULT_SITE_SETTINGS.whatsappCartTemplate,
+      logoUrl: DEFAULT_SITE_SETTINGS.logoUrl || "/cfranklogo.png",
+      heroVideoUrl: DEFAULT_SITE_SETTINGS.heroVideoUrl,
+      heroPosterUrl: DEFAULT_SITE_SETTINGS.heroPosterUrl,
+      heroImageUrl: DEFAULT_SITE_SETTINGS.heroImageUrl,
       deliverySummaryHeading: DEFAULT_SITE_SETTINGS.deliverySummaryHeading,
       deliverySummaryText: DEFAULT_SITE_SETTINGS.deliverySummaryText,
       deliveryRegions: DEFAULT_SITE_SETTINGS.deliveryRegions,
@@ -838,7 +842,7 @@ export const db = {
             heroVideoUrl: data.hero_video_url || result.heroVideoUrl,
             heroPosterUrl: data.hero_poster_url || result.heroPosterUrl,
             heroImageUrl: data.hero_image_url || result.heroImageUrl,
-            logoUrl: data.logo_url || result.logoUrl,
+            logoUrl: (data.logo_url && data.logo_url.trim()) ? data.logo_url : result.logoUrl,
           };
         }
       } catch (err) {
