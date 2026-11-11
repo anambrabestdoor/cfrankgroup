@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { DOOR_PRODUCTS } from "@/app/data/doorsData";
+import { brand } from "@/lib/brand";
 
 const COLLECTION_SLUGS = [
   "hdf-doors",
@@ -11,12 +12,10 @@ const COLLECTION_SLUGS = [
   "paint",
   "roof-tiles",
   "bathrooms",
-  "real-estate",
-  "careers",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://anambrabestdoor.com";
+  const baseUrl = brand.url;
   const currentDate = new Date().toISOString();
 
   // Static core routes
@@ -50,12 +49,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.75,
-    },
-    {
-      url: `${baseUrl}/blog`,
-      lastModified: currentDate,
-      changeFrequency: "weekly",
-      priority: 0.8,
     },
     {
       url: `${baseUrl}/faq`,

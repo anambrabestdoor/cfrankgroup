@@ -1,3 +1,5 @@
+import { brand, colors, whatsappDefaults } from "./brand";
+
 export interface SiteSettings {
   companyName: string;
   parentCompany: string;
@@ -22,6 +24,10 @@ export interface SiteSettings {
   jijiShopUrl: string;
   whatsappInquiryTemplate: string;
   whatsappCartTemplate: string;
+  heroVideoUrl?: string;
+  heroPosterUrl?: string;
+  heroImageUrl?: string;
+  logoUrl?: string;
   serviceAreas: string[];
   deliverySummaryHeading?: string;
   deliverySummaryText?: string;
@@ -35,29 +41,33 @@ export interface SiteSettings {
 }
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  companyName: "Anambra Best Door Enterprises",
-  parentCompany: "CFrank Enterprise",
-  proprietor: "Chidera Frank Okonkwo",
-  tagline: "Direct Importer of Heavy-Gauge Security Doors & Building Fittings",
-  description: "Anambra Best Door Enterprises is a specialized construction activities and door fittings enterprise operated by CFrank Enterprise (Chidera Frank Okonkwo) at God's Own Plaza W-Line and Maraim Plaza, Building Materials International Market Ogidi, Anambra State. Supplying premium steel security doors, interior wooden doors, bullet proof doors, HDF doors, sanitary wares, and building fittings nationwide.",
-  address: "Shop 8, First Floor, God's Own Plaza W-Line, Building Materials International Market, Ogidi, Anambra State, Nigeria (Opposite Chubby Plaza)",
-  secondAddress: "No 16/17, Maraim Plaza Building Material Ogidi, Ogidi, Anambra State, Nigeria",
-  marketLocation: "God's Own Plaza W-Line & Maraim Plaza, Building Materials International Market, Ogidi, Anambra State",
-  phone: "+2347070070305",
-  phoneDisplay: "+234 707 007 0305",
-  whatsappNumber: "2347070070305",
-  salesEmail: "anambrabestdoor@gmail.com",
-  workingHours: "Mon - Sat: 8:00 AM - 5:30 PM",
-  cacNumber: "BN 9943925",
+  companyName: brand.name,
+  parentCompany: brand.name,
+  proprietor: brand.proprietor,
+  tagline: brand.tagline,
+  description: brand.description,
+  address: brand.address,
+  secondAddress: "",
+  marketLocation: brand.address,
+  phone: brand.phone,
+  phoneDisplay: brand.phoneDisplay,
+  whatsappNumber: brand.whatsappNumber,
+  salesEmail: brand.email,
+  workingHours: brand.workingHours,
+  cacNumber: brand.cacNumber,
   cacRegistrationDate: "Oct 16, 2026",
   cacStatus: "ACTIVE",
   cacCertificateUrl: "/cac-status-report-page1.jpeg",
   cacPage2Url: "/cac-proprietor-page2.jpeg",
-  instagramUrl: "https://www.instagram.com/anambrabestdoor/",
-  facebookUrl: "https://www.facebook.com/Anambrabestdoor",
-  jijiShopUrl: "https://jiji.ng/shop/anambrabestdoor",
-  whatsappInquiryTemplate: "Hello CFrank Enterprise, I would like to inquire about the current price and stock availability for [Door Name] (Size: [Size], Quantity: [Qty]).",
-  whatsappCartTemplate: "Hello CFrank Enterprise, I would like to inquire about current price and availability for the following items from your catalogue:\n\n[Items]\n\nPlease confirm availability and delivery terms to my project site.",
+  instagramUrl: brand.social.instagram,
+  facebookUrl: brand.social.facebook,
+  jijiShopUrl: brand.social.jiji,
+  whatsappInquiryTemplate: whatsappDefaults.inquiryTemplate,
+  whatsappCartTemplate: whatsappDefaults.cartTemplate,
+  heroVideoUrl: "/cfrank_hero_assembly.mp4?v=4.5",
+  heroPosterUrl: "/cfrank_hero_poster.webp?v=4.5",
+  heroImageUrl: "",
+  logoUrl: "/cfranklogo.png",
   serviceAreas: [
     "Anambra (Onitsha, Awka, Nnewi, Ogidi)",
     "Asaba & Delta State",
@@ -157,7 +167,7 @@ export function buildWhatsAppOrderUrl(params: {
       text += `\nNote: ${params.additionalNotes}`;
     }
   } else {
-    text = `Hello CFrank Enterprise, I am contacting you from your website. I would like to inquire about your product inventory, current prices, and delivery terms.`;
+    text = `Hello ${brand.name}, I am contacting you from your website. I would like to inquire about your product inventory, current prices, and delivery terms.`;
   }
 
   return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;

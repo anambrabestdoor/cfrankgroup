@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
         const sanitizedName = file.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "_");
 
         const uploadRes = await cloudinary.uploader.upload(fileBase64, {
-          folder: "anambra_best_door/products",
+          folder: "cfrank_group/products",
           public_id: sanitizedName,
           resource_type: "image",
           overwrite: true,

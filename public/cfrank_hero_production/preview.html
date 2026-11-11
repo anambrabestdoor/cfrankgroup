@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CFrank Group — Architectural Commerce Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&family=Plus+Jakarta+Sans:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #121518;
+      color: #FBF9F5;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Header: exact match to live Header.tsx ──────────── */
+    header {
+      background: #FBF9F5;
+      border-bottom: 1px solid #E5E3DC;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .header-logo img {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .header-nav a {
+      color: #121518;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: color 0.15s;
+    }
+    .header-nav a:hover { color: #F3661B; }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* Icon-style square buttons matching live header */
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      background: white;
+      border: 1px solid #E5E3DC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      color: #121518;
+    }
+    .icon-btn svg { width: 16px; height: 16px; }
+    /* WhatsApp contact button */
+    .btn-contact {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #121518;
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-contact:hover { background: #252A2F; }
+    .btn-contact svg { width: 14px; height: 14px; color: #F3661B; }
+
+    /* ─── Hero ───────────────────────────────────────────── */
+    .hero-section {
+      width: 100%;
+      background: #121518;
+      border-bottom: 1px solid #22262B;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: 8%;
+      width: 60%;
+      height: 120%;
+      background: radial-gradient(ellipse at center, rgba(243,102,27,0.04) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-container {
+      max-width: 1340px;
+      margin: 0 auto;
+      padding: 56px 40px 64px 40px;
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: center;
+      min-height: calc(100vh - 76px);
+      position: relative;
+      z-index: 1;
+    }
+    @media (min-width: 1024px) {
+      .hero-container {
+        grid-template-columns: 460px 1fr;
+        gap: 56px;
+        padding: 48px 40px;
+      }
+    }
+
+    /* ─── Left col ───────────────────────────────────────── */
+    .left-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #181C20;
+      border: 1px solid #252B32;
+      padding: 7px 14px 7px 10px;
+      border-radius: 4px;
+      margin-bottom: 28px;
+      align-self: flex-start;
+    }
+    .badge-mark { width: 18px; height: 18px; flex-shrink: 0; }
+    .badge span {
+      font-family: 'Space Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #F3661B;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .headline {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(38px, 4.5vw, 56px);
+      font-weight: 900;
+      line-height: 1.04;
+      color: #FFFFFF;
+      letter-spacing: -0.04em;
+      margin-bottom: 20px;
+    }
+    .headline em { font-style: normal; color: #F3661B; }
+    .support-copy {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      color: #9EA5AD;
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 400px;
+    }
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: #F3661B;
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 13px 26px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #D9530F; }
+    .btn-secondary {
+      background: transparent;
+      color: #C5CAD0;
+      border: 1px solid #2E353D;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 13px 26px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-secondary:hover { color: #FFFFFF; border-color: #515961; }
+
+    /* ─── Right col: video + building label overlay ──────── */
+    .right-col {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    video {
+      width: 100%;
+      display: block;
+      background: #121518;
+      border: none;
+      outline: none;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    video::-webkit-media-controls,
+    video::-webkit-media-controls-enclosure,
+    video::-webkit-media-controls-panel,
+    video::-webkit-media-controls-overlay-play-button,
+    video::-webkit-media-controls-start-playback-button { display: none !important; opacity: 0 !important; }
+
+    @media (prefers-reduced-motion: reduce) {
+      video { display: none; }
+      .video-fallback { display: block !important; }
+    }
+    .video-fallback { display: none; width: 100%; }
+    .video-fallback img { width: 100%; display: block; }
+
+    /* ─── Footer ─────────────────────────────────────────── */
+    footer {
+      background: #121518;
+      border-top: 1px solid #22262B;
+      padding: 56px 40px 32px 40px;
+      color: #A0A09B;
+      font-size: 12px;
+    }
+    .footer-inner {
+      max-width: 1340px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-logo img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      margin-bottom: 12px;
+      /* Invert dark logo to light since footer is dark */
+      filter: brightness(0) invert(1);
+      opacity: 0.85;
+    }
+    .footer-logo p {
+      font-size: 12px;
+      line-height: 1.65;
+      color: #6B7280;
+      max-width: 240px;
+    }
+    .footer-col h4 {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      margin-bottom: 14px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a {
+      color: #A0A09B;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .footer-col ul li a:hover { color: #F3661B; }
+    .footer-bottom {
+      max-width: 1340px;
+      margin: 0 auto;
+      border-top: 1px solid #22262B;
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-bottom span { font-size: 11px; color: #4A5260; }
+    .footer-legal {
+      display: flex;
+      gap: 20px;
+    }
+    .footer-legal a {
+      font-size: 11px;
+      color: #4A5260;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-legal a:hover { color: #9EA5AD; }
+  </style>
+</head>
+<body>
+
+  <!-- Header: matches live site Header.tsx exactly -->
+  <header>
+    <a href="/" class="header-logo">
+      <img src="/cfranklogo.png" alt="CFrank Group" />
+    </a>
+    <nav class="header-nav">
+      <a href="/">Home</a>
+      <a href="/shop">Shop</a>
+      <a href="/businesses">Our Businesses</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <!-- Search icon -->
+      <a href="/shop" class="icon-btn" title="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </a>
+      <!-- Cart icon -->
+      <a href="/cart" class="icon-btn" title="Cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+      </a>
+      <!-- Contact Us (WhatsApp) -->
+      <a href="https://wa.me/2347065660855" class="btn-contact" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#F3661B">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Contact Us
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <div class="hero-container">
+
+      <div class="left-col">
+        <h1 class="headline">
+          Everything to build,<br>secure, and complete <em>your space.</em>
+        </h1>
+
+        <p class="support-copy">
+          We deliver quality security doors, stone-coated roof tiles, smart biometric door locks, and sanitary wares; building project supply in one order.
+        </p>
+
+        <div class="cta-row">
+          <a href="/shop" class="btn-primary">Browse shop</a>
+          <a href="/about" class="btn-secondary">About us</a>
+        </div>
+      </div>
+
+      <!-- Right: Seamless 3D Architectural Animation -->
+      <div class="right-col">
+        <div class="video-wrapper">
+          <video
+            autoplay
+            loop
+            muted
+            playsinline
+            disablepictureinpicture
+            controlslist="nodownload nofullscreen noremoteplayback"
+            poster="cfrank_hero_poster.webp?v=4.4"
+          >
+            <source src="cfrank_hero_assembly.webm?v=4.4" type="video/webm" />
+            <source src="cfrank_hero_assembly.mp4?v=4.4" type="video/mp4" />
+          </video>
+
+          <!-- Reduced-motion fallback -->
+          <div class="video-fallback">
+            <img src="cfrank_hero_completed_house.png" alt="CFrank Group architectural house" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <!-- Brand column -->
+      <div class="footer-logo">
+        <img src="/cfranklogo.png" alt="CFrank Group" />
+        <p>Building materials, roof tiles, security doors, sanitary wares, and smart hardware, supplied together for your project.</p>
+      </div>
+
+      <!-- Navigation column -->
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/shop">Shop</a></li>
+          <li><a href="/shop">Catalogue</a></li>
+          <li><a href="/about">About us</a></li>
+          <li><a href="/contact">Contact us</a></li>
+          <li><a href="/tracking">Track Order</a></li>
+          <li><a href="/wholesale">Project Sourcing</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal column -->
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/returns">Return Policy</a></li>
+          <li><a href="/terms">Terms &amp; Conditions</a></li>
+          <li><a href="/shipping">Delivery Policy</a></li>
+          <li><a href="/faq">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2025 CFrank Group. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/returns">Return Policy</a>
+        <a href="/terms">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

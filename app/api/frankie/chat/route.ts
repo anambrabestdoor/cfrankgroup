@@ -29,12 +29,12 @@ function buildFrankieSystemPrompt(settings: any = DEFAULT_SITE_SETTINGS): string
   const catalogContext = buildCatalogContext();
 
   return `
-You are Frankie, a friendly sales rep for Anambra Best Door (operated by CFrank Enterprise).
+You are Frankie, a friendly sales consultant for CFrank Group (registered as Anambra Best Door Enterprises).
 
 OWNERSHIP & VERIFIED BUSINESS FACTS (GROUND TRUTH WHEN EXPLICITLY ASKED):
-- Parent Registered Corporate Entity: CFrank Enterprise
+- Brand Entity: CFrank Group
+- Registered Business Name: Anambra Best Door Enterprises
 - Sole Proprietor & Owner: Chidera Frank Okonkwo
-- Business Trading Name: Anambra Best Door Enterprises (powered and operated by CFrank Enterprise)
 - CAC Registration Number: BN 9943925 (Registered under Companies and Allied Matters Act, Active status)
 - Physical Warehouse Address: ${settings.address}${settings.secondAddress ? ` | Branch Location: ${settings.secondAddress}` : ""}
 - Contact Phone: ${settings.phoneDisplay || settings.phone}
@@ -44,7 +44,7 @@ OWNERSHIP & VERIFIED BUSINESS FACTS (GROUND TRUTH WHEN EXPLICITLY ASKED):
 CRITICAL RULES ON IDENTITY & BUSINESS FACTS:
 - You are a sales rep, NOT a co-planner or robotic assistant.
 - DO NOT force, recite, or introduce yourself with ownership facts ("owned by Chidera Frank Okonkwo"), CAC numbers, or physical warehouse addresses in casual conversation or general product questions. Doing so sounds like a bot.
-- ONLY provide ownership details (Chidera Frank Okonkwo / CFrank Enterprise) or CAC registration (BN 9943925) if the customer specifically asks "Who owns this business?", "Who is the owner?", "Who is Frank?", or asks for CAC verification.
+- ONLY provide ownership details (Chidera Frank Okonkwo / CFrank Group) or CAC registration (BN 9943925) if the customer specifically asks "Who owns this business?", "Who is the owner?", "Who is Frank?", or asks for CAC verification.
 - ONLY provide the physical warehouse address if the customer specifically asks where you are located, asks for directions, or asks to visit in person.
 
 AUTHENTIC IN-STOCK CATALOGUE (GROUND TRUTH - ONLY RECOMMEND THESE REAL PRODUCTS):
@@ -68,7 +68,7 @@ You are not just a passive information bot; you act as an experienced, honest, a
 4. Warehouse Logistics: Highlight that nationwide waybill delivery is available with video sign-off before loading, or in-person inspection.
 
 CRITICAL DOMAIN & SCOPE RULE:
-You are an experienced Nigerian building materials and door trade consultant & sales rep for Anambra Best Door (CFrank Enterprise).
+You are an experienced Nigerian building materials and door trade consultant & sales rep for CFrank Group.
 You ONLY assist with:
 1. Doors: Turkish heavy-gauge security doors, bulletproof doors, foreign luxury HDF room doors, Watson doors, waterproof composite bathroom doors, cast aluminium doors, biometric smart locks, jambs, architraves, hinges, and handles.
 2. Sanitary Wares: dual-flush water closets (Executive Gold, England suites, Pro series), dining wash hand basins, luxury vanity units, shower towers, and brass mixer taps.
@@ -80,7 +80,7 @@ STRICT REJECTION OF NON-BUILDING INQUIRIES (NATURAL & HUMAN, NEVER ROBOTIC):
 If a user asks ANY question outside building, construction, doors, sanitary wares, roofing, or site fittings (e.g. computer coding, math, essays, politics, cryptocurrency, football/sports, recipes, general trivia, movies, or general knowledge):
 - NEVER use robotic phrases like "I am an AI", "I am a language model", "I am programmed to", or "I am specifically built to".
 - Politely, warmly, and firmly decline like a real Nigerian trade shop manager who knows his specialty:
-  "Ah, that one is outside my trade! Here at Anambra Best Door, I only handle building construction, quality doors, roofing, and sanitary fittings for your site. Tell me about your building project or what fittings you need, and let me get you the best price and specs!"
+  "Ah, that one is outside my trade! Here at CFrank Group, I only handle building construction, quality doors, roofing, and sanitary fittings for your site. Tell me about your building project or what fittings you need, and let me get you the best price and specs!"
 - Always redirect back to doors, sanitary wares, or roofing supplies.
 
 COMMUNICATION STYLE:
@@ -133,9 +133,9 @@ function runDeterministicFrankie(message: string, settings: any = DEFAULT_SITE_S
   ) {
     return {
       message:
-        "CFrank Enterprise is the parent operating entity of Anambra Best Door.\n\n• Operating Brand: Anambra Best Door Enterprises\n• Parent Corporate Entity: CFrank Enterprise\n• CAC Registration: BN 9943925\n• Direct Contact Line: +234 707 007 0305\n\nYou can chat directly with our sales desk on WhatsApp or call our line for trade inquiries.",
+        "CFrank Group is registered with the Corporate Affairs Commission (CAC) as Anambra Best Door Enterprises.\n\n• Brand: CFrank Group\n• CAC Registered Entity: Anambra Best Door Enterprises\n• Sole Proprietor: Chidera Frank Okonkwo\n• Registration Number: BN 9943925\n• Direct Contact Line: +234 707 007 0305\n\nYou can chat directly with our customer care agent on WhatsApp or call our line for trade inquiries.",
       suggested_actions: [
-        { label: "Call Sales Desk", action_type: "call", payload: callUrl },
+        { label: "Call Customer Care", action_type: "call", payload: callUrl },
         { label: "Chat on WhatsApp", action_type: "link", payload: waUrl },
         { label: "About Us & CAC Details", action_type: "link", payload: "/about" },
       ],
@@ -194,7 +194,7 @@ function runDeterministicFrankie(message: string, settings: any = DEFAULT_SITE_S
   if (q.includes("price") || q.includes("cost") || q.includes("how much") || q.includes("rate") || q.includes("quote")) {
     return {
       message:
-        "Pricing for our doors and sanitary wares depends on dimensions, leaf thickness, frame package, and order quantity. We provide wholesale and contractor quotations tailored to your exact bill of quantities.\n\nSend your door schedule or required opening sizes directly to our sales desk on WhatsApp for an immediate quotation.",
+        "Pricing for our doors and sanitary wares depends on dimensions, leaf thickness, frame package, and order quantity. We provide wholesale and contractor quotations tailored to your exact bill of quantities.\n\nSend your door schedule or required opening sizes directly to our customer care agent on WhatsApp for an immediate quotation.",
       suggested_actions: [
         { label: "Chat on WhatsApp for Quote", action_type: "link", payload: waUrl },
         { label: "Call Admin Directly", action_type: "call", payload: callUrl },
@@ -291,7 +291,7 @@ function runDeterministicFrankie(message: string, settings: any = DEFAULT_SITE_S
   if (q.includes("cac") || q.includes("registration") || q.includes("scam") || q.includes("real") || q.includes("legit")) {
     return {
       message:
-        "Anambra Best Door is 100% registered and verified with the Corporate Affairs Commission (CAC):\n\n• Corporate Entity: CFrank Enterprise\n• Registration Number: BN 9943925\n• Status: Active\n\nYou can click 'Verify CAC' in our site footer or about page to inspect the official CAC certificate extracts.",
+        "CFrank Group is 100% registered and verified with the Corporate Affairs Commission (CAC) under Anambra Best Door Enterprises:\n\n• Business Entity: Anambra Best Door Enterprises\n• Sole Proprietor: Chidera Frank Okonkwo\n• Registration Number: BN 9943925\n• Status: Active\n\nYou can click 'Verify CAC' in our site footer or about page to inspect the official CAC certificate extracts.",
       suggested_actions: [
         { label: "About Us & CAC Details", action_type: "link", payload: "/about" },
         { label: "Chat on WhatsApp", action_type: "link", payload: waUrl },
@@ -439,7 +439,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       message:
-        "I'm temporarily having trouble connecting to the network. You can reach our sales desk directly on WhatsApp or call us directly.",
+        "I'm temporarily having trouble connecting to the network. You can reach our customer care agent directly on WhatsApp or call us directly.",
       suggested_actions: [
         { label: "Chat on WhatsApp", action_type: "link", payload: waUrl },
         { label: "Call Admin", action_type: "call", payload: callUrl },

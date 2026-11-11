@@ -1,17 +1,20 @@
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
+import { NextRequest } from "next/server";
 
-const JWT_SECRET_STRING = process.env.JWT_SECRET || "cfrank-enterprise-jwt-secret-key-ogidi-anambra-2026";
+const JWT_SECRET_STRING = process.env.JWT_SECRET || "cfrank-group-auth-jwt-secret-key-2026";
 const SECRET_KEY = new TextEncoder().encode(JWT_SECRET_STRING);
 
-export const ADMIN_COOKIE_NAME = "abd_admin_token";
+export const ADMIN_COOKIE_NAME = "cfg_admin_token";
 
 export interface AdminSession {
   email: string;
   role: "admin" | "editor";
   name?: string;
   isSuperAdmin?: boolean;
+  /** businessId restricts this admin to managing only products/orders for one division */
+  businessId?: string;
 }
 
 export interface AdminValidationResult {
@@ -20,6 +23,7 @@ export interface AdminValidationResult {
   role: "admin" | "editor";
   name?: string;
   isSuperAdmin: boolean;
+  businessId?: string;
 }
 
 /**
@@ -60,6 +64,35 @@ export async function verifyAdminToken(token: string): Promise<AdminSession | nu
   } catch {
     return null;
   }
+}
+
+/**
+ * Validates request cookies and headers for an authenticated admin or editor.
+ */
+export async function verifyAdminRequest(req: NextRequest): Promise<AdminSession | null> {
+  const token =
+    req.cookies.get(ADMIN_COOKIE_NAME)?.value ||
+    req.cookies.get("token")?.value ||
+    req.cookies.get("abd_admin_token")?.value ||
+    req.headers.get("authorization")?.replace("Bearer ", "");
+
+  if (!token) return null;
+
+  const adminSession = await verifyAdminToken(token);
+  if (adminSession) return adminSession;
+
+  try {
+    const dbPayload = db.verifyToken(token);
+    if (dbPayload && (dbPayload.role === "admin" || dbPayload.role === "editor")) {
+      return {
+        email: dbPayload.email,
+        role: dbPayload.role,
+        name: dbPayload.name,
+      };
+    }
+  } catch {}
+
+  return null;
 }
 
 /**

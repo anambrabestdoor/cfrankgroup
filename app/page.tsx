@@ -2,102 +2,109 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Hero from "@/app/components/Hero";
 import ProductCard from "@/app/components/ProductCard";
 import { useApp } from "@/app/context/AppContext";
+import { brand, colors } from "@/lib/brand";
 import {
-  BadgeCheck,
-  Home,
-  HardHat,
+  Building2,
   Store,
   Layers,
   Lock,
-  Droplets,
   Bath,
-  KeyRound,
-  Ruler,
   ArrowRight,
   MessageSquare,
   Plus,
   CheckCircle,
   Truck,
+  FileText,
+  BadgeCheck,
+  MapPin,
+  ExternalLink,
 } from "lucide-react";
 
 export default function StorefrontPage() {
-  const { settings, products } = useApp();
+  const { settings, products, setCacModalOpen } = useApp();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [activeCategoryFilter, setActiveCategoryFilter] = useState<string>("all");
 
-  // 4 latest products: 2 HDF room doors + 2 from other categories (security, sanitary, bathroom)
-  const miniArchiveProducts = useMemo(() => {
+  // Filter products for catalog preview
+  const previewProducts = useMemo(() => {
     const list = Array.isArray(products) ? products : [];
     const active = list.filter((p) => Boolean(p && typeof p === "object" && p.active !== false));
-    const hdf = active.filter((p) => p.category === "hdf-doors").slice(0, 2);
 
-    const nonHdf = active.filter((p) => p.category !== "hdf-doors");
-    const security = nonHdf.find((p) => p.category === "security-doors");
-    const sanitaryOrBath = nonHdf.find(
-      (p) => p.category === "sanitary-fittings" || p.category === "bathroom-doors"
-    );
-
-    const others: typeof active = [];
-    if (security) others.push(security);
-    if (sanitaryOrBath) others.push(sanitaryOrBath);
-
-    if (others.length < 2) {
-      for (const p of nonHdf) {
-        if (!others.some((o) => o.id === p.id)) {
-          others.push(p);
-          if (others.length === 2) break;
-        }
-      }
+    if (activeCategoryFilter === "doors") {
+      return active
+        .filter((p) =>
+          ["security-doors", "hdf-doors", "interior-doors", "luxury-doors", "bathroom-doors"].includes(
+            p.category
+          )
+        )
+        .slice(0, 8);
     }
 
-    return [...hdf, ...others].slice(0, 4);
-  }, [products]);
+    if (activeCategoryFilter === "sanitary") {
+      return active
+        .filter((p) => ["sanitary-fittings", "bathrooms"].includes(p.category))
+        .slice(0, 8);
+    }
+
+    if (activeCategoryFilter === "building-materials") {
+      return active
+        .filter((p) => ["paint", "roof-tiles", "building-materials"].includes(p.category))
+        .slice(0, 8);
+    }
+
+    // Default "all": 4 doors + 4 sanitary/materials
+    const doors = active
+      .filter((p) =>
+        ["security-doors", "hdf-doors", "interior-doors", "luxury-doors"].includes(p.category)
+      )
+      .slice(0, 4);
+
+    const sanitary = active
+      .filter((p) => ["sanitary-fittings", "bathrooms", "paint"].includes(p.category))
+      .slice(0, 4);
+
+    return [...doors, ...sanitary];
+  }, [products, activeCategoryFilter]);
 
   const toggleFaq = (idx: number) => {
     setOpenFaq(openFaq === idx ? null : idx);
   };
 
-  const faqs = [
+  const corporateFaqs = [
     {
-      q: "What types of doors do you supply?",
-      a: "We supply Turkish steel security entrance doors, foreign HDF luxury interior doors, Watson panel doors, waterproof WPC bathroom doors, digital and mechanical door locks, and bathroom sanitary wares.",
+      q: "What is CFrank Group?",
+      a: "CFrank Group is a commercial enterprise supplying certified Turkish security doors, luxury interior doors, sanitary wares, smart biometric locks, and stone-coated roofing materials from our physical facilities in Ogidi, Anambra State.",
     },
     {
-      q: "Where is your warehouse and showroom located?",
-      a: `Our main store and warehouse are located at ${settings.address}${settings.secondAddress ? `, and our branch showroom is at ${settings.secondAddress}` : ""}. Customers and site representatives are welcome to visit during business hours.`,
+      q: "Can I order multiple product categories in a single order?",
+      a: "Yes. Our platform allows contractors, builders, and homeowners to combine security entrance doors, room doors, water closets, and building finishes into one unified order. Orders are coordinated centrally from our Anambra commercial facilities.",
     },
     {
-      q: "Can I inspect the doors before buying?",
-      a: "Yes. We encourage customers or their site representatives to inspect door finishes, frame sets and locking hardware in person at our warehouse before loading and dispatch.",
+      q: "Where are your physical showroom and warehouse located?",
+      a: `Our commercial showroom and warehouse are situated at No. 16/17 Maraim Plaza, Building Materials International Market, Ogidi, Anambra State. Clients, architects, and site representatives are welcome to inspect physical inventory before dispatch.`,
     },
     {
-      q: "What door sizes are available?",
-      a: "We supply standard single doors (commonly used for 3ft openings), one-and-a-half leaf doors (for 4ft openings), and double-leaf entrance doors (for 4.5ft to 5ft openings). Custom configurations can also be discussed based on your wall openings.",
+      q: "Do you supply building projects outside Anambra State?",
+      a: "Yes. We coordinate dedicated waybill and haulage logistics to project sites across South-Eastern Nigeria (Asaba, Enugu, Owerri, Port Harcourt, Aba, Abakaliki) as well as Abuja, Lagos, and other nationwide destinations.",
     },
     {
-      q: "Do your interior doors come with frames and locks?",
-      a: "Most of our foreign HDF doors and security doors are supplied as complete pre-hung packages, including matching frame sets, architraves, hinges and locksets. Check individual product listings or ask us to confirm what is included with your preferred design.",
+      q: "How do I submit an architectural door schedule or whole-house BOQ?",
+      a: "You can submit your schedule directly via our online BOQ tool, email it to info@cfrankgroup.com, or send it to our trade desk on WhatsApp. Our technical team reviews openings, wall dimensions, and finish requirements to provide an itemized corporate quotation.",
     },
     {
-      q: "Do you deliver outside Anambra State?",
-      a: "Yes. We coordinate transport and waybill delivery from our warehouse to project sites in Asaba, Enugu, Owerri, Port Harcourt, Lagos, Abuja and other states across Nigeria. Transport costs are agreed separately based on location and order size.",
-    },
-    {
-      q: "How do I get a quote for a building project?",
-      a: "Send your door schedule, required sizes, preferred designs and quantities to us on WhatsApp or by email. We will review your list and provide an itemized quote.",
-    },
-    {
-      q: "Is your business registered?",
-      a: "Yes. Anambra Best Door is operated by CFrank Enterprise, registered with the Corporate Affairs Commission under Business Number BN 9943925.",
+      q: "Is CFrank Group legally registered in Nigeria?",
+      a: "Yes. Registered with the Corporate Affairs Commission (CAC) under Business Number BN 9943925. Certified legal status extracts can be viewed directly on our website or verified via the official CAC public portal.",
     },
   ];
 
   const homeFaqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
+    mainEntity: corporateFaqs.map((faq) => ({
       "@type": "Question",
       name: faq.q,
       acceptedAnswer: {
@@ -107,617 +114,393 @@ export default function StorefrontPage() {
     })),
   };
 
+  const productCategories = [
+    {
+      id: "doors",
+      name: "Security & Armoured Doors",
+      description: "Turkish steel security doors, bulletproof models, and luxury entrance sets.",
+      image: "/products/bullet-proof-door.jpeg",
+      href: "/shop?category=doors",
+      tag: "Entrances",
+    },
+    {
+      id: "hdf-doors",
+      name: "Foreign HDF Room Doors",
+      description: "Acoustic room doors, Watson panels, and waterproof composite doors.",
+      image: "/products/hdf-wooden-door-with-complete-fittings.jpeg",
+      href: "/shop?category=hdf-doors",
+      tag: "Interiors",
+    },
+    {
+      id: "sanitary",
+      name: "Executive Sanitary Wares",
+      description: "Vitreous china water closets, vanity dining basins, and rainfall showers.",
+      image: "/products/Excutive Gøld wc.jpeg",
+      href: "/shop?category=sanitary-fittings",
+      tag: "Bathrooms",
+    },
+    {
+      id: "roofing",
+      name: "Stone-Coated Roofing Tiles",
+      description: "Weather-resilient stone-coated steel tiles and architectural finishes.",
+      image: "/depot_video_1.jpg",
+      href: "/shop?category=building-materials",
+      tag: "Roofing",
+    },
+  ];
+
   return (
-    <div className="flex flex-col w-full bg-[#FAF9F5] sm:bg-[#F8FAFC]">
-      {/* Homepage FAQ Schema for Search Snippets */}
+    <div className="min-h-screen bg-[#FBF9F5]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeFaqSchema) }}
       />
 
-      {/* 1. Hero Section (Split Hero with Physical Door Showcase & Video Trigger) */}
+      {/* 1. Corporate Hero Section */}
       <Hero />
 
-      {/* Mini Archive: 4 Featured Products (2 HDF + 2 Other Categories) */}
-      <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full border-b border-slate-200/80">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 sm:mb-8">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-blue-50 border border-blue-200/80 text-[11px] font-bold text-[#003296] uppercase tracking-wider">
-              <span>Store Products</span>
+      {/* 2. Product Categories Overview */}
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="space-y-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E5E3DC] pb-4">
+            <div className="space-y-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#F3661B]">
+                Product Categories
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#121518]">
+                Architectural Supply by Category
+              </h2>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-              Our Quality Products
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 max-w-xl">
-              Foreign HDF interior doors, heavy-gauge security doors, and bathroom fittings ready for purchase.
-            </p>
+            <Link
+              href="/shop"
+              className="text-xs font-bold text-[#121518] hover:text-[#F3661B] inline-flex items-center gap-1.5 transition-colors self-start md:self-auto"
+            >
+              <span>Explore Full Catalogue</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-          <Link
-            href="/shop"
-            className="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-[#003296] hover:text-[#002266] hover:underline shrink-0 group self-start sm:self-end"
-          >
-            <span>See Our Full Products</span>
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-        </div>
 
-        {/* 4-Item Product Grid (2-Column Mobile, 4-Column Desktop) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-          {miniArchiveProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {productCategories.map((cat) => (
+              <div
+                key={cat.id}
+                className="bg-white rounded-md border border-[#E5E3DC] overflow-hidden flex flex-col justify-between hover:border-[#F3661B]/60 transition-colors shadow-xs group"
+              >
+                <div>
+                  <div className="relative aspect-[4/3] w-full bg-[#121518]">
+                    <Image
+                      src={cat.image}
+                      alt={cat.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                    <div className="absolute top-2.5 left-2.5 bg-[#121518]/85 text-[#FBF9F5] text-[10px] font-semibold px-2 py-0.5 rounded">
+                      {cat.tag}
+                    </div>
+                  </div>
+
+                  <div className="p-5 space-y-2">
+                    <h3 className="text-base font-bold text-[#121518] leading-tight group-hover:text-[#F3661B] transition-colors">
+                      {cat.name}
+                    </h3>
+                    <p className="text-xs text-[#4A4A4A] line-clamp-2 leading-relaxed">
+                      {cat.description}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-5 pt-0">
+                  <div className="pt-3 border-t border-[#E5E3DC] flex items-center justify-between text-xs">
+                    <Link
+                      href={cat.href}
+                      className="font-bold text-[#F3661B] hover:underline inline-flex items-center gap-1"
+                    >
+                      <span>View Products</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* 2. Section 2: "Who We Supply" (Compact py-8 sm:py-12 spacing) */}
-      <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8 space-y-2.5">
-          <div className="inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-xs font-bold text-[#003296]">
-            <span>Who We Supply</span>
+      {/* 3. Unified Product Catalogue Preview */}
+      <section className="bg-white py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-y border-[#E5E3DC]">
+        <div className="max-w-7xl mx-auto space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E5E3DC] pb-4">
+            <div className="space-y-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#F3661B]">
+                Unified Storefront
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#121518]">
+                Warehouse Inventory & Sourcing
+              </h2>
+            </div>
+
+            {/* Category Filter Tabs */}
+            <div className="flex flex-wrap items-center gap-1.5 self-start md:self-auto text-xs">
+              <button
+                onClick={() => setActiveCategoryFilter("all")}
+                className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                  activeCategoryFilter === "all"
+                    ? "bg-[#121518] text-white"
+                    : "bg-[#FBF9F5] text-[#4A4A4A] hover:bg-[#E5E3DC]"
+                }`}
+              >
+                All Categories
+              </button>
+              <button
+                onClick={() => setActiveCategoryFilter("doors")}
+                className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                  activeCategoryFilter === "doors"
+                    ? "bg-[#121518] text-white"
+                    : "bg-[#FBF9F5] text-[#4A4A4A] hover:bg-[#E5E3DC]"
+                }`}
+              >
+                Doors & Entrances
+              </button>
+              <button
+                onClick={() => setActiveCategoryFilter("sanitary")}
+                className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                  activeCategoryFilter === "sanitary"
+                    ? "bg-[#121518] text-white"
+                    : "bg-[#FBF9F5] text-[#4A4A4A] hover:bg-[#E5E3DC]"
+                }`}
+              >
+                Sanitary Wares
+              </button>
+              <button
+                onClick={() => setActiveCategoryFilter("building-materials")}
+                className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                  activeCategoryFilter === "building-materials"
+                    ? "bg-[#121518] text-white"
+                    : "bg-[#FBF9F5] text-[#4A4A4A] hover:bg-[#E5E3DC]"
+                }`}
+              >
+                Roofing & Finishes
+              </button>
+            </div>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
-            The right doors for every kind of project.
+
+          {/* Product Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {previewProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          <div className="text-center pt-6">
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#121518] hover:bg-[#22262B] text-white text-xs font-bold rounded-lg transition-colors"
+            >
+              <span>Explore Complete Unified Catalogue</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Commercial Procurement & Project BOQ Section — Full-Width Architectural Band */}
+      <section className="bg-[#121518] text-white py-14 sm:py-20 border-y border-[#22262B]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-7 space-y-5">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#F3661B] uppercase tracking-wider">
+              <FileText className="w-4 h-4" />
+              <span>Commercial & Project Procurement</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
+              Single-contract supply for hotels, estates, and private residences
+            </h2>
+
+            <p className="text-xs sm:text-sm text-[#D1D1CC] leading-relaxed">
+              Consolidate architectural entrance schedules, interior room doors, executive sanitary wares, and surface finishes into one coordinated supply agreement. We provide verified line-item pricing, batch uniformity, and phased site offloading.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs text-[#D1D1CC]">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-[#F3661B] shrink-0" />
+                <span>Line-item architectural schedule quotes</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-[#F3661B] shrink-0" />
+                <span>Dedicated logistics & direct site haulage</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-[#F3661B] shrink-0" />
+                <span>Pre-hung complete door packages</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-[#F3661B] shrink-0" />
+                <span>Single consolidated corporate billing</span>
+              </div>
+            </div>
+
+            <div className="pt-3 flex flex-wrap items-center gap-3">
+              <Link
+                href="/wholesale"
+                className="py-3 px-5 bg-[#F3661B] hover:bg-[#D9530F] text-white text-xs font-bold rounded-md inline-flex items-center gap-2 transition-colors"
+              >
+                <span>Submit BOQ / Project Schedule</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+
+              <a
+                href={`https://wa.me/${brand.whatsappNumber}?text=${encodeURIComponent(
+                  `Hello ${brand.name}, I am a contractor/builder looking to request a commercial quote for an upcoming project.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-3 px-5 bg-transparent hover:bg-white/10 text-white text-xs font-semibold rounded-md border border-[#3E454E] inline-flex items-center gap-2 transition-colors"
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-[#F3661B]" />
+                <span>Chat with Project Desk</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="lg:col-span-5 space-y-4 bg-[#181C20] p-6 rounded-md border border-[#262C33]">
+            <h3 className="text-sm font-bold text-white border-b border-[#262C33] pb-2">
+              Procurement Desk Contact
+            </h3>
+            <div className="space-y-3 text-xs text-[#D1D1CC]">
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#73787E] block">
+                  Central Depot
+                </span>
+                <span className="font-semibold text-white block mt-0.5">
+                  Building Materials International Market, Ogidi
+                </span>
+                <span className="text-[#A0A5AB]">Lines 22 & 24, Anambra State</span>
+              </div>
+
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#73787E] block">
+                  Direct Line
+                </span>
+                <a href={`tel:${brand.phone}`} className="font-mono text-white hover:underline block mt-0.5">
+                  {brand.phoneDisplay}
+                </a>
+              </div>
+
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#73787E] block">
+                  Corporate Email
+                </span>
+                <a href={`mailto:${brand.email}`} className="text-white hover:underline block mt-0.5">
+                  {brand.email}
+                </a>
+              </div>
+
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#73787E] block">
+                  Corporate Registry
+                </span>
+                <span className="font-mono text-[#F3661B] block mt-0.5">
+                  Federal Republic of Nigeria | {brand.cacNumber}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. CAC Corporate Affairs Commission Verification Section */}
+      <section className="bg-white py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-y border-[#E5E3DC]">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-8 space-y-4">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">
+              <BadgeCheck className="w-4 h-4 text-emerald-600" />
+              <span>Verified Legal Entity</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#121518]">
+              Registered Corporate Standing under CAMA 2020
+            </h2>
+
+            <p className="text-xs sm:text-sm text-[#4A4A4A] leading-relaxed max-w-2xl">
+              {brand.name} operates with full legal certification from the Corporate Affairs Commission under Business Number <strong>{brand.cacNumber}</strong>. We encourage all commercial clients and private buyers to verify our status online.
+            </p>
+
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => setCacModalOpen(true)}
+                className="px-5 py-2.5 bg-[#121518] hover:bg-[#22262B] text-white text-xs font-bold rounded-lg inline-flex items-center gap-2 transition-colors cursor-pointer"
+              >
+                <span>View Certified Status Extract</span>
+                <ExternalLink className="w-3.5 h-3.5 text-[#F3661B]" />
+              </button>
+
+              <a
+                href="https://search.cac.gov.ng"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-2.5 bg-[#FBF9F5] hover:bg-[#E5E3DC] text-[#121518] text-xs font-semibold rounded-lg border border-[#E5E3DC] inline-flex items-center gap-2 transition-colors"
+              >
+                <span>Verify on CAC Public Portal</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+
+          <div
+            onClick={() => setCacModalOpen(true)}
+            className="lg:col-span-4 relative aspect-[4/3] rounded-md overflow-hidden border border-[#E5E3DC] bg-[#FBF9F5] shadow-sm cursor-pointer group"
+          >
+            <Image
+              src="/cac-status-report-page1.jpeg"
+              alt="CAC Registration Extract"
+              fill
+              className="object-contain p-2 group-hover:scale-102 transition-transform duration-300"
+              sizes="(max-width: 1024px) 100vw, 33vw"
+            />
+            <div className="absolute bottom-2 right-2 bg-[#121518]/90 text-white text-[10px] font-semibold px-2 py-0.5 rounded">
+              Click to preview
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Corporate & Trade FAQ Section */}
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
+        <div className="text-center space-y-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#F3661B]">
+            Frequently Asked Questions
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#121518]">
+            Trade, Ordering & Logistics
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-            From a single home to a multi-unit development, Anambra Best Door helps homeowners, builders and trade buyers find doors that suit their spaces, designs and budgets. Explore our range of security doors, HDF wooden doors and other available designs, with options for individual purchases and bulk enquiries.
+          <p className="text-xs sm:text-sm text-[#4A4A4A]">
+            Answers to common questions regarding corporate procurement, deliveries, and product specifications.
           </p>
         </div>
 
-        {/* 3-Column Card Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-          {/* Card 1: Homeowners & Residential Projects */}
-          <div className="bg-white rounded-xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3.5 sm:gap-4">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
-                  <Home className="w-5 h-5" />
-                </div>
-                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 leading-snug">
-                  Homeowners & Residential Projects
-                </span>
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                Make a lasting first impression.
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Choose an entrance door that complements your home and interior doors that bring your spaces together. Explore security-focused entrance designs, decorative finishes and practical options for new builds, renovations and duplexes.
-              </p>
-            </div>
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-              <Link
-                href="/shop"
-                className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#003296] hover:underline"
-              >
-                <span>Explore Security Doors & HDF Wooden Doors</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Card 2: Contractors & Property Developers */}
-          <div className="bg-white rounded-xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3.5 sm:gap-4">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
-                  <HardHat className="w-5 h-5" />
-                </div>
-                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 leading-snug">
-                  Contractors & Property Developers
-                </span>
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                Door solutions for projects of every size.
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Planning a residential development, apartment block, hotel or renovation? Discuss your door types, quantities, preferred designs and project requirements with us. We’ll help you explore suitable options and request a quote for your project.
-              </p>
-            </div>
-            <div className="pt-3 border-t border-slate-100 flex items-center text-xs font-bold text-[#003296]">
-              <span>HDF Wooden Doors · Bulk Orders · Project Enquiries</span>
-            </div>
-          </div>
-
-          {/* Card 3: Dealers, Retailers & Wholesalers */}
-          <div className="bg-white rounded-xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3.5 sm:gap-4">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center shrink-0">
-                  <Store className="w-5 h-5" />
-                </div>
-                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 leading-snug">
-                  Dealers, Retailers & Wholesalers
-                </span>
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                Source doors for your next order.
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Looking to stock up or purchase multiple doors? Contact us to discuss available designs, quantities, pricing and collection or delivery arrangements. Whether you're buying for resale or sourcing materials for a project, we’ll help you establish the options available for your order.
-              </p>
-            </div>
-            <div className="pt-3 border-t border-slate-100 flex items-center text-xs font-bold text-[#003296]">
-              <span>Wholesale Enquiries · Multiple-Unit Orders · Trade Pricing</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Have a project in mind? Action Banner */}
-        <div className="mt-8 bg-slate-50 rounded-xl p-6 sm:p-8 border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-1.5 text-center md:text-left max-w-xl">
-            <h3 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight">
-              Have a project in mind?
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Tell us the type of doors you need, your preferred designs and the quantity required. We&apos;ll help you explore available options and discuss pricing.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
-            <Link
-              href="/shop"
-              className="w-full sm:w-auto py-3 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-colors text-center cursor-pointer"
-            >
-              <span>Browse Our Doors</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-
-            <a
-              href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                "Hello CFrank Enterprise, I have a project in mind. I would like to discuss door types, preferred designs, quantities, and pricing."
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto py-3 px-6 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-colors text-center cursor-pointer"
-            >
-              <MessageSquare className="w-4 h-4" />
-              <span>Discuss Your Project on WhatsApp</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Section 3: Catalogue Highlights (6 Standard Trade Categories) */}
-      <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-white border-t border-b border-slate-200/70">
-        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2.5">
-            <div className="inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-xs font-bold text-[#003296]">
-              <span>Product Catalogue</span>
-            </div>
-            <h2 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
-              Doors & Building Materials in Stock
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              Direct supplier inventory available for site delivery and nationwide waybill dispatch.
-            </p>
-          </div>
-
-          {/* 6 Category Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {/* 1. Foreign HDF Luxury Room Doors */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 sm:p-7 border border-slate-200/80 flex flex-col justify-between hover:border-[#003296]/40 transition-all space-y-3">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                    <Layers className="w-5 h-5" />
-                  </div>
-                  <span className="px-2.5 py-0.5 bg-blue-100 text-[#003296] text-[10px] font-bold rounded-full uppercase tracking-wider">
-                    Interior Doors
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                  Foreign HDF Luxury Room Doors
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  High-density fibreboard interior doors, Watson designs and complete pre-hung packages with matching frames and architraves.
-                </p>
-              </div>
-              <Link
-                href="/collections/hdf-doors"
-                className="inline-flex items-center space-x-1 text-xs font-bold text-[#003296] hover:underline pt-2"
-              >
-                <span>Browse Room Doors</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            {/* 2. Turkish Steel Security Doors */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 sm:p-7 border border-slate-200/80 flex flex-col justify-between hover:border-[#003296]/40 transition-all space-y-3">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                    <Lock className="w-5 h-5" />
-                  </div>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Perimeter Security
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                  Turkish Steel Security Doors
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Heavy-gauge steel entrance doors, multi-point deadbolt locking systems, cast aluminum decorative panels and finished steel facings.
-                </p>
-              </div>
-              <Link
-                href="/collections/security-doors"
-                className="inline-flex items-center space-x-1 text-xs font-bold text-[#003296] hover:underline pt-2"
-              >
-                <span>Browse Security Doors</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            {/* 3. Waterproof Bathroom & Toilet Doors */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 sm:p-7 border border-slate-200/80 flex flex-col justify-between hover:border-[#003296]/40 transition-all space-y-3">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                    <Droplets className="w-5 h-5" />
-                  </div>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Moisture Resistant
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                  Waterproof Bathroom & Toilet Doors
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  WPC composite and aluminium-edged doors designed for high-moisture areas, bathrooms and en-suite facilities.
-                </p>
-              </div>
-              <Link
-                href="/collections/bathroom-doors"
-                className="inline-flex items-center space-x-1 text-xs font-bold text-[#003296] hover:underline pt-2"
-              >
-                <span>Browse Bathroom Doors</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            {/* 4. Sanitary Wares & Bathroom Fittings */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 sm:p-7 border border-slate-200/80 flex flex-col justify-between hover:border-[#003296]/40 transition-all space-y-3">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                    <Bath className="w-5 h-5" />
-                  </div>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Sanitary Wares
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                  Sanitary Wares & Bathroom Fittings
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Water closets, wash hand basins, executive vanity sinks and kitchen basins for residential and commercial bathrooms.
-                </p>
-              </div>
-              <Link
-                href="/collections/sanitary-fittings"
-                className="inline-flex items-center space-x-1 text-xs font-bold text-[#003296] hover:underline pt-2"
-              >
-                <span>Browse Sanitary Wares</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            {/* 5. Architectural Door Hardware */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 sm:p-7 border border-slate-200/80 flex flex-col justify-between hover:border-[#003296]/40 transition-all space-y-3">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                    <KeyRound className="w-5 h-5" />
-                  </div>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Hardware & Access
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                  Architectural Door Hardware
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Digital smart locks, mechanical mortise handle sets, heavy-duty hinges and door accessories for homes and offices.
-                </p>
-              </div>
-              <Link
-                href="/shop"
-                className="inline-flex items-center space-x-1 text-xs font-bold text-[#003296] hover:underline pt-2"
-              >
-                <span>Browse Door Hardware</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            {/* 6. Watson & American Panel Doors */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 sm:p-7 border border-slate-200/80 flex flex-col justify-between hover:border-[#003296]/40 transition-all space-y-3">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                    <Home className="w-5 h-5" />
-                  </div>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Panel Doors
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                  Watson & American Panel Doors
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Interior panel door options for bedrooms, offices and residential developments, available in standard trade dimensions.
-                </p>
-              </div>
-              <Link
-                href="/shop?category=interior-doors"
-                className="inline-flex items-center space-x-1 text-xs font-bold text-[#003296] hover:underline pt-2"
-              >
-                <span>Browse Panel Doors</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Section 4: Standard & Custom Door Sizes */}
-      <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-[#FAF9F5] sm:bg-[#F8FAFC] border-b border-slate-200/70">
-        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2.5">
-            <div className="inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-xs font-bold text-[#003296]">
-              <Ruler className="w-3.5 h-3.5" />
-              <span>Sizing Guide</span>
-            </div>
-            <h2 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
-              Standard & Custom Door Sizes
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              Available in standard single and double leaf sizes, with options to suit typical residential and commercial openings. Share your wall openings or project schedule with us, and we will confirm the right door sizes and frame allowances for your build.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-2">
-              <span className="text-[11px] font-bold text-[#003296] uppercase tracking-wider block">Single Leaf</span>
-              <h3 className="text-base font-bold text-slate-900">Standard 3ft Openings</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Commonly used for standard room doors, interior bedrooms, private study rooms, and office suites.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-2">
-              <span className="text-[11px] font-bold text-[#003296] uppercase tracking-wider block">1.5 Leaf</span>
-              <h3 className="text-base font-bold text-slate-900">Semi-Double 4ft Openings</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Popular for master bedroom suites, executive offices, and semi-entrance residential doorways.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-2">
-              <span className="text-[11px] font-bold text-[#003296] uppercase tracking-wider block">Double Leaf</span>
-              <h3 className="text-base font-bold text-slate-900">4.5ft to 5ft Openings</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Designed for main residential entrances, perimeter security doors, duplex entries, and reception halls.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-2">
-              <span className="text-[11px] font-bold text-[#003296] uppercase tracking-wider block">Custom Sizing</span>
-              <h3 className="text-base font-bold text-slate-900">Tailored Wall Heights</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Oversized entry portals, extra-tall door leaves, and bespoke architectural specifications on request.
-              </p>
-            </div>
-          </div>
-
-          <div className="text-center pt-2">
-            <a
-              href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                "Hello Anambra Best Door, I would like to confirm door sizes and frame allowances for my building project."
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 py-3 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition-colors cursor-pointer"
-            >
-              <MessageSquare className="w-4 h-4" />
-              <span>Confirm Your Door Sizes on WhatsApp</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Section 5: Why Buy from Anambra Best Door? */}
-      <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-white border-b border-slate-200/70">
-        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2.5">
-            <div className="inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-xs font-bold text-[#003296]">
-              <BadgeCheck className="w-3.5 h-3.5" />
-              <span>Direct Trade Reliability</span>
-            </div>
-            <h2 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
-              Why Buy from Anambra Best Door?
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              Reliable supply, physical market presence, and straightforward trade terms.
-            </p>
-          </div>
-
-          {/* 5 Value Pillars + CAC Entity Card */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {/* 1. Visit Our Warehouse */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-3">
-              <div className="space-y-2.5">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                  <Store className="w-5 h-5" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-                  Warehouse Inspection
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Inspect door leaves, steel gauges, locks, and wood finishes in person before dispatch.
-                </p>
-              </div>
-            </div>
-
-            {/* 2. Pricing for Your Requirements */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-3">
-              <div className="space-y-2.5">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                  <BadgeCheck className="w-5 h-5" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-                  Pricing for Your Requirements
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Clear, competitive prices whether you are buying a single door or ordering for a full building project.
-                </p>
-              </div>
-            </div>
-
-            {/* 3. Support for Bulk Orders */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-3">
-              <div className="space-y-2.5">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                  <HardHat className="w-5 h-5" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-                  Support for Bulk Orders
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Special arrangements and coordination for contractors, developers and trade buyers with larger schedules.
-                </p>
-              </div>
-            </div>
-
-            {/* 4. Delivery Arrangements */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-3">
-              <div className="space-y-2.5">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                  <Truck className="w-5 h-5" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-                  Delivery Arrangements
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  We help arrange vehicle loading and transport to sites across Anambra and other states.
-                </p>
-              </div>
-            </div>
-
-            {/* 5. Inspect Before You Buy */}
-            <div className="bg-[#FAF9F5] sm:bg-[#F8FAFC] rounded-xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-3">
-              <div className="space-y-2.5">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#003296] flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-                  Inspect Before You Buy
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  You or your site representative are welcome to check the doors at our warehouse before loading and dispatch.
-                </p>
-              </div>
-            </div>
-
-            {/* 6. Direct Warehouse Pricing Card */}
-            <div className="bg-[#003296] text-white rounded-xl p-6 shadow-sm flex flex-col justify-between space-y-3">
-              <div className="space-y-2">
-                <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-white/15 text-blue-100 text-[10px] font-bold uppercase tracking-wider">
-                  <span>Direct Import Pricing</span>
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                  Direct Warehouse Rates
-                </h3>
-                <p className="text-xs text-blue-100/90 leading-relaxed">
-                  Transparent trade pricing directly from our stock warehouse without middleman or agent markups.
-                </p>
-              </div>
-              <div className="pt-2 text-xs text-blue-200">
-                <span>Wholesale & Single-Unit Orders</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Section 6: Frequently Asked Questions */}
-      <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full space-y-6 sm:space-y-8">
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-xs font-bold text-[#003296]">
-            <span>Frequently Asked Questions</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-            Clear answers for builders and homeowners.
-          </h2>
-        </div>
-
-        {/* Clean Accordion Pills */}
         <div className="space-y-3">
-          {faqs.map((faq, idx) => {
-            const isOpen = openFaq === idx;
-            return (
-              <div
-                key={idx}
-                className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-xs transition-all"
+          {corporateFaqs.map((faq, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-md border border-[#E5E3DC] overflow-hidden transition-colors"
+            >
+              <button
+                onClick={() => toggleFaq(idx)}
+                className="w-full text-left p-5 flex items-center justify-between gap-4 font-semibold text-xs sm:text-sm text-[#121518] hover:text-[#F3661B] transition-colors cursor-pointer"
               >
-                <button
-                  type="button"
-                  onClick={() => toggleFaq(idx)}
-                  className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none"
-                  aria-expanded={isOpen}
-                >
-                  <span className="font-bold text-slate-900 text-xs sm:text-sm">
-                    {faq.q}
-                  </span>
-                  <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-transform ${isOpen ? "bg-[#003296] text-white rotate-45" : "bg-slate-100 text-slate-600"
-                      }`}
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                  </div>
-                </button>
-                {isOpen && (
-                  <div className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3 animate-in fade-in duration-150">
-                    {faq.a}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 7. Section 7: Planning a Door Purchase or Building Project? */}
-      <section className="py-8 sm:py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div className="rounded-2xl bg-[#003296] text-white p-6 sm:p-12 text-center space-y-4 sm:space-y-6 shadow-xl relative overflow-hidden">
-          <div className="space-y-2 relative z-10 max-w-2xl mx-auto">
-            <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-              Planning a Door Purchase or Building Project?
-            </h2>
-            <p className="text-xs sm:text-sm text-blue-100/90 leading-relaxed font-normal">
-              Whether you need entrance security doors for a new home, interior doors for an apartment development, or sanitary fittings for a commercial renovation, we are ready to assist.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1 relative z-10">
-            <Link
-              href="/shop"
-              className="w-full sm:w-auto py-3 px-7 bg-white hover:bg-slate-100 text-[#003296] text-xs sm:text-sm font-black rounded-xl flex items-center justify-center space-x-2 shadow-md transition-all active:scale-98 cursor-pointer"
-            >
-              <span>Browse Products</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-
-            <a
-              href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
-                "Hello Anambra Best Door, I would like to request a quote for my building project."
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto py-3 px-7 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-all active:scale-98 cursor-pointer"
-            >
-              <MessageSquare className="w-4 h-4" />
-              <span>Chat us on Whatsapp</span>
-            </a>
-          </div>
+                <span>{faq.q}</span>
+                <span className="text-[#F3661B] shrink-0 font-bold text-base">
+                  {openFaq === idx ? "-" : "+"}
+                </span>
+              </button>
+              {openFaq === idx && (
+                <div className="px-5 pb-5 text-xs text-[#4A4A4A] leading-relaxed border-t border-[#E5E3DC] pt-3">
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </section>
     </div>

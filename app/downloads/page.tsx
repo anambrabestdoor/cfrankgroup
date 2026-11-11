@@ -3,15 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { Download, FileText, CheckCircle2, MessageSquare, ExternalLink, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
+import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Download Trade Catalogues | Anambra Best Door",
+  title: `Download Trade Catalogues | ${brand.name}`,
   description:
-    "Download official PDF catalogues for Anambra Best Door steel security doors, interior luxury HDF room doors, and sanitary bathroom fittings.",
+    `Download official PDF catalogues for ${brand.name} covering certified Turkish steel security doors, interior luxury HDF room doors, stone-coated roof tiles, and sanitary fittings.`,
   openGraph: {
-    title: "Download Trade Catalogues | Anambra Best Door",
+    title: `Download Trade Catalogues | ${brand.name}`,
     description:
-      "Official PDF trade catalogues for doors and sanitary fittings available from Anambra Best Door.",
+      `Official PDF trade catalogues for doors and sanitary fittings available from ${brand.name}.`,
   },
 };
 
@@ -58,11 +59,11 @@ const CATALOGS = [
 
 export default function DownloadsPage() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#FBF9F5]">
       {/* Hero Header */}
-      <div className="bg-[#0A192F] text-white py-14 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
+      <div className="bg-[#121518] text-white py-14 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
         <div className="max-w-3xl mx-auto space-y-3">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-blue-400 block">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-[#F3661B] block">
             Official Product Catalogues
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
@@ -80,7 +81,7 @@ export default function DownloadsPage() {
           {CATALOGS.map((catalog) => (
             <div
               key={catalog.id}
-              className="bg-white rounded-xl border border-slate-200/90 overflow-hidden shadow-xs hover:border-[#003296] transition-colors flex flex-col justify-between"
+              className="bg-white rounded-xl border border-slate-200/90 overflow-hidden shadow-xs hover:border-[#F3661B] transition-colors flex flex-col justify-between"
             >
               <div>
                 {/* Featured Image */}
@@ -104,7 +105,7 @@ export default function DownloadsPage() {
                 {/* Card Body */}
                 <div className="p-6 sm:p-7 space-y-4">
                   <div className="space-y-1.5">
-                    <h2 className="text-lg sm:text-xl font-black text-[#003296] tracking-tight leading-snug">
+                    <h2 className="text-lg sm:text-xl font-black text-[#F3661B] tracking-tight leading-snug">
                       {catalog.title}
                     </h2>
                     <p className="text-xs font-semibold text-slate-500">
@@ -124,7 +125,7 @@ export default function DownloadsPage() {
                     <ul className="space-y-1.5 text-xs text-slate-600">
                       {catalog.highlights.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#003296] shrink-0 mt-0.5" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#F3661B] shrink-0 mt-0.5" />
                           <span>{item}</span>
                         </li>
                       ))}
@@ -149,7 +150,7 @@ export default function DownloadsPage() {
                     href={catalog.fileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 font-semibold hover:text-[#003296] hover:underline"
+                    className="inline-flex items-center gap-1 font-semibold hover:text-[#F3661B] hover:underline"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     <span>Open / Preview in Browser</span>
@@ -170,12 +171,14 @@ export default function DownloadsPage() {
               Need a Custom Quote or Wall Opening Sizing Guide?
             </h3>
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-              If your architectural schedule requires non-standard heights or multi-unit project quantities, our sales desk will calculate your bill of quantities and waybill costs.
+              If your architectural schedule requires non-standard heights or multi-unit project quantities, our customer care agent will calculate your bill of quantities and waybill costs.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <a
-              href="https://wa.me/2347070070305?text=Hello%20Anambra%20Best%20Door%2C%20I%20have%20downloaded%20your%20catalogue%20and%20would%20like%20to%20inquire%20about%20a%20door%20order."
+              href={`https://wa.me/${brand.whatsappNumber}?text=${encodeURIComponent(
+                `Hello ${brand.name}, I have downloaded your trade catalogue and would like to inquire about pricing and availability.`
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 py-2.5 px-4 bg-[#25D366] text-white font-bold text-xs rounded-xl shadow-xs hover:bg-[#1EBE5D] transition-colors"

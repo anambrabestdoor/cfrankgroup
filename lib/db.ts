@@ -5,6 +5,7 @@ import path from "path";
 import { DOOR_PRODUCTS, DoorProduct } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
 import { isSupabaseConfigured, getSupabaseAdmin } from "@/lib/supabase";
+import { brand } from "@/lib/brand";
 
 export interface User {
   email: string;
@@ -42,18 +43,27 @@ export interface OrderItem {
   productName: string;
   price: number;
   quantity: number;
+  size?: string;
+  orientation?: string;
+  businessId?: string;
+  businessName?: string;
 }
 
 export interface Order {
   id: string;
   email: string;
   customerName: string;
+  phone?: string;
+  deliveryLocation?: string;
+  notes?: string;
+  divisions?: string[];
   items: OrderItem[];
   total: number;
   date: string;
   status: "pending" | "processing" | "shipped" | "delivered";
   paymentMethod?: string;
   paymentProofUrl?: string;
+  channel?: "whatsapp" | "online" | "walk_in";
 }
 
 export interface Settings {
@@ -63,6 +73,9 @@ export interface Settings {
   exchangeRate: number;
   allowSignups: boolean;
   heroVideoUrl?: string;
+  heroPosterUrl?: string;
+  heroImageUrl?: string;
+  logoUrl?: string;
   heroTitle?: string;
   heroSubtitle?: string;
   heroCtaText?: string;
@@ -135,7 +148,7 @@ export interface WholesaleApplication {
   status: "pending" | "approved" | "rejected";
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || "anambra-best-door-cfrank-secret-2026-key";
+const JWT_SECRET = process.env.JWT_SECRET || "cfrank-group-auth-secret-key-2026";
 const DEFAULT_ADMIN_HASH = bcrypt.hashSync("admin123", 10);
 function getDbFilePath(): string {
   if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
@@ -299,12 +312,14 @@ export const db = {
                 description: row.description || "",
                 specifications: (row.specifications && typeof row.specifications === "object") ? row.specifications : {},
                 features: Array.isArray(row.features) ? row.features : [],
-                jijiUrl: row.jiji_url || "https://jiji.ng/shop/anambrabestdoor",
-                seoTitle: row.seo_title || `${row.name} | Anambra Best Door`,
+                jijiUrl: row.jiji_url || brand.social.jiji || "https://jiji.ng/shop/anambrabestdoor",
+                seoTitle: row.seo_title || `${row.name} | ${brand.name}`,
                 seoDescription: row.seo_description || row.short_description || "",
                 focusKeyphrase: row.focus_keyphrase || row.name,
                 featured: row.featured ?? false,
                 active: row.active ?? true,
+                businessId: row.business_id || undefined,
+                businessName: row.business_name || undefined,
               };
 
               if (mapped.active === false) {
@@ -362,8 +377,8 @@ export const db = {
             description: data.description || "",
             specifications: (data.specifications && typeof data.specifications === "object") ? data.specifications : {},
             features: Array.isArray(data.features) ? data.features : [],
-            jijiUrl: data.jiji_url || "https://jiji.ng/shop/anambrabestdoor",
-            seoTitle: data.seo_title || `${data.name} | Anambra Best Door`,
+            jijiUrl: data.jiji_url || brand.social.jiji || "https://jiji.ng/shop/anambrabestdoor",
+            seoTitle: data.seo_title || `${data.name} | ${brand.name}`,
             seoDescription: data.seo_description || data.short_description || "",
             focusKeyphrase: data.focus_keyphrase || data.name,
             featured: data.featured ?? false,
@@ -384,7 +399,7 @@ export const db = {
           (p.slug && p.slug.toLowerCase() === query)
       );
       if (diskMatch) return diskMatch;
-    } catch {}
+    } catch { }
 
     // 3. Fallback to bundled catalogue
     const local = DOOR_PRODUCTS.find(
@@ -518,19 +533,24 @@ export const db = {
 
   async createOrder(order: Omit<Order, "id" | "date">): Promise<Order> {
     const cleanEmail = order.email.toLowerCase().trim();
-    const generatedOrderId = "ABD-" + Math.floor(100000 + Math.random() * 900000);
+    const generatedOrderId = "CFG-" + Math.floor(100000 + Math.random() * 900000);
     const dateStr = new Date().toISOString().split("T")[0];
 
     const newOrder: Order = {
       id: generatedOrderId,
       email: cleanEmail,
       customerName: order.customerName || "Valued Customer",
+      phone: order.phone,
+      deliveryLocation: order.deliveryLocation,
+      notes: order.notes,
+      divisions: order.divisions || [],
       items: order.items,
       total: Number(order.total),
       date: dateStr,
       status: order.status || "pending",
-      paymentMethod: order.paymentMethod,
+      paymentMethod: order.paymentMethod || "whatsapp",
       paymentProofUrl: order.paymentProofUrl,
+      channel: order.channel || "whatsapp",
     };
 
     try {
@@ -815,6 +835,10 @@ export const db = {
             jijiShopUrl: data.jiji_shop_url || result.jijiShopUrl,
             whatsappInquiryTemplate: data.whatsapp_inquiry_template || result.whatsappInquiryTemplate,
             whatsappCartTemplate: data.whatsapp_cart_template || result.whatsappCartTemplate,
+            heroVideoUrl: data.hero_video_url || result.heroVideoUrl,
+            heroPosterUrl: data.hero_poster_url || result.heroPosterUrl,
+            heroImageUrl: data.hero_image_url || result.heroImageUrl,
+            logoUrl: data.logo_url || result.logoUrl,
           };
         }
       } catch (err) {
@@ -851,6 +875,10 @@ export const db = {
           jiji_shop_url: merged.jijiShopUrl,
           whatsapp_inquiry_template: merged.whatsappInquiryTemplate,
           whatsapp_cart_template: merged.whatsappCartTemplate,
+          hero_video_url: merged.heroVideoUrl || "",
+          hero_poster_url: merged.heroPosterUrl || "",
+          hero_image_url: merged.heroImageUrl || "",
+          logo_url: merged.logoUrl || "",
           updated_at: new Date().toISOString(),
         };
         await supabase.from("site_settings").upsert(payload, { onConflict: "id" });
@@ -869,28 +897,7 @@ export const db = {
     if (disk.reviews && disk.reviews.length > 0) {
       return disk.reviews;
     }
-    return [
-      {
-        id: "rev-1",
-        author: "Chief Emeka O.",
-        rating: 5,
-        date: "October 12, 2026",
-        title: "Top quality steel doors delivered to Awka site",
-        comment: "Supplied 14 Turkish security doors and HDF interior doors for my duplex project. Heavy gauge steel, neat lock mechanisms, and direct waybill delivery was smooth.",
-        verified: true,
-        productName: "Bullet Proof Security Door",
-      },
-      {
-        id: "rev-2",
-        author: "Engr. Kenneth M.",
-        rating: 5,
-        date: "October 5, 2026",
-        title: "Solid construction fittings and reliable warehouse",
-        comment: "Inspected at Maraim Plaza Building Material Ogidi warehouse before purchase. Frank provided accurate wall measurements and prompt loading.",
-        verified: true,
-        productName: "Italian Copper Finish Door",
-      },
-    ];
+    return [];
   },
 
   async createReview(review: Omit<Review, "id">): Promise<Review> {
@@ -924,7 +931,7 @@ export const db = {
         id: "faq-1",
         category: "Product & Specifications",
         question: "What wall opening sizes do your security doors come in?",
-        answer: "Our standard security doors are available in 3ft (900mm x 2100mm) and 4ft (1200mm x 2100mm / 1500mm x 2100mm for luxury double doors). Custom dimensions can also be confirmed with our sales desk on WhatsApp.",
+        answer: "Our standard security doors are available in 3ft (900mm x 2100mm) and 4ft (1200mm x 2100mm / 1500mm x 2100mm for luxury double doors). Custom dimensions can also be confirmed with our customer care agent on WhatsApp.",
       },
       {
         id: "faq-2",
@@ -935,8 +942,8 @@ export const db = {
       {
         id: "faq-3",
         category: "Registration & Verification",
-        question: "Is CFrank Enterprise / Anambra Best Door registered with CAC?",
-        answer: "Yes, CFrank Enterprise is registered with the Corporate Affairs Commission (CAC BN: 9943925) for specialized building completion and construction activities.",
+        question: `Is ${brand.name} registered with CAC?`,
+        answer: `Yes, ${brand.name} (operating Anambra Best Door) is registered with the Corporate Affairs Commission (CAC BN: ${brand.cacNumber}) for specialized building completion and construction activities.`,
       },
     ];
   },

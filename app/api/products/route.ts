@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { DoorProduct } from "@/app/data/doorsData";
 import { db } from "@/lib/db";
 import { verifyAdminToken, ADMIN_COOKIE_NAME } from "@/lib/adminAuth";
+import { brand } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -92,6 +93,8 @@ export async function POST(req: NextRequest) {
       focusKeyphrase,
       featured,
       active,
+      businessId,
+      businessName,
     } = body;
 
     if (!name || !category) {
@@ -138,12 +141,14 @@ export async function POST(req: NextRequest) {
       description: description || "",
       specifications: specifications || {},
       features: Array.isArray(features) ? features : [],
-      jijiUrl: jijiUrl || "https://jiji.ng/shop/anambrabestdoor",
-      seoTitle: seoTitle || `${name} | Anambra Best Door`,
+      jijiUrl: jijiUrl || brand.social.jiji || "https://jiji.ng/shop/anambrabestdoor",
+      seoTitle: seoTitle || `${name} | ${brand.name}`,
       seoDescription: seoDescription || shortDescription || description || name,
       focusKeyphrase: focusKeyphrase || name,
       featured: featured ?? false,
       active: active !== false,
+      businessId: businessId || undefined,
+      businessName: businessName || undefined,
     };
 
     const saved = await db.saveProduct(newProduct);

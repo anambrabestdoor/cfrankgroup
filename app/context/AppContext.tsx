@@ -14,11 +14,17 @@ export interface CartItem {
   category: string;
   size?: string;
   orientation?: string;
+  businessId?: string;
+  businessName?: string;
+  slug?: string;
 }
 
 interface AppContextType {
   cart: CartItem[];
-  addToCart: (product: DoorProduct, options?: { size?: string; orientation?: string; quantity?: number }) => void;
+  addToCart: (
+    product: DoorProduct,
+    options?: { size?: string; orientation?: string; quantity?: number }
+  ) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -53,22 +59,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Load cart, settings, and products from localStorage on mount
   useEffect(() => {
     try {
-      const savedCart = localStorage.getItem("abd_cart_items");
+      const savedCart = localStorage.getItem("cfg_cart_items") || localStorage.getItem("abd_cart_items");
       if (savedCart) {
         setCart(JSON.parse(savedCart));
       }
-      const savedSettings = localStorage.getItem("abd_site_settings");
+      const savedSettings = localStorage.getItem("cfg_site_settings") || localStorage.getItem("abd_site_settings");
       if (savedSettings) {
         setSettings((prev) => ({ ...prev, ...JSON.parse(savedSettings) }));
       }
-      const catalogVersion = localStorage.getItem("abd_catalog_version");
-      if (catalogVersion !== "2026-10-blank-prices") {
-        // Upgrade stale legacy cache to blank prices schema
+      const catalogVersion = localStorage.getItem("cfg_catalog_version");
+      if (catalogVersion !== "2026-cfrank-v1") {
+        localStorage.removeItem("cfg_products");
         localStorage.removeItem("abd_products");
-        localStorage.setItem("abd_catalog_version", "2026-10-blank-prices");
+        localStorage.setItem("cfg_catalog_version", "2026-cfrank-v1");
         setProducts(DOOR_PRODUCTS);
       } else {
-        const savedProducts = localStorage.getItem("abd_products");
+        const savedProducts = localStorage.getItem("cfg_products") || localStorage.getItem("abd_products");
         if (savedProducts) {
           const parsed = JSON.parse(savedProducts);
           if (Array.isArray(parsed) && parsed.length > 0) {
@@ -88,8 +94,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           setSettings((prev) => {
             const merged = { ...prev, ...serverSettings };
             try {
-              localStorage.setItem("abd_site_settings", JSON.stringify(merged));
-            } catch {}
+              localStorage.setItem("cfg_site_settings", JSON.stringify(merged));
+            } catch { }
             return merged;
           });
         }
@@ -105,8 +111,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (Array.isArray(serverProducts) && serverProducts.length > 0) {
           setProducts(serverProducts);
           try {
-            localStorage.setItem("abd_products", JSON.stringify(serverProducts));
-          } catch {}
+            localStorage.setItem("cfg_products", JSON.stringify(serverProducts));
+          } catch { }
         }
       })
       .catch((err) => {
@@ -117,7 +123,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Sync cart to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem("abd_cart_items", JSON.stringify(cart));
+      localStorage.setItem("cfg_cart_items", JSON.stringify(cart));
     } catch {
       // storage quota or private window
     }
@@ -126,7 +132,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Sync products to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem("abd_products", JSON.stringify(products));
+      localStorage.setItem("cfg_products", JSON.stringify(products));
     } catch {
       // storage quota or private window
     }
@@ -159,6 +165,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             category: product.category,
             size: options?.size,
             orientation: options?.orientation,
+            businessId: product.businessId,
+            businessName: product.businessName,
+            slug: product.slug,
           },
         ];
       });
@@ -189,7 +198,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setSettings((prev) => {
       const updated = { ...prev, ...newSettings };
       try {
-        localStorage.setItem("abd_site_settings", JSON.stringify(updated));
+        localStorage.setItem("cfg_site_settings", JSON.stringify(updated));
       } catch {
         // storage fallback
       }

@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { brand } from './lib/brand';
 
 export interface OrderEmailPayload {
   orderId: string;
@@ -51,7 +52,7 @@ export class EmailService {
     trackingInfo: { carrier: string; trackingNumber: string }
   ): Promise<{ invoiceSuccess: boolean; shippingSuccess: boolean }> {
     console.log(`[EmailService] Beginning e-commerce dispatch for Order ${order.orderId}...`);
-    
+
     const invoiceHtml = this.renderInvoiceTemplate(order);
     const shippingHtml = this.renderShippingTemplate(order, trackingInfo);
 
@@ -62,14 +63,14 @@ export class EmailService {
     try {
       const resend = getResendClient();
       if (resend) {
-        const fromEmail = process.env.RESEND_FROM_EMAIL || 'Anambra Best Door <orders@anambrabestdoor.com>';
+        const fromEmail = process.env.RESEND_FROM_EMAIL || `${brand.name} <orders@cfrankgroup.com>`;
         const recipient = order.email;
-        
+
         console.log(`[EmailService] Attempting to send live invoice to ${recipient}...`);
         const invoiceResponse = await resend.emails.send({
           from: fromEmail,
           to: [recipient],
-          subject: `Order Confirmation #${order.orderId} - Anambra Best Door (CFrank Enterprise)`,
+          subject: `Order Confirmation #${order.orderId} - ${brand.name}`,
           html: invoiceHtml
         });
 
@@ -85,7 +86,7 @@ export class EmailService {
         const shippingResponse = await resend.emails.send({
           from: fromEmail,
           to: [recipient],
-          subject: `Your Waybill & Dispatch Details #${order.orderId} - Anambra Best Door`,
+          subject: `Waybill & Dispatch Details #${order.orderId} - ${brand.name}`,
           html: shippingHtml
         });
 
@@ -120,7 +121,7 @@ export class EmailService {
     let failedCount = 0;
 
     const resend = getResendClient();
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Anambra Best Door <orders@anambrabestdoor.com>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || `${brand.name} <orders@cfrankgroup.com>`;
 
     for (const recipient of recipients) {
       const emailHtml = this.renderNewsletterTemplate(recipient, payload);
@@ -168,11 +169,11 @@ export class EmailService {
     try {
       const resend = getResendClient();
       if (resend) {
-        const fromEmail = process.env.RESEND_FROM_EMAIL || 'Anambra Best Door <orders@anambrabestdoor.com>';
+        const fromEmail = process.env.RESEND_FROM_EMAIL || `${brand.name} <orders@cfrankgroup.com>`;
         const response = await resend.emails.send({
           from: fromEmail,
           to: [email],
-          subject: `${code.split('').join(' ')} is your Anambra Best Door verification code`,
+          subject: `${code.split('').join(' ')} is your ${brand.name} verification code`,
           html: codeHtml
         });
 
@@ -203,18 +204,18 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>Your Verification Code - Anambra Best Door</title>
+          <title>Your Verification Code - ${escapeHtml(brand.name)}</title>
         </head>
         <body style="margin: 0; padding: 40px 0; background-color: #fafafa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
           <table align="center" border="0" cellpadding="0" cellspacing="0" width="450" style="background-color: #ffffff; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin: 0 auto;">
             <!-- Brand Header -->
             <tr>
-              <td style="padding: 30px 40px 15px 40px; text-align: center; background-color: #0A192F;">
+              <td style="padding: 30px 40px 15px 40px; text-align: center; background-color: #171A1D;">
                 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 20px; letter-spacing: 0.05em; color: #ffffff; font-weight: 900; text-transform: uppercase;">
-                  ANAMBRA BEST DOOR
+                  ${escapeHtml(brand.name)}
                 </div>
-                <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">
-                  Operated by CFrank Enterprise • CAC BN 9943925
+                <div style="font-size: 11px; color: #B99A62; margin-top: 4px;">
+                  CAC ${escapeHtml(brand.cacNumber)} • Official Business Portal
                 </div>
               </td>
             </tr>
@@ -225,7 +226,7 @@ export class EmailService {
                 <p style="font-size: 15px; color: #334155; margin: 0 0 20px 0;">
                   Your one-time portal verification code:
                 </p>
-                <div style="font-family: Courier, monospace; font-size: 32px; font-weight: bold; letter-spacing: 0.25em; color: #003296; background-color: #f8fafc; border: 2px dashed #003296; padding: 18px; display: inline-block; border-radius: 6px; min-width: 220px;">
+                <div style="font-family: Courier, monospace; font-size: 32px; font-weight: bold; letter-spacing: 0.25em; color: #171A1D; background-color: #f8fafc; border: 2px dashed #B99A62; padding: 18px; display: inline-block; border-radius: 6px; min-width: 220px;">
                   ${formattedCode}
                 </div>
                 <p style="font-size: 12px; color: #64748b; margin: 20px 0 0 0; line-height: 1.5;">
@@ -238,8 +239,8 @@ export class EmailService {
             <tr>
               <td style="padding: 20px 40px; border-top: 1px solid #eaeaea; text-align: center; background-color: #f8fafc;">
                 <p style="font-size: 11px; color: #94a3b8; margin: 0;">
-                  No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State.<br>
-                  Phone: +234 707 007 0305 | Email: anambrabestdoor@gmail.com
+                  ${escapeHtml(brand.address)}<br>
+                  Phone: ${escapeHtml(brand.phoneDisplay)} | Email: ${escapeHtml(brand.email)}
                 </p>
               </td>
             </tr>
@@ -285,12 +286,12 @@ export class EmailService {
           <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin: 0 auto;">
             <!-- Brand Header -->
             <tr>
-              <td style="padding: 30px 40px; background-color: #0A192F; text-align: left;">
+              <td style="padding: 30px 40px; background-color: #171A1D; text-align: left;">
                 <div style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: 0.05em;">
-                  ANAMBRA BEST DOOR
+                  ${escapeHtml(brand.name).toUpperCase()}
                 </div>
-                <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
-                  CFrank Enterprise • Direct Importer • CAC BN 9943925
+                <div style="font-size: 12px; color: #B99A62; margin-top: 4px;">
+                  Official Order Invoice • CAC ${escapeHtml(brand.cacNumber)}
                 </div>
               </td>
             </tr>
@@ -298,11 +299,11 @@ export class EmailService {
             <!-- Greeting -->
             <tr>
               <td style="padding: 30px 40px 10px 40px;">
-                <h1 style="font-size: 18px; font-weight: bold; color: #0f172a; margin: 0 0 10px 0;">
+                <h1 style="font-size: 18px; font-weight: bold; color: #171A1D; margin: 0 0 10px 0;">
                   Thank you for your order, ${escapeHtml(order.customerName)}.
                 </h1>
                 <p style="font-size: 13px; line-height: 1.6; color: #475569; margin: 0;">
-                  Your door order has been recorded. Our warehouse team at Maraim Plaza, Ogidi, will prepare your items, conduct pre-dispatch inspection photos/videos, and coordinate waybill delivery to your project site.
+                  Your order has been recorded. Our fulfilment team will verify availability, conduct pre-dispatch inspection, and coordinate waybill delivery to your project destination.
                 </p>
               </td>
             </tr>
@@ -400,9 +401,9 @@ export class EmailService {
             <tr>
               <td style="padding: 25px 40px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
                 <p style="font-size: 11px; color: #64748b; margin: 0; line-height: 1.5;">
-                  <strong>Anambra Best Door (operated by CFrank Enterprise)</strong><br>
-                  No. 16/17 Maraim Plaza, Building Material International Market, Ogidi, Anambra State.<br>
-                  Direct WhatsApp: +234 707 007 0305 | Email: anambrabestdoor@gmail.com
+                  <strong>${escapeHtml(brand.name)}</strong><br>
+                  ${escapeHtml(brand.address)}<br>
+                  Phone: ${escapeHtml(brand.phoneDisplay)} | Email: ${escapeHtml(brand.email)}
                 </p>
               </td>
             </tr>
@@ -424,12 +425,12 @@ export class EmailService {
           <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin: 0 auto;">
             <!-- Brand Header -->
             <tr>
-              <td style="padding: 30px 40px; background-color: #0A192F; text-align: left;">
+              <td style="padding: 30px 40px; background-color: #171A1D; text-align: left;">
                 <div style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: 0.05em;">
-                  ANAMBRA BEST DOOR
+                  ${escapeHtml(brand.name).toUpperCase()}
                 </div>
-                <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
-                  Warehouse Dispatch & Waybill Logistics
+                <div style="font-size: 12px; color: #B99A62; margin-top: 4px;">
+                  Dispatch & Logistics Waybill Coordination
                 </div>
               </td>
             </tr>
@@ -481,7 +482,7 @@ export class EmailService {
             <tr>
               <td style="padding: 25px 40px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
                 <p style="font-size: 12px; color: #64748b; margin: 0; line-height: 1.6;">
-                  For dispatch inquiries or driver phone contacts, message our Ogidi warehouse desk directly on WhatsApp at <a href="https://wa.me/2347070070305" style="color: #003296; font-weight: bold;">+234 707 007 0305</a>.
+                  For dispatch inquiries or logistics details, contact our sales desk directly on WhatsApp at <a href="https://wa.me/${escapeHtml(brand.whatsappNumber)}" style="color: #171A1D; font-weight: bold;">${escapeHtml(brand.phoneDisplay)}</a>.
                 </p>
               </td>
             </tr>
@@ -495,7 +496,7 @@ export class EmailService {
     email: string,
     payload: { title: string; subtitle: string; voucherCode: string; discountPercent: number; heroImage?: string }
   ): string {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://anambrabestdoor.com';
+    const appUrl = brand.appUrl;
     const unsubscribeLink = `${appUrl}/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}`;
 
     return `
@@ -508,34 +509,34 @@ export class EmailService {
         <body style="margin: 0; padding: 40px 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
           <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin: 0 auto;">
             <tr>
-              <td style="padding: 30px 40px; background-color: #0A192F; text-align: left;">
+              <td style="padding: 30px 40px; background-color: #171A1D; text-align: left;">
                 <div style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: 0.05em;">
-                  ANAMBRA BEST DOOR
+                  ${escapeHtml(brand.name).toUpperCase()}
                 </div>
-                <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
+                <div style="font-size: 12px; color: #B99A62; margin-top: 4px;">
                   Contractor & Trade Notification
                 </div>
               </td>
             </tr>
             <tr>
               <td style="padding: 30px 40px; text-align: center;">
-                <h1 style="font-size: 20px; font-weight: bold; color: #0f172a; margin: 0 0 10px 0;">
+                <h1 style="font-size: 20px; font-weight: bold; color: #171A1D; margin: 0 0 10px 0;">
                   ${escapeHtml(payload.title)}
                 </h1>
                 <p style="font-size: 14px; line-height: 1.6; color: #475569; margin: 0 0 20px 0;">
                   ${escapeHtml(payload.subtitle)}
                 </p>
-                <div style="padding: 15px; background-color: #f0f7ff; border: 1px dashed #003296; border-radius: 6px; display: inline-block;">
+                <div style="padding: 15px; background-color: #f8fafc; border: 1px dashed #B99A62; border-radius: 6px; display: inline-block;">
                   <span style="font-size: 12px; color: #64748b; display: block;">Trade Voucher Code:</span>
-                  <span style="font-size: 20px; font-weight: bold; color: #003296; font-family: Courier, monospace;">${escapeHtml(payload.voucherCode)}</span>
-                  <span style="font-size: 12px; color: #166534; display: block; font-weight: bold; margin-top: 4px;">Save ${payload.discountPercent}% on Bulk Door Packages</span>
+                  <span style="font-size: 20px; font-weight: bold; color: #171A1D; font-family: Courier, monospace;">${escapeHtml(payload.voucherCode)}</span>
+                  <span style="font-size: 12px; color: #166534; display: block; font-weight: bold; margin-top: 4px;">Save ${payload.discountPercent}% on Bulk Packages</span>
                 </div>
               </td>
             </tr>
             <tr>
               <td style="padding: 20px 40px; text-align: center; border-top: 1px solid #e2e8f0; background-color: #f8fafc;">
                 <p style="font-size: 11px; color: #94a3b8; margin: 0;">
-                  Anambra Best Door Enterprises • Maraim Plaza, Ogidi, Anambra State.<br>
+                  ${escapeHtml(brand.name)} • ${escapeHtml(brand.address)}<br>
                   <a href="${unsubscribeLink}" style="color: #64748b; text-decoration: underline;">Unsubscribe</a>
                 </p>
               </td>

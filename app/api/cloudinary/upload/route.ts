@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     let fileBase64 = "";
     let mimeType = "image/png";
     let sizeBytes = 0;
-    let folder = "anambra_best_door/products";
+    let folder = "cfrank_group/products";
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await req.formData();
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       }
 
       if (isVideo && !requestedFolder) {
-        folder = "anambra_best_door/videos";
+        folder = "cfrank_group/videos";
       }
 
       const bytes = await file.arrayBuffer();
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
       }
 
       if (isVideo && !body.folder) {
-        folder = "anambra_best_door/videos";
+        folder = "cfrank_group/videos";
       }
     }
 

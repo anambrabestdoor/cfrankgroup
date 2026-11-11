@@ -7,6 +7,7 @@ import { useApp } from "@/app/context/AppContext";
 import { DOOR_PRODUCTS, DoorProduct, CATEGORIES } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS, SiteSettings } from "@/lib/settings";
 import { AdminSession } from "@/lib/adminAuth";
+import { brand } from "@/lib/brand";
 import {
   LayoutDashboard,
   Package,
@@ -45,7 +46,6 @@ import {
   Video,
   Users,
   UserPlus,
-  Shield,
   Truck,
   ChevronDown,
   ChevronRight,
@@ -161,7 +161,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
 
   // WordPress-Style Navigation State
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "products" | "inventory" | "media" | "delivery" | "team" | "settings" | "cac"
+    "dashboard" | "products" | "inventory" | "media" | "delivery" | "team" | "settings" | "cac" | "orders"
   >("dashboard");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [navDropdowns, setNavDropdowns] = useState<Record<string, boolean>>({
@@ -183,6 +183,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStockFilter, setSelectedStockFilter] = useState<"all" | "in_stock" | "out_of_stock">("all");
+  const [selectedBusinessFilter, setSelectedBusinessFilter] = useState("all");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Sync productsList with latest products from context
@@ -210,6 +211,53 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
   const [teamError, setTeamError] = useState<string | null>(null);
   const [teamSuccess, setTeamSuccess] = useState<string | null>(null);
 
+  // Orders Management State
+  const [ordersList, setOrdersList] = useState<any[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [orderSearchQuery, setOrderSearchQuery] = useState("");
+  const [orderStatusFilter, setOrderStatusFilter] = useState<string>("all");
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+
+  const fetchOrders = async () => {
+    setLoadingOrders(true);
+    try {
+      const res = await fetch("/api/orders");
+      if (res.ok) {
+        const data = await res.json();
+        setOrdersList(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.warn("Failed to fetch orders:", err);
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
+
+  const handleUpdateOrderStatus = async (id: string, newStatus: string) => {
+    setUpdatingOrderId(id);
+    try {
+      const res = await fetch(`/api/orders/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        setOrdersList((prev) =>
+          prev.map((o) => (o.id === id ? { ...o, status: newStatus } : o))
+        );
+        if (selectedOrder && selectedOrder.id === id) {
+          setSelectedOrder((prev: any) => ({ ...prev, status: newStatus }));
+        }
+        showToast(`Order #${id} updated to ${newStatus}`);
+      }
+    } catch {
+      showToast(`Failed to update order #${id}`);
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
+
   // Cloudinary Media Library State
   const [mediaItems, setMediaItems] = useState<CloudinaryAsset[]>([]);
   const [loadingMedia, setLoadingMedia] = useState(false);
@@ -225,6 +273,8 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
   const [formCategory, setFormCategory] = useState<DoorProduct["category"]>("security-doors");
   const [formGroup, setFormGroup] = useState<string>("doors");
   const [formSubcategory, setFormSubcategory] = useState<string>("Heavy Duty Armored Security Doors");
+  const [formBusinessId, setFormBusinessId] = useState<string>("anambra-best-door");
+  const [formBusinessName, setFormBusinessName] = useState<string>("Anambra Best Door");
   const [formPrice, setFormPrice] = useState<number>(0);
   const [formOriginalPrice, setFormOriginalPrice] = useState<number>(0);
   const [formPriceOnRequest, setFormPriceOnRequest] = useState(false);
@@ -330,6 +380,12 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
       fetchCloudinaryMedia(mediaResourceType);
     }
   }, [activeTab, mediaResourceType]);
+
+  useEffect(() => {
+    if (activeTab === "orders") {
+      fetchOrders();
+    }
+  }, [activeTab]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -556,6 +612,8 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
     setFormCategory("security-doors");
     setFormGroup("doors");
     setFormSubcategory("Heavy Duty Armored Security Doors");
+    setFormBusinessId("anambra-best-door");
+    setFormBusinessName("Anambra Best Door");
     setFormPrice(0);
     setFormOriginalPrice(0);
     setFormPriceOnRequest(false);
@@ -588,6 +646,8 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
     setFormCategory(prod.category);
     setFormGroup(prod.group || (prod.category === "sanitary-fittings" ? "sanitary" : "doors"));
     setFormSubcategory(prod.subcategory || "");
+    setFormBusinessId(prod.businessId || "anambra-best-door");
+    setFormBusinessName(prod.businessName || "Anambra Best Door");
     setFormPrice(prod.price || 0);
     setFormOriginalPrice(prod.originalPrice || 0);
     const initialPriceMode: "show_price" | "price_on_request" | "blank" =
@@ -625,7 +685,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
       setFormSlug(slugify(val));
     }
     if (!seoTitle) {
-      setSeoTitle(`${val} | Anambra Best Door`);
+      setSeoTitle(`${val} | ${brand.name}`);
     }
     if (!focusKeyphrase) {
       setFocusKeyphrase(val.split(" ").slice(0, 3).join(" "));
@@ -639,10 +699,6 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
       setFormGroup("sanitary");
     } else if (newCat === "paint" || newCat === "roof-tiles") {
       setFormGroup("materials");
-    } else if (newCat === "real-estate") {
-      setFormGroup("properties");
-    } else if (newCat === "careers") {
-      setFormGroup("careers");
     } else {
       setFormGroup("doors");
     }
@@ -650,8 +706,6 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
     if (newCat === "paint") setFormSubcategory("Wall Finishes & Screeding Paint");
     else if (newCat === "roof-tiles") setFormSubcategory("Stone Coated Roof Tiles");
     else if (newCat === "bathrooms" || newCat === "sanitary-fittings") setFormSubcategory("Sanitary Wares & Bath Fixtures");
-    else if (newCat === "real-estate") setFormSubcategory("Commercial & Residential Property");
-    else if (newCat === "careers") setFormSubcategory("Skilled Fabrication & Sales Vacancy");
     else if (newCat === "security-doors") setFormSubcategory("Heavy Duty Armored Security Doors");
     else if (newCat === "hdf-doors") setFormSubcategory("Foreign HDF Luxury Doors");
     else if (newCat === "bathroom-doors") setFormSubcategory("Waterproof Polymer Bathroom Doors");
@@ -706,10 +760,12 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
       description: formDescription,
       specifications: formSpecs,
       jijiUrl: formJijiUrl,
-      seoTitle: seoTitle || `${formName} | Anambra Best Door`,
+      seoTitle: seoTitle || `${formName} | ${brand.name}`,
       seoDescription: seoDescription || formShortDesc,
       focusKeyphrase: focusKeyphrase || formName,
       active: formActive,
+      businessId: formBusinessId || undefined,
+      businessName: formBusinessName || undefined,
     };
 
     if (editingId) {
@@ -836,7 +892,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("folder", "anambra_best_door/products");
+      formData.append("folder", "cfrank_group/products");
 
       const res = await fetch("/api/cloudinary/upload", {
         method: "POST",
@@ -884,7 +940,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
 
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("folder", "anambra_best_door/products");
+        formData.append("folder", "cfrank_group/products");
 
         const res = await fetch("/api/cloudinary/upload", {
           method: "POST",
@@ -935,7 +991,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("folder", "anambra_best_door/videos");
+      formData.append("folder", "cfrank_group/videos");
 
       const res = await fetch("/api/cloudinary/upload", {
         method: "POST",
@@ -1074,7 +1130,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
             <div className="relative w-14 h-14 mx-auto rounded-2xl overflow-hidden bg-white p-1.5 shadow-md border border-slate-700/60 flex items-center justify-center">
               <Image
                 src="/favicon.png"
-                alt="Anambra Best Door"
+                alt={brand.shortName}
                 width={48}
                 height={48}
                 className="rounded-xl object-contain"
@@ -1082,7 +1138,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
               />
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              Anambra Best Door Admin
+              {brand.name} Admin
             </h1>
             <p className="text-xs text-slate-400">
               Sign in to manage products, prices, media, and regional dispatch.
@@ -1110,7 +1166,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="admin@example.com"
-                    className="w-full pl-10 pr-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#003296]"
+                    className="w-full pl-10 pr-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#F3661B]"
                   />
                 </div>
               </div>
@@ -1127,7 +1183,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="Enter admin password"
-                    className="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#003296]"
+                    className="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#F3661B]"
                   />
                   <button
                     type="button"
@@ -1152,7 +1208,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
               <button
                 type="submit"
                 disabled={isSubmittingLogin}
-                className="w-full py-3 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold text-xs rounded-xl shadow-md transition disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
+                className="w-full py-3 px-4 bg-[#F3661B] hover:bg-[#D9530F] text-white font-bold text-xs rounded-xl shadow-md transition disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
               >
                 {isSubmittingLogin ? (
                   <>
@@ -1186,7 +1242,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                 />
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-[#003296] text-white text-xs font-bold rounded-xl"
+                  className="w-full py-2.5 bg-[#F3661B] text-white text-xs font-bold rounded-xl"
                 >
                   Send Reset Link
                 </button>
@@ -1219,13 +1275,13 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
           <div className="relative w-7 h-7 rounded-lg overflow-hidden bg-white p-0.5 shadow-xs border border-slate-700/60 flex items-center justify-center shrink-0">
             <Image
               src="/favicon-48x48.png"
-              alt="Anambra Best Door"
+              alt={brand.shortName}
               width={22}
               height={22}
               className="rounded-md object-contain"
             />
           </div>
-          <span className="font-bold text-xs text-white">Anambra Best Door</span>
+          <span className="font-bold text-xs text-white">{brand.shortName}</span>
         </div>
 
         <Link
@@ -1258,15 +1314,15 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
             <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-white p-1 shadow-xs border border-slate-700/60 flex items-center justify-center shrink-0">
               <Image
                 src="/favicon-48x48.png"
-                alt="Anambra Best Door"
+                alt={brand.shortName}
                 width={26}
                 height={26}
                 className="rounded-lg object-contain"
               />
             </div>
             <div>
-              <span className="font-bold text-xs text-white block leading-tight">Anambra Best Door</span>
-              <span className="text-[10px] text-slate-400 block">CFrank Enterprise Admin</span>
+              <span className="font-bold text-xs text-white block leading-tight">{brand.shortName}</span>
+              <span className="text-[10px] text-slate-400 block">{brand.name} Admin</span>
             </div>
           </div>
           <button
@@ -1288,7 +1344,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
             }}
             className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl font-semibold transition-colors cursor-pointer ${
               activeTab === "dashboard"
-                ? "bg-[#003296] text-white shadow-xs"
+                ? "bg-[#F3661B] text-white shadow-xs"
                 : "text-slate-300 hover:bg-slate-800 hover:text-white"
             }`}
           >
@@ -1457,6 +1513,24 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
             )}
           </div>
 
+          {/* Orders */}
+          <button
+            onClick={() => {
+              setActiveTab("orders");
+              fetchOrders();
+              setIsEditing(false);
+              setMobileSidebarOpen(false);
+            }}
+            className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl font-semibold transition-colors cursor-pointer ${
+              activeTab === "orders"
+                ? "bg-[#F3661B] text-white shadow-xs"
+                : "text-slate-300 hover:bg-slate-800 hover:text-white"
+            }`}
+          >
+            <Truck className="w-4 h-4" />
+            <span>Orders</span>
+          </button>
+
           {/* Settings & Compliance Group */}
           <div>
             <button
@@ -1550,7 +1624,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
         {/* Media Picker Modal */}
         {mediaPickerOpen && (
           <div
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in"
+            className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 animate-fade-in"
             onClick={(e) => {
               if (e.target === e.currentTarget) setMediaPickerOpen(false);
             }}
@@ -1576,7 +1650,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
               <div className="flex-1 overflow-y-auto p-4">
                 {loadingMedia ? (
                   <div className="py-16 text-center text-xs text-slate-500 flex flex-col items-center justify-center space-y-2">
-                    <Loader2 className="w-6 h-6 animate-spin text-[#003296]" />
+                    <Loader2 className="w-6 h-6 animate-spin text-[#F3661B]" />
                     <span>Loading media files...</span>
                   </div>
                 ) : mediaItems.length === 0 ? (
@@ -1592,7 +1666,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                         key={item.public_id}
                         type="button"
                         onClick={() => handleSelectMediaFromPicker(item)}
-                        className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 hover:border-[#003296] hover:ring-2 hover:ring-[#003296]/30 group transition-all cursor-pointer bg-slate-100"
+                        className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 hover:border-[#F3661B] hover:ring-2 hover:ring-[#F3661B]/30 group transition-all cursor-pointer bg-slate-100"
                       >
                         <Image
                           src={getAdminThumbnailUrl(item.url)}
@@ -1634,7 +1708,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
               <div>
                 <h1 className="text-2xl font-black text-slate-900 tracking-tight">Overview Dashboard</h1>
                 <p className="text-xs text-slate-500">
-                  Quick operational metrics for Anambra Best Door and CFrank Enterprise.
+                  Quick operational metrics for {brand.name}.
                 </p>
               </div>
 
@@ -1646,12 +1720,12 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                     setSelectedStockFilter("all");
                     setActiveTab("products");
                   }}
-                  className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1 text-left hover:border-[#003296] transition-colors cursor-pointer group"
+                  className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1 text-left hover:border-[#F3661B] transition-colors cursor-pointer group"
                 >
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block group-hover:text-[#003296]">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block group-hover:text-[#F3661B]">
                     Total Products
                   </span>
-                  <span className="text-3xl font-black text-[#003296] block">
+                  <span className="text-3xl font-black text-[#F3661B] block">
                     {totalProductsCount}
                   </span>
                   <span className="text-[11px] text-slate-400">Total catalog items</span>
@@ -1695,16 +1769,19 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
 
                 <button
                   type="button"
-                  onClick={() => setActiveTab("team")}
-                  className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1 text-left hover:border-slate-400 transition-colors cursor-pointer group"
+                  onClick={() => {
+                    setActiveTab("orders");
+                    fetchOrders();
+                  }}
+                  className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-1 text-left hover:border-[#F3661B] transition-colors cursor-pointer group"
                 >
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block group-hover:text-slate-900">
-                    Staff & Editors
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block group-hover:text-[#F3661B]">
+                    Logged Orders
                   </span>
                   <span className="text-3xl font-black text-slate-900 block">
-                    {teamMembers.length || 1}
+                    {ordersList.length}
                   </span>
-                  <span className="text-[11px] text-slate-400">Authorized portal users</span>
+                  <span className="text-[11px] text-slate-400">WhatsApp & portal inquiries</span>
                 </button>
               </div>
 
@@ -1714,7 +1791,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={handleNewProduct}
-                    className="py-2.5 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold text-xs rounded-xl flex items-center space-x-1.5 cursor-pointer shadow-xs"
+                    className="py-2.5 px-4 bg-[#F3661B] hover:bg-[#D9530F] text-white font-bold text-xs rounded-xl flex items-center space-x-1.5 cursor-pointer shadow-xs"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add New Product</span>
@@ -1755,7 +1832,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
           {isEditing && (
             <form onSubmit={handleSaveProduct} className="space-y-6">
               {/* Sticky Top Action Header */}
-              <div className="sticky top-0 z-20 bg-slate-100/95 backdrop-blur-xs py-3 border-b border-slate-200/90 flex flex-wrap items-center justify-between gap-3 shadow-2xs -mt-2 mb-4">
+              <div className="sticky top-0 z-20 bg-slate-100 py-3 border-b border-slate-200/90 flex flex-wrap items-center justify-between gap-3 shadow-2xs -mt-2 mb-4">
                 <div className="flex items-center space-x-2">
                   <button
                     type="button"
@@ -1779,7 +1856,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer"
+                    className="px-5 py-2 bg-[#F3661B] hover:bg-[#D9530F] text-white text-xs font-bold rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer"
                   >
                     <Save className="w-3.5 h-3.5" />
                     <span>{editingId ? "Update Product" : "Publish Product"}</span>
@@ -1868,7 +1945,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                         <button
                           type="button"
                           onClick={handleLoadDefaultSpecs}
-                          className="px-2.5 py-1 text-[11px] font-bold text-[#003296] bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 cursor-pointer"
+                          className="px-2.5 py-1 text-[11px] font-bold text-[#F3661B] bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 cursor-pointer"
                         >
                           Load Standard Specs
                         </button>
@@ -1973,7 +2050,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                             fetchCloudinaryMedia("image");
                             setMediaPickerOpen(true);
                           }}
-                          className="w-full py-2.5 px-3 bg-blue-50 hover:bg-blue-100 text-[#003296] border border-blue-200 text-xs font-bold rounded-xl flex items-center justify-center space-x-2 cursor-pointer"
+                          className="w-full py-2.5 px-3 bg-blue-50 hover:bg-blue-100 text-[#F3661B] border border-blue-200 text-xs font-bold rounded-xl flex items-center justify-center space-x-2 cursor-pointer"
                         >
                           <FolderOpen className="w-4 h-4" />
                           <span>Choose from Media Library</span>
@@ -1983,7 +2060,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
                           disabled={isUploadingImage}
-                          className="w-full py-2.5 px-3 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl flex items-center justify-center space-x-2 cursor-pointer"
+                          className="w-full py-2.5 px-3 bg-[#F3661B] hover:bg-[#D9530F] text-white text-xs font-bold rounded-xl flex items-center justify-center space-x-2 cursor-pointer"
                         >
                           {isUploadingImage ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -2036,7 +2113,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                             fetchCloudinaryMedia("image");
                             setMediaPickerOpen(true);
                           }}
-                          className="px-2.5 py-1 text-[11px] font-bold text-[#003296] bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 cursor-pointer"
+                          className="px-2.5 py-1 text-[11px] font-bold text-[#F3661B] bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 cursor-pointer"
                         >
                           Pick from Library
                         </button>
@@ -2086,7 +2163,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                   <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-4 shadow-xs">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                       <div className="flex items-center space-x-2">
-                        <Globe className="w-4 h-4 text-[#003296]" />
+                        <Globe className="w-4 h-4 text-[#F3661B]" />
                         <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                           Search Engine Optimization (SEO)
                         </h3>
@@ -2130,7 +2207,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                           type="text"
                           value={seoTitle}
                           onChange={(e) => setSeoTitle(e.target.value)}
-                          placeholder="e.g. Bullet Proof Door in Onitsha Nigeria | Anambra Best Door"
+                          placeholder={`e.g. Security Door in Onitsha Nigeria | ${brand.name}`}
                           className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
                         />
                       </div>
@@ -2155,10 +2232,10 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                           Google Search Snippet Preview
                         </span>
                         <p className="text-xs font-medium text-[#1a0dab] truncate">
-                          {seoTitle || `${formName || "Product"} | Anambra Best Door`}
+                          {seoTitle || `${formName || "Product"} | ${brand.name}`}
                         </p>
                         <p className="text-[11px] text-[#006621] truncate font-mono">
-                          https://anambrabestdoor.com/products/{formSlug || "door-model"}
+                          ${brand.url}/products/{formSlug || "door-model"}
                         </p>
                         <p className="text-[11px] text-slate-600 line-clamp-2">
                           {seoDescription || formShortDesc || "Direct warehouse supply of genuine security doors and building fittings in Ogidi, Anambra State."}
@@ -2208,11 +2285,12 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                     />
                   </div>
 
+                  {/* Business Division Assignment */}
                   {/* SEO Health Checklist Card (Matching Yoast / RankMath UI) */}
                   <div className="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-3.5 shadow-xs">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                       <div className="flex items-center space-x-2">
-                        <Globe className="w-4 h-4 text-[#003296]" />
+                        <Globe className="w-4 h-4 text-[#F3661B]" />
                         <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                           SEO Optimization
                         </h3>
@@ -2264,7 +2342,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                           name="priceMode"
                           checked={formPriceMode === "show_price"}
                           onChange={() => setFormPriceMode("show_price")}
-                          className="w-4 h-4 text-[#003296]"
+                          className="w-4 h-4 text-[#F3661B]"
                         />
                         <span className="font-semibold text-slate-800">Show Specific Price</span>
                       </label>
@@ -2274,7 +2352,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                           name="priceMode"
                           checked={formPriceMode === "price_on_request"}
                           onChange={() => setFormPriceMode("price_on_request")}
-                          className="w-4 h-4 text-[#003296]"
+                          className="w-4 h-4 text-[#F3661B]"
                         />
                         <span className="font-semibold text-slate-800">Price on Request</span>
                       </label>
@@ -2284,7 +2362,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                           name="priceMode"
                           checked={formPriceMode === "blank"}
                           onChange={() => setFormPriceMode("blank")}
-                          className="w-4 h-4 text-[#003296]"
+                          className="w-4 h-4 text-[#F3661B]"
                         />
                         <span className="font-semibold text-slate-800">Leave Blank / Chat for Price</span>
                       </label>
@@ -2385,7 +2463,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2.5 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer"
+                    className="px-5 py-2.5 bg-[#F3661B] hover:bg-[#D9530F] text-white text-xs font-bold rounded-xl shadow-xs flex items-center space-x-1.5 cursor-pointer"
                   >
                     <Save className="w-3.5 h-3.5" />
                     <span>{editingId ? "Update Product" : "Publish Product"}</span>
@@ -2402,7 +2480,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 space-y-5 shadow-xs">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                 <div className="flex items-center space-x-2">
-                  <Package className="w-5 h-5 text-[#003296]" />
+                  <Package className="w-5 h-5 text-[#F3661B]" />
                   <h2 className="text-lg font-black text-slate-900">
                     Product Catalogue ({filteredProducts.length})
                   </h2>
@@ -2411,7 +2489,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={handleNewProduct}
-                    className="py-2.5 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold text-xs rounded-xl flex items-center space-x-1.5 cursor-pointer shadow-xs"
+                    className="py-2.5 px-4 bg-[#F3661B] hover:bg-[#D9530F] text-white font-bold text-xs rounded-xl flex items-center space-x-1.5 cursor-pointer shadow-xs"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add New</span>
@@ -2427,7 +2505,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                   onClick={() => setSelectedStockFilter("all")}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                     selectedStockFilter === "all"
-                      ? "bg-[#003296] text-white shadow-xs"
+                      ? "bg-[#F3661B] text-white shadow-xs"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
@@ -2529,7 +2607,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                         <td className="p-3 text-right space-x-1">
                           <button
                             onClick={() => handleEditProduct(p)}
-                            className="p-1.5 text-slate-600 hover:text-[#003296] rounded-lg hover:bg-slate-100 cursor-pointer"
+                            className="p-1.5 text-slate-600 hover:text-[#F3661B] rounded-lg hover:bg-slate-100 cursor-pointer"
                             title="Edit Product"
                           >
                             <Edit className="w-3.5 h-3.5" />
@@ -2556,7 +2634,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
           {activeTab === "inventory" && !isEditing && (
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 space-y-5 shadow-xs">
               <div className="flex items-center space-x-2">
-                <TrendingUp className="w-5 h-5 text-[#003296]" />
+                <TrendingUp className="w-5 h-5 text-[#F3661B]" />
                 <h2 className="text-lg font-black text-slate-900">Stock & Availability Status</h2>
               </div>
               <div className="overflow-x-auto border border-slate-200 rounded-xl">
@@ -2609,7 +2687,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 space-y-5 shadow-xs">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                 <div className="flex items-center space-x-2">
-                  <ImageIcon className="w-5 h-5 text-[#003296]" />
+                  <ImageIcon className="w-5 h-5 text-[#F3661B]" />
                   <h2 className="text-lg font-black text-slate-900">
                     Media Library ({mediaItems.length})
                   </h2>
@@ -2621,7 +2699,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                       onClick={() => setMediaResourceType("image")}
                       className={`px-3 py-1.5 font-bold cursor-pointer ${
                         mediaResourceType === "image"
-                          ? "bg-[#003296] text-white"
+                          ? "bg-[#F3661B] text-white"
                           : "bg-slate-50 text-slate-600 hover:bg-slate-100"
                       }`}
                     >
@@ -2631,7 +2709,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                       onClick={() => setMediaResourceType("video")}
                       className={`px-3 py-1.5 font-bold cursor-pointer ${
                         mediaResourceType === "video"
-                          ? "bg-[#003296] text-white"
+                          ? "bg-[#F3661B] text-white"
                           : "bg-slate-50 text-slate-600 hover:bg-slate-100"
                       }`}
                     >
@@ -2651,7 +2729,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
 
               {loadingMedia ? (
                 <div className="py-20 text-center text-xs text-slate-500 flex flex-col items-center justify-center space-y-2">
-                  <Loader2 className="w-8 h-8 animate-spin text-[#003296]" />
+                  <Loader2 className="w-8 h-8 animate-spin text-[#F3661B]" />
                   <span>Fetching files from media storage...</span>
                 </div>
               ) : mediaItems.length === 0 ? (
@@ -2723,7 +2801,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
           {activeTab === "delivery" && !isEditing && (
             <form onSubmit={handleSaveSettings} className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-8 space-y-6 shadow-xs">
               <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
-                <Truck className="w-5 h-5 text-[#003296]" />
+                <Truck className="w-5 h-5 text-[#F3661B]" />
                 <div>
                   <h2 className="text-lg font-black text-slate-900">
                     Regional Delivery & Warehouse Transit Settings
@@ -2858,7 +2936,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
               <div className="pt-4 border-t border-slate-100 flex justify-end">
                 <button
                   type="submit"
-                  className="py-2.5 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 cursor-pointer"
+                  className="py-2.5 px-6 bg-[#F3661B] hover:bg-[#D9530F] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Delivery Settings</span>
@@ -2873,7 +2951,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
           {activeTab === "team" && !isEditing && (
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-8 space-y-6 shadow-xs">
               <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
-                <Users className="w-5 h-5 text-[#003296]" />
+                <Users className="w-5 h-5 text-[#F3661B]" />
                 <div>
                   <h2 className="text-lg font-black text-slate-900">
                     Team & Content Editor Management
@@ -2928,7 +3006,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                 <button
                   type="submit"
                   disabled={isSubmittingEditor}
-                  className="py-2 px-4 bg-[#003296] hover:bg-[#002266] text-white font-bold rounded-xl flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
+                  className="py-2 px-4 bg-[#F3661B] hover:bg-[#D9530F] text-white font-bold rounded-xl flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
                 >
                   <UserPlus className="w-3.5 h-3.5" />
                   <span>{isSubmittingEditor ? "Creating Account..." : "Create Account"}</span>
@@ -2959,7 +3037,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                           <td className="p-3 font-bold text-slate-900">
                             {m.name || m.email.split("@")[0]}
                             {isCurrentUser && (
-                              <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-[#003296] border border-blue-200/60">
+                              <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-[#F3661B] border border-blue-200/60">
                                 You
                               </span>
                             )}
@@ -2970,7 +3048,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                               className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                                 m.role === "admin"
                                   ? "bg-purple-100 text-purple-800"
-                                  : "bg-blue-100 text-[#003296]"
+                                  : "bg-blue-100 text-[#F3661B]"
                               }`}
                             >
                               {m.role === "admin" ? "Administrator" : "Editor"}
@@ -3014,7 +3092,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
           {activeTab === "settings" && !isEditing && (
             <form onSubmit={handleSaveSettings} className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-8 space-y-6 shadow-xs">
               <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
-                <Settings className="w-5 h-5 text-[#003296]" />
+                <Settings className="w-5 h-5 text-[#F3661B]" />
                 <div>
                   <h2 className="text-lg font-black text-slate-900">Store Profile & Warehouse Addresses</h2>
                   <p className="text-xs text-slate-500">
@@ -3155,6 +3233,65 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                   />
                 </div>
 
+                <div className="sm:col-span-2 pt-3 border-t border-slate-100">
+                  <h3 className="font-bold text-slate-900 text-sm mb-2">Site Media & Hero Placeholders</h3>
+                  <p className="text-xs text-slate-500 mb-3">
+                    Update the logo, hero video/image, and poster placeholders across the site. Images upload automatically to Cloudinary.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Site Logo URL</label>
+                  <input
+                    type="text"
+                    value={siteSettingsForm.logoUrl || ""}
+                    onChange={(e) =>
+                      setSiteSettingsForm({ ...siteSettingsForm, logoUrl: e.target.value })
+                    }
+                    placeholder="/cfrank-logo.png or https://res.cloudinary.com/..."
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Hero Fallback Image URL</label>
+                  <input
+                    type="text"
+                    value={siteSettingsForm.heroImageUrl || ""}
+                    onChange={(e) =>
+                      setSiteSettingsForm({ ...siteSettingsForm, heroImageUrl: e.target.value })
+                    }
+                    placeholder="https://res.cloudinary.com/... or /hero.jpg"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Hero Video URL</label>
+                  <input
+                    type="text"
+                    value={siteSettingsForm.heroVideoUrl || ""}
+                    onChange={(e) =>
+                      setSiteSettingsForm({ ...siteSettingsForm, heroVideoUrl: e.target.value })
+                    }
+                    placeholder="/cfrank_hero_assembly.mp4?v=4.5"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Hero Video Poster URL</label>
+                  <input
+                    type="text"
+                    value={siteSettingsForm.heroPosterUrl || ""}
+                    onChange={(e) =>
+                      setSiteSettingsForm({ ...siteSettingsForm, heroPosterUrl: e.target.value })
+                    }
+                    placeholder="/cfrank_hero_poster.webp?v=4.5"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+
                 <div className="sm:col-span-2 pt-2 border-t border-slate-100">
                   <label className="font-bold text-slate-800 block mb-1">
                     WhatsApp Single Product Inquiry Template
@@ -3193,7 +3330,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
               <div className="pt-4 border-t border-slate-100 flex justify-end">
                 <button
                   type="submit"
-                  className="py-2.5 px-6 bg-[#003296] hover:bg-[#002266] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 cursor-pointer"
+                  className="py-2.5 px-6 bg-[#F3661B] hover:bg-[#D9530F] text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Site Settings</span>
@@ -3248,6 +3385,260 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* VIEW: ORDERS & DISPATCH                                                    */}
+          {/* ========================================================================= */}
+          {activeTab === "orders" && !isEditing && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <h1 className="text-2xl font-black text-slate-900 tracking-tight">Orders & Dispatch</h1>
+                  <p className="text-xs text-slate-500">
+                    Live customer orders dispatched via WhatsApp checkout and commercial inquiries.
+                  </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={fetchOrders}
+                    disabled={loadingOrders}
+                    className="inline-flex items-center space-x-1.5 px-3 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${loadingOrders ? "animate-spin text-[#F3661B]" : ""}`} />
+                    <span>{loadingOrders ? "Syncing..." : "Refresh"}</span>
+                  </button>
+                  <a
+                    href={`https://wa.me/${settings.whatsappNumber || brand.whatsappNumber}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-[#171A1D] text-white text-xs font-semibold rounded-xl hover:bg-[#252A2F] transition-colors"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Open WhatsApp Desk</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Filter & Search Bar */}
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search by Order ID (e.g. CFG-), customer name, phone, or location..."
+                    value={orderSearchQuery}
+                    onChange={(e) => setOrderSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#F3661B]"
+                  />
+                  {orderSearchQuery && (
+                    <button
+                      onClick={() => setOrderSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 md:pb-0 text-xs">
+                  {["all", "pending", "processing", "shipped", "delivered"].map((st) => (
+                    <button
+                      key={st}
+                      onClick={() => setOrderStatusFilter(st)}
+                      className={`px-3 py-1.5 rounded-lg font-semibold capitalize whitespace-nowrap transition-colors cursor-pointer ${
+                        orderStatusFilter === st
+                          ? "bg-slate-900 text-white"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                    >
+                      {st === "all" ? "All Orders" : st}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Orders List */}
+              {(() => {
+                const filtered = ordersList.filter((o) => {
+                  const q = orderSearchQuery.toLowerCase().trim();
+                  const matchSearch =
+                    !q ||
+                    o.id?.toLowerCase().includes(q) ||
+                    o.customerName?.toLowerCase().includes(q) ||
+                    o.phone?.includes(q) ||
+                    o.email?.toLowerCase().includes(q) ||
+                    o.deliveryLocation?.toLowerCase().includes(q);
+                  const matchStatus =
+                    orderStatusFilter === "all" || o.status === orderStatusFilter;
+                  return matchSearch && matchStatus;
+                });
+
+                if (loadingOrders && ordersList.length === 0) {
+                  return (
+                    <div className="bg-white rounded-2xl border border-slate-200/90 p-12 text-center space-y-3">
+                      <Loader2 className="w-8 h-8 text-[#F3661B] animate-spin mx-auto" />
+                      <p className="text-xs text-slate-500 font-medium">Loading orders database...</p>
+                    </div>
+                  );
+                }
+
+                if (filtered.length === 0) {
+                  return (
+                    <div className="bg-white rounded-2xl border border-slate-200/90 p-10 text-center space-y-4">
+                      <div className="w-14 h-14 rounded-full bg-slate-50 border border-slate-200 text-slate-400 mx-auto flex items-center justify-center">
+                        <Truck className="w-7 h-7 text-[#F3661B]" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-sm font-bold text-slate-800">No Orders Found</h3>
+                        <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                          {orderSearchQuery || orderStatusFilter !== "all"
+                            ? "No orders match your filter criteria. Try clearing your search query."
+                            : "New orders submitted through the website checkout or WhatsApp will be listed here automatically."}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="space-y-3">
+                    {filtered.map((order) => {
+                      const statusColors: Record<string, string> = {
+                        pending: "bg-amber-50 text-amber-700 border-amber-200",
+                        processing: "bg-blue-50 text-blue-700 border-blue-200",
+                        shipped: "bg-purple-50 text-purple-700 border-purple-200",
+                        delivered: "bg-emerald-50 text-emerald-700 border-emerald-200",
+                      };
+                      const cleanPhone = order.phone?.replace(/[^0-9]/g, "") || "";
+                      const waLink = cleanPhone
+                        ? `https://wa.me/${cleanPhone.startsWith("0") ? "234" + cleanPhone.slice(1) : cleanPhone}?text=${encodeURIComponent(`Hello ${order.customerName || "Customer"}, this is ${brand.name} following up on your Order #${order.id}.`)}`
+                        : `https://wa.me/${settings.whatsappNumber || brand.whatsappNumber}?text=${encodeURIComponent(`Order #${order.id} update for ${order.customerName || "Customer"}`)}`;
+
+                      return (
+                        <div
+                          key={order.id}
+                          className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs space-y-4 hover:border-slate-300 transition-colors"
+                        >
+                          {/* Order Header */}
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-3">
+                            <div className="flex items-center space-x-3">
+                              <span className="font-mono text-xs font-bold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg">
+                                {order.id}
+                              </span>
+                              <span className="text-[11px] text-slate-500">{order.date}</span>
+                              {order.divisions && order.divisions.length > 0 && (
+                                <div className="hidden sm:flex items-center space-x-1">
+                                  {order.divisions.map((d: string) => (
+                                    <span key={d} className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-50 text-slate-600 border border-slate-200">
+                                      {d}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex items-center space-x-2">
+                              {/* Status Badge & Selector */}
+                              <select
+                                value={order.status || "pending"}
+                                disabled={updatingOrderId === order.id}
+                                onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                                className={`text-[11px] font-bold rounded-lg px-2.5 py-1 border cursor-pointer ${
+                                  statusColors[order.status || "pending"] || "bg-slate-50 text-slate-700 border-slate-200"
+                                }`}
+                              >
+                                <option value="pending">Pending</option>
+                                <option value="processing">Processing</option>
+                                <option value="shipped">Shipped / In Transit</option>
+                                <option value="delivered">Delivered</option>
+                              </select>
+
+                              {/* WhatsApp Contact */}
+                              <a
+                                href={waLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center space-x-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-[11px] font-semibold transition-colors"
+                              >
+                                <MessageSquare className="w-3 h-3" />
+                                <span>WhatsApp</span>
+                              </a>
+                            </div>
+                          </div>
+
+                          {/* Client Details Grid */}
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block">Customer</span>
+                              <span className="font-semibold text-slate-800 block truncate">
+                                {order.customerName || "Valued Client"}
+                              </span>
+                              {order.phone && (
+                                <a href={`tel:${order.phone}`} className="text-slate-500 hover:text-slate-800 text-[11px] block">
+                                  {order.phone}
+                                </a>
+                              )}
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block">Destination</span>
+                              <span className="font-semibold text-slate-800 block truncate">
+                                {order.deliveryLocation || "Ogidi Warehouse Pickup"}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block">Order Value</span>
+                              <span className="font-bold text-slate-900 block text-sm">
+                                {order.total && order.total > 0 ? `₦${order.total.toLocaleString()}` : "Price on Request / Quote"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Items Breakdown */}
+                          {Array.isArray(order.items) && order.items.length > 0 && (
+                            <div className="space-y-1.5 pt-1">
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                                Items Ordered ({order.items.length})
+                              </span>
+                              <div className="space-y-1">
+                                {order.items.map((it: any, idx: number) => (
+                                  <div key={idx} className="flex items-center justify-between text-xs py-1 px-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                                    <div className="flex items-center space-x-2">
+                                      <span className="font-medium text-slate-800">{it.productName || it.name}</span>
+                                      {it.size && <span className="text-[10px] text-slate-500">({it.size})</span>}
+                                      {it.businessName && (
+                                        <span className="text-[9px] px-1.5 py-0.2 rounded bg-white text-[#F3661B] border border-[#F3661B]/30 font-semibold">
+                                          {it.businessName}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center space-x-3 text-slate-600">
+                                      <span>Qty: {it.quantity}</span>
+                                      {it.price && it.price > 0 && (
+                                        <span className="font-semibold text-slate-900">
+                                          ₦{(it.price * it.quantity).toLocaleString()}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {order.notes && (
+                            <div className="text-xs bg-amber-50/50 p-2.5 rounded-lg border border-amber-200/50 text-slate-700">
+                              <span className="font-bold text-amber-800">Project Notes: </span>
+                              {order.notes}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
             </div>
           )}
         </main>

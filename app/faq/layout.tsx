@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
+import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Frequently Asked Questions | Door Specifications & Waybill Delivery",
+  title: `Frequently Asked Questions | ${brand.name}`,
   description:
-    "Common trade questions answered: Turkish steel security door gauges, foreign HDF door package contents, WPC waterproof bathroom doors, warehouse visits, and nationwide delivery across Nigeria.",
+    `Frequently asked questions regarding products, specifications, waybill delivery, contractor pricing, and corporate verification at ${brand.name}.`,
   alternates: {
     canonical: "/faq",
   },
   openGraph: {
-    title: "Frequently Asked Questions | Anambra Best Door",
+    title: `Frequently Asked Questions | ${brand.name}`,
     description:
-      "Answers on Turkish door thickness, rough opening dimensions, CAC verification, and waybill delivery across Nigeria.",
+      `Answers on product specifications, rough opening dimensions, CAC verification, and waybill delivery across Nigeria.`,
   },
 };
 

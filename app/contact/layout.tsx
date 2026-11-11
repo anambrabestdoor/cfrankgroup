@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
+import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Contact & Warehouse Location | Anambra Best Door",
+  title: `Contact & Locations | ${brand.name}`,
   description:
-    "Visit our physical showroom and warehouse at Maraim Plaza, Building Material International Market, Ogidi. Phone: 0803 521 8890. WhatsApp sales line and nationwide delivery coordination.",
+    `Contact ${brand.name}. Headquarters and showrooms in Ogidi, Anambra State. Phone: ${brand.phoneDisplay}. WhatsApp customer care agent and nationwide logistics coordination.`,
   alternates: {
     canonical: "/contact",
   },
   openGraph: {
-    title: "Contact Anambra Best Door | Warehouse & Showroom",
+    title: `Contact ${brand.name} | Headquarters & Showrooms`,
     description:
-      "Showroom directions, WhatsApp sales inquiries, phone numbers, and contractor offloading coordination.",
+      `Get in touch with ${brand.name} for corporate inquiries, contractor orders, and retail purchases.`,
   },
 };
 

@@ -1,27 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { verifyAdminRequest } from "@/lib/adminAuth";
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    const payload = db.verifyToken(token);
-    if (!payload || !payload.email) {
-      return NextResponse.json({ error: "Unauthorized session." }, { status: 401 });
-    }
-
-    const cleanEmail = payload.email.toLowerCase().trim();
-
-    if (payload.role === "admin") {
+    const admin = await verifyAdminRequest(req);
+    if (admin) {
       const allOrders = await db.getOrders();
       return NextResponse.json(allOrders);
     }
 
-    const userOrders = await db.getOrdersByEmail(cleanEmail);
-    return NextResponse.json(userOrders);
+    const token = req.cookies.get("token")?.value;
+    if (token) {
+      const payload = db.verifyToken(token);
+      if (payload?.email) {
+        if (payload.role === "admin") {
+          const allOrders = await db.getOrders();
+          return NextResponse.json(allOrders);
+        }
+        const userOrders = await db.getOrdersByEmail(payload.email.toLowerCase().trim());
+        return NextResponse.json(userOrders);
+      }
+    }
+
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   } catch (error) {
     console.error("[Orders GET API Error]:", error);
     return NextResponse.json({ error: "Failed to fetch orders." }, { status: 500 });
@@ -31,26 +33,40 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { orderId, email, items, total, customerName, paymentMethod, paymentProofUrl } = body;
+    const {
+      orderId,
+      email,
+      phone,
+      deliveryLocation,
+      notes,
+      divisions,
+      items,
+      total,
+      customerName,
+      paymentMethod,
+      paymentProofUrl,
+      channel,
+    } = body;
 
     // Check if this is an order creation request (items & total provided)
     if (Array.isArray(items) && total !== undefined) {
       const token = req.cookies.get("token")?.value;
       const payload = token ? db.verifyToken(token) : null;
-      const targetEmail = (email || payload?.email || "").toLowerCase().trim();
-
-      if (!targetEmail) {
-        return NextResponse.json({ error: "Customer email is required to place an order." }, { status: 400 });
-      }
+      const targetEmail = (email || payload?.email || (phone ? `${String(phone).replace(/[^0-9]/g, "")}@cfrank.internal` : "direct-order@cfrank.internal")).toLowerCase().trim();
 
       const newOrder = await db.createOrder({
         customerName: customerName ? customerName.trim() : (payload?.name || "Valued Customer"),
         email: targetEmail,
+        phone: phone ? String(phone).trim() : undefined,
+        deliveryLocation: deliveryLocation ? String(deliveryLocation).trim() : undefined,
+        notes: notes ? String(notes).trim() : undefined,
+        divisions: Array.isArray(divisions) ? divisions : [],
         items,
         total: Number(total),
         status: "pending",
-        paymentMethod,
+        paymentMethod: paymentMethod || "whatsapp",
         paymentProofUrl,
+        channel: channel || "whatsapp",
       });
 
       return NextResponse.json(newOrder, { status: 201 });

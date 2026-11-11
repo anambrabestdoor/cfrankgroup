@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { verifyAdminRequest } from "@/lib/adminAuth";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -8,13 +9,8 @@ interface RouteParams {
 export async function PUT(req: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const token = req.cookies.get("token")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    const payload = db.verifyToken(token);
-    if (!payload || payload.role !== "admin") {
+    const admin = await verifyAdminRequest(req);
+    if (!admin) {
       return NextResponse.json({ error: "Forbidden. Admin access required." }, { status: 403 });
     }
 

@@ -2,9 +2,21 @@
 
 import React, { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import ProductCard from "@/app/components/ProductCard";
 import { DOOR_PRODUCTS, CATEGORIES } from "@/app/data/doorsData";
-import { ChevronDown, Search, MessageSquare, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import { brand } from "@/lib/brand";
+import {
+  ChevronDown,
+  Search,
+  MessageSquare,
+  RotateCcw,
+  ChevronLeft,
+  ChevronRight,
+  Building2,
+  FileText,
+  SlidersHorizontal,
+} from "lucide-react";
 import { useApp } from "@/app/context/AppContext";
 
 const PRODUCTS_PER_PAGE = 12;
@@ -12,49 +24,51 @@ const PRODUCTS_PER_PAGE = 12;
 function ShopContent() {
   const { settings, products } = useApp();
   const searchParams = useSearchParams();
+
   const urlCategory = searchParams.get("category");
+  const urlBusiness = searchParams.get("business");
   const urlQuery = searchParams.get("q") || searchParams.get("search");
 
-  const [selectedGroup, setSelectedGroup] = useState<string>("all");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>(urlCategory || "all");
   const [searchQuery, setSearchQuery] = useState<string>(urlQuery || "");
   const [sortBy, setSortBy] = useState<string>("latest");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [inStockOnly, setInStockOnly] = useState<boolean>(false);
 
+  // Sync with URL params
   useEffect(() => {
     if (urlQuery) setSearchQuery(urlQuery);
-    if (urlCategory) {
-      if (urlCategory === "doors") {
-        setSelectedGroup("doors");
-        setSelectedCategory("all");
-      } else if (urlCategory === "sanitary" || urlCategory === "sanitary-fittings") {
-        setSelectedGroup("all");
-        setSelectedCategory("sanitary-fittings");
-      } else {
-        setSelectedGroup("all");
-        setSelectedCategory(urlCategory);
-      }
-    }
+    if (urlCategory) setSelectedCategory(urlCategory);
   }, [urlCategory, urlQuery]);
 
   // Reset to page 1 whenever filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedGroup, selectedCategory, searchQuery, sortBy]);
+  }, [selectedCategory, searchQuery, sortBy, inStockOnly]);
 
   const filteredProducts = useMemo(() => {
     const activeList = products && products.length > 0 ? products : DOOR_PRODUCTS;
+
     const filtered = activeList.filter((product) => {
-      if (!product || !product.active) return false;
+      if (!product || product.active === false) return false;
 
-      if (selectedGroup !== "all" && product.group && product.group !== selectedGroup) return false;
-      if (selectedCategory !== "all" && product.category !== selectedCategory) return false;
+      // Filter by Category
+      if (selectedCategory !== "all") {
+        if (product.category !== selectedCategory) return false;
+      }
 
+      // Filter by in-stock status
+      if (inStockOnly && product.stockStatus !== "in_stock") {
+        return false;
+      }
+
+      // Filter by Search Query
       if (searchQuery.trim() !== "") {
         const q = searchQuery.toLowerCase();
         const matchesName = (product.name || "").toLowerCase().includes(q);
         const matchesDesc = (product.shortDescription || product.description || "").toLowerCase().includes(q);
         const matchesSub = (product.subcategory || "").toLowerCase().includes(q);
+
         const specs =
           product.specifications && typeof product.specifications === "object"
             ? Object.values(product.specifications)
@@ -62,21 +76,23 @@ function ShopContent() {
         const matchesSpec = specs.some(
           (val) => typeof val === "string" && val.toLowerCase().includes(q)
         );
-        if (!matchesName && !matchesDesc && !matchesSub && !matchesSpec) return false;
+
+        if (!matchesName && !matchesDesc && !matchesSub && !matchesSpec) {
+          return false;
+        }
       }
+
       return true;
     });
 
-    // Sort
+    // Sorting
     return filtered.sort((a, b) => {
       if (sortBy === "price-low") return (a.price || 0) - (b.price || 0);
       if (sortBy === "price-high") return (b.price || 0) - (a.price || 0);
       if (sortBy === "featured") {
-        // Featured first, then by creation time
         if (a.featured && !b.featured) return -1;
         if (!a.featured && b.featured) return 1;
       }
-      // "latest" and default: newest first (products from DB already come newest-first, preserve order)
       const getTime = (p: typeof a) => {
         if (p.createdAt) {
           const t = new Date(p.createdAt).getTime();
@@ -87,7 +103,7 @@ function ShopContent() {
       };
       return getTime(b) - getTime(a);
     });
-  }, [selectedGroup, selectedCategory, searchQuery, sortBy, products]);
+  }, [selectedCategory, searchQuery, sortBy, inStockOnly, products]);
 
   // Pagination
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
@@ -104,14 +120,13 @@ function ShopContent() {
   };
 
   const resetFilters = () => {
-    setSelectedGroup("all");
     setSelectedCategory("all");
     setSearchQuery("");
     setSortBy("latest");
+    setInStockOnly(false);
     setCurrentPage(1);
   };
 
-  // Build page numbers array (show max 7 page buttons)
   const getPageNumbers = () => {
     const pages: (number | "...")[] = [];
     if (totalPages <= 7) {
@@ -129,237 +144,233 @@ function ShopContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Archive Header */}
-      <div className="bg-white border-b border-slate-200/80 py-10 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-3xl mx-auto space-y-3">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#003296] block">
-            Direct Warehouse Inventory • Nationwide Delivery
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
-            Doors &amp; Sanitary Ware Catalogue
+    <div className="min-h-screen bg-[#FBF9F5]">
+      {/* Archive Header Banner */}
+      <section className="bg-[#121518] text-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8 border-b border-[#22262B]">
+        <div className="max-w-7xl mx-auto space-y-3 text-center sm:text-left">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#F3661B] uppercase tracking-wider">
+            <Building2 className="w-4 h-4" />
+            <span>Product Catalogue</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+            CFrank Group Shop
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
-            Direct importer rates on heavy-gauge Turkish security doors, luxury foreign HDF room doors, waterproof bathroom doors, and commercial sanitary fittings.
+          <p className="text-xs sm:text-sm text-[#D1D1CC] max-w-2xl leading-relaxed">
+            Order quality security doors, foreign HDF luxury doors, stone-coated roof tiles, and sanitary wares directly from our inventory.
           </p>
         </div>
-      </div>
+      </section>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* Main Group Switcher Tabs */}
-        <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
-          {[
-            { label: "All Items", group: "all", category: "all" },
-            { label: "Doors & Entrances", group: "doors", category: "all" },
-            { label: "Bathrooms & Sanitary", group: "all", category: "sanitary-fittings" },
-            { label: "Paint & Finishes", group: "all", category: "paint" },
-            { label: "Roof Tiles", group: "all", category: "roof-tiles" },
-            { label: "Real Estate", group: "all", category: "real-estate" },
-            { label: "Careers", group: "all", category: "careers" },
-          ].map(({ label, group, category }) => {
-            const isActive =
-              selectedGroup === group &&
-              (category === "all" ? selectedCategory === "all" : selectedCategory === category);
-            return (
-              <button
-                key={label}
-                onClick={() => {
-                  setSelectedGroup(group);
-                  setSelectedCategory(category);
-                }}
-                className={`py-2 px-4 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  isActive
-                    ? "bg-[#003296] text-white shadow-sm"
-                    : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80"
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Filter, Search & Sort Bar */}
-        <div className="bg-white rounded-xl border border-slate-200/90 p-4 sm:p-5 shadow-xs space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            {/* Search Input */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by model, HDF, steel gauge, WC, tap..."
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#003296]"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-
-            {/* Sort Options */}
-            <div className="flex items-center space-x-3 self-end md:self-auto">
-              <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">
-                Sort by:
-              </span>
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 pr-8 text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#003296] cursor-pointer"
-                >
-                  <option value="latest">Latest First</option>
-                  <option value="featured">Featured First</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                </select>
-                <ChevronDown className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
-              </div>
-            </div>
-          </div>
-
-          {/* Subcategory Pills */}
-          <div className="flex items-center space-x-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Category Selector Tabs */}
+        <div className="space-y-2">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#73787E] block text-center sm:text-left">
+            Filter by Category
+          </span>
+          <div className="flex items-center justify-start gap-2 flex-wrap pb-1">
             <button
               onClick={() => setSelectedCategory("all")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              className={`py-2 px-3.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
                 selectedCategory === "all"
-                  ? "bg-slate-900 text-white shadow-xs"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "bg-[#121518] text-white shadow-xs"
+                  : "bg-white text-[#4A4A4A] hover:bg-[#E5E3DC] border border-[#E5E3DC]"
               }`}
             >
-              All Types
+              All Products ({products?.length || DOOR_PRODUCTS.length})
             </button>
             {CATEGORIES.filter((c) => c.id !== "all").map((cat) => {
-              const active = selectedCategory === cat.id;
+              const count = (products || DOOR_PRODUCTS).filter(
+                (p) => p.category === cat.id
+              ).length;
+              if (count === 0) return null;
               return (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                    active
-                      ? "bg-[#003296] text-white shadow-xs"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  className={`py-2 px-3.5 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    selectedCategory === cat.id
+                      ? "bg-[#121518] text-white shadow-xs"
+                      : "bg-white text-[#4A4A4A] hover:bg-[#E5E3DC] border border-[#E5E3DC]"
                   }`}
                 >
-                  {cat.name}
+                  <span>{cat.name}</span>
+                  <span className="text-[10px] text-[#F3661B] font-semibold">({count})</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Results Counter & Active Filter Indicators */}
-        <div className="flex items-center justify-between text-xs text-slate-500 px-1">
-          <span>
-            Showing{" "}
-            <strong className="text-slate-900">
-              {(safePage - 1) * PRODUCTS_PER_PAGE + 1}–{Math.min(safePage * PRODUCTS_PER_PAGE, filteredProducts.length)}
-            </strong>{" "}
-            of <strong className="text-slate-900">{filteredProducts.length}</strong> items
-            {totalPages > 1 && (
-              <span className="text-slate-400 ml-1">· page {safePage} of {totalPages}</span>
-            )}
-          </span>
-          {(selectedGroup !== "all" || selectedCategory !== "all" || searchQuery !== "" || sortBy !== "latest") && (
-            <button
-              onClick={resetFilters}
-              className="text-[#003296] font-semibold hover:underline flex items-center space-x-1 cursor-pointer"
+        {/* Filter & Search Bar */}
+        <div className="bg-white rounded-md border border-[#E5E3DC] p-4 sm:p-5 shadow-xs space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Search Input */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-4 h-4 text-[#73787E] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by product name, specification, finish, door size..."
+                className="w-full pl-9 pr-8 py-2.5 bg-[#FBF9F5] border border-[#E5E3DC] rounded-md text-xs sm:text-sm text-[#121518] placeholder:text-[#73787E] focus:outline-none focus:border-[#121518]"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#73787E] hover:text-[#121518] cursor-pointer"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Controls: Category Dropdown & Sort */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Category Dropdown */}
+              <div className="relative">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="appearance-none pl-3 pr-8 py-2.5 bg-[#FBF9F5] border border-[#E5E3DC] rounded-md text-xs font-semibold text-[#121518] focus:outline-none focus:border-[#121518] cursor-pointer"
+                >
+                  <option value="all">All Categories</option>
+                  {CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-[#73787E] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+
+              {/* Sort Dropdown */}
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="appearance-none pl-3 pr-8 py-2.5 bg-[#FBF9F5] border border-[#E5E3DC] rounded-md text-xs font-semibold text-[#121518] focus:outline-none focus:border-[#121518] cursor-pointer"
+                >
+                  <option value="latest">Sort: Newest First</option>
+                  <option value="featured">Sort: Featured First</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-[#73787E] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+
+              {/* In-Stock Toggle */}
+              <label className="flex items-center gap-2 text-xs text-[#4A4A4A] cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={inStockOnly}
+                  onChange={(e) => setInStockOnly(e.target.checked)}
+                  className="rounded border-[#E5E3DC] text-[#121518] focus:ring-0"
+                />
+                <span>In-Stock Only</span>
+              </label>
+
+              {(selectedCategory !== "all" ||
+                searchQuery ||
+                inStockOnly ||
+                sortBy !== "latest") && (
+                <button
+                  onClick={resetFilters}
+                  className="text-xs text-[#F3661B] hover:underline flex items-center gap-1 font-semibold cursor-pointer"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Reset</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Active Filter Summary Bar */}
+          <div className="flex items-center justify-between text-xs text-[#73787E] pt-2 border-t border-[#E5E3DC]">
+            <div>
+              Showing <strong className="text-[#121518]">{filteredProducts.length}</strong> items
+              {selectedCategory !== "all" && (
+                <span> in <strong className="text-[#121518]">{CATEGORIES.find(c => c.id === selectedCategory)?.name || selectedCategory}</strong></span>
+              )}
+            </div>
+
+            <Link
+              href="/wholesale"
+              className="text-[#121518] hover:text-[#F3661B] font-semibold inline-flex items-center gap-1"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset Filters</span>
-            </button>
-          )}
+              <FileText className="w-3.5 h-3.5 text-[#F3661B]" />
+              <span>Project BOQ Sourcing</span>
+            </Link>
+          </div>
         </div>
 
         {/* Product Grid */}
         {filteredProducts.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-12 text-center space-y-4">
-            <p className="text-base font-bold text-slate-800">No matching products found</p>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              We may have unlisted variations in stock at our warehouse.
-            </p>
-            <div className="pt-2 flex justify-center gap-3">
-              <button
-                onClick={resetFilters}
-                className="py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-xl cursor-pointer"
-              >
-                Clear Search &amp; Filters
-              </button>
-              <a
-                href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent("Hello CFrank Enterprise, I am looking for a specific door or sanitary ware not listed on your shop page.")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="py-2 px-4 bg-[#25D366] text-white font-bold text-xs rounded-xl flex items-center space-x-1"
-              >
-                <MessageSquare className="w-3.5 h-3.5" />
-                <span>Ask on WhatsApp</span>
-              </a>
+          <div className="text-center py-16 bg-white rounded-md border border-[#E5E3DC] space-y-4">
+            <div className="w-14 h-14 rounded-md bg-[#FBF9F5] border border-[#E5E3DC] text-[#73787E] mx-auto flex items-center justify-center">
+              <Search className="w-5 h-5 text-[#F3661B]" />
             </div>
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-[#121518]">No matching items found</h3>
+              <p className="text-xs text-[#6B7280] max-w-sm mx-auto">
+                No items matched your current filter criteria. Try clearing filters or contacting our customer care agent for offline stock.
+              </p>
+            </div>
+            <button
+              onClick={resetFilters}
+              className="py-2.5 px-5 bg-[#121518] hover:bg-[#22262B] text-white text-xs font-bold rounded-md transition-colors cursor-pointer"
+            >
+              Clear All Filters
+            </button>
           </div>
         ) : (
-          <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-              {paginatedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {paginatedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1 sm:gap-2 pt-4 pb-2 flex-wrap">
-                {/* Prev */}
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-1 sm:gap-2 pt-6">
+            <button
+              onClick={() => goToPage(safePage - 1)}
+              disabled={safePage === 1}
+              className="p-2 rounded-md border border-[#E5E3DC] bg-white text-[#121518] hover:bg-[#FBF9F5] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            {getPageNumbers().map((page, idx) =>
+              page === "..." ? (
+                <span key={`dots-${idx}`} className="px-2 text-xs text-[#73787E]">
+                  ...
+                </span>
+              ) : (
                 <button
-                  onClick={() => goToPage(safePage - 1)}
-                  disabled={safePage === 1}
-                  aria-label="Previous page"
-                  className="flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  key={page}
+                  onClick={() => goToPage(page as number)}
+                  className={`w-9 h-9 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
+                    safePage === page
+                      ? "bg-[#121518] text-white shadow-xs"
+                      : "bg-white border border-[#E5E3DC] text-[#121518] hover:bg-[#FBF9F5]"
+                  }`}
                 >
-                  <ChevronLeft className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Prev</span>
+                  {page}
                 </button>
-
-                {/* Page Numbers */}
-                {getPageNumbers().map((page, idx) =>
-                  page === "..." ? (
-                    <span key={`ellipsis-${idx}`} className="px-2 py-2 text-xs text-slate-400 select-none">
-                      …
-                    </span>
-                  ) : (
-                    <button
-                      key={page}
-                      onClick={() => goToPage(page as number)}
-                      aria-label={`Go to page ${page}`}
-                      aria-current={safePage === page ? "page" : undefined}
-                      className={`w-9 h-9 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                        safePage === page
-                          ? "bg-[#003296] text-white shadow-sm"
-                          : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  )
-                )}
-
-                {/* Next */}
-                <button
-                  onClick={() => goToPage(safePage + 1)}
-                  disabled={safePage === totalPages}
-                  aria-label="Next page"
-                  className="flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
-                >
-                  <span className="hidden sm:inline">Next</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              )
             )}
-          </>
+
+            <button
+              onClick={() => goToPage(safePage + 1)}
+              disabled={safePage === totalPages}
+              className="p-2 rounded-md border border-[#E5E3DC] bg-white text-[#121518] hover:bg-[#FBF9F5] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              aria-label="Next page"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         )}
       </main>
     </div>
@@ -368,7 +379,13 @@ function ShopContent() {
 
 export default function ShopPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-8 text-xs text-slate-500">Loading catalogue...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#FBF9F5] flex items-center justify-center p-12 text-xs text-[#73787E]">
+          Loading CFrank Group Unified Shop...
+        </div>
+      }
+    >
       <ShopContent />
     </Suspense>
   );

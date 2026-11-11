@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
+import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Wholesale & Estate Supply | Direct Importer Pricing",
+  title: `Wholesale & Contractor Supply | ${brand.name}`,
   description:
-    "Direct container-load and pallet wholesale supply of Turkish steel security doors, luxury HDF interior room doors, waterproof bathroom doors, and sanitary wares for Nigerian building contractors, developers, and door dealers.",
+    `Direct bulk supply and container pricing for building contractors, developers, and institutions across Nigeria from ${brand.name}.`,
   alternates: {
     canonical: "/wholesale",
   },
   openGraph: {
-    title: "Wholesale Door & Sanitary Supply in Nigeria | CFrank Enterprise",
+    title: `Wholesale & Commercial Project Supply | ${brand.name}`,
     description:
-      "Bulk developer pricing, direct container offloading, and scheduled site waybill deliveries across Anambra, Asaba, Enugu, Port Harcourt, Lagos, and Abuja.",
+      `Bulk developer pricing, direct container offloading, and scheduled site waybill deliveries across Nigeria.`,
   },
 };
 

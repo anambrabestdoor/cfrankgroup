@@ -8,7 +8,6 @@ import MobileMenuDrawer from "./MobileMenuDrawer";
 import CartDrawer from "./CartDrawer";
 import SearchOverlay from "./SearchOverlay";
 import CacVerificationModal from "./CacVerificationModal";
-import FrankieWidget from "./FrankieWidget";
 
 export default function ConditionalShell({
   children,
@@ -39,7 +38,6 @@ export default function ConditionalShell({
       <CartDrawer />
       <SearchOverlay />
       <CacVerificationModal />
-      <FrankieWidget />
     </>
   );
 }

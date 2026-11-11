@@ -2,7 +2,7 @@ export interface DoorProduct {
   id: string;
   slug: string;
   name: string;
-  group?: "doors" | "sanitary" | "building-materials" | "properties" | "careers" | string;
+  group?: "doors" | "sanitary" | "building-materials" | string;
   subcategory?: string;
   category:
     | "security-doors"
@@ -14,8 +14,6 @@ export interface DoorProduct {
     | "paint"
     | "roof-tiles"
     | "bathrooms"
-    | "real-estate"
-    | "careers"
     | string;
   categoryLabel: string;
   price?: number;
@@ -40,7 +38,21 @@ export interface DoorProduct {
   focusKeyphrase: string;
   featured?: boolean;
   active: boolean;
+  businessId?: string;
+  businessName?: string;
+  variants?: Array<{
+    id: string;
+    name: string;
+    price?: number;
+    stock?: number;
+    sku?: string;
+    attributes?: Record<string, string>;
+  }>;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+export type Product = DoorProduct;
 
 export const CATEGORIES = [
   { id: "all", name: "All Products" },
@@ -53,8 +65,6 @@ export const CATEGORIES = [
   { id: "paint", name: "Paints & Wall Finishes" },
   { id: "roof-tiles", name: "Roof Tiles & Roofing" },
   { id: "bathrooms", name: "Bathrooms & Sanitary Wares" },
-  { id: "real-estate", name: "Real Estate & Properties" },
-  { id: "careers", name: "Careers & Job Openings" },
 ];
 
 export const CATEGORY_GROUPS = [
@@ -86,14 +96,6 @@ export const CATEGORY_GROUPS = [
       { id: "paints", name: "Paints & Wall Coatings", filterCategory: "paint" },
       { id: "roofing", name: "Stone-Coated Roof Tiles", filterCategory: "roof-tiles" },
       { id: "bathrooms-suite", name: "Complete Bathroom Suites", filterCategory: "bathrooms" },
-    ]
-  },
-  {
-    id: "properties",
-    title: "Real Estate & Services",
-    subcategories: [
-      { id: "real-estate-listings", name: "Properties & Lands", filterCategory: "real-estate" },
-      { id: "job-openings", name: "Careers & Open Positions", filterCategory: "careers" },
     ]
   }
 ];

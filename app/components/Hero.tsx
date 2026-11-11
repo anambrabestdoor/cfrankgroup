@@ -1,245 +1,95 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  ArrowRight,
-  Play,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  CheckCircle2,
-} from "lucide-react";
-
-const heroSlides = [
-  {
-    id: "hdf-door",
-    title: "Foreign HDF Room Door",
-    image: "/WhatsApp Image 2026-10-19 at 7.46.19 AM.jpeg",
-    href: "/shop?category=hdf-doors",
-    buttonText: "Browse Room Doors",
-    alt: "Foreign Luxury HDF Wooden Door with complete frame and lock at Anambra Best Door",
-  },
-  {
-    id: "security-door",
-    title: "Heavy-Gauge Turkish Security Door",
-    image: "/WhatsApp Image 2026-10-19 at 7.46.18 AM.jpeg",
-    href: "/shop?category=security-doors",
-    buttonText: "Browse Security Doors",
-    alt: "Heavy-Gauge Turkish Steel Security Door displayed at Anambra Best Door warehouse",
-  },
-  {
-    id: "sanitary-wc",
-    title: "Executive Luxury Water Closet (WC)",
-    image: "/products/Excutive Gøld wc.jpeg",
-    href: "/shop?category=sanitary-fittings",
-    buttonText: "Browse Sanitary Wares",
-    alt: "Executive Luxury Water Closet by Anambra Best Door and CFrank Enterprise",
-  },
-  {
-    id: "residential-installation",
-    title: "Luxury Pre-Hung Interior Sets",
-    image: "/WhatsApp Image 2026-10-19 at 7.46.19 AM (2).jpeg",
-    href: "/shop",
-    buttonText: "Browse Our Doors",
-    alt: "Anambra Best Door residential suite installation project",
-  },
-];
+import { useApp } from "@/app/context/AppContext";
 
 export default function Hero() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [videoModalOpen, setVideoModalOpen] = useState(false);
-
-  // Automatic slideshow interval
-  useEffect(() => {
-    if (isPaused) return;
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [isPaused]);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  };
-
-  const slide = heroSlides[currentSlide];
-
+  const { settings } = useApp();
+  const videoSrc = settings.heroVideoUrl || "/cfrank_hero_assembly.mp4?v=4.5";
+  const posterSrc = settings.heroPosterUrl || "/cfrank_hero_poster.webp?v=4.5";
+  const fallbackImage = settings.heroImageUrl || "/cfrank_hero_completed_house.png";
   return (
-    <section className="relative bg-[#FAF9F5] sm:bg-[#F8FAFC] pt-8 pb-10 sm:pt-14 sm:pb-16 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* Left Column: Headline, Real Trade Copy, Direct CTAs */}
-          <div className="lg:col-span-7 space-y-5 text-left">
-            {/* Quality Label Badge */}
-            <div className="inline-flex items-center gap-1.5 py-1 px-3 bg-blue-50/80 border border-blue-200/70 rounded-full text-xs font-bold text-[#003296] w-fit">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#003296]" />
-              <span>Quality Doors and Sanitary Wares</span>
-            </div>
+    <section className="relative w-full bg-[#121518] text-[#FBF9F5] border-b border-[#22262B] overflow-hidden">
+      {/* Subtle warm depth layer behind building */}
+      <div
+        className="pointer-events-none absolute top-[-20%] right-[5%] w-[60%] h-[120%] opacity-40"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(243, 102, 27, 0.08) 0%, transparent 65%)",
+        }}
+        aria-hidden="true"
+      />
 
-            {/* 1. Main Headline */}
-            <h1 className="text-3xl sm:text-5xl md:text-5xl lg:text-6xl font-black text-slate-950 tracking-tight leading-[1.12]">
-              Doors That Define Your Space.
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+          {/* Left Column: Architectural Value Proposition & CTAs */}
+          <div className="lg:col-span-5 flex flex-col justify-center text-left">
+            {/* Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.08] mb-5">
+              Everything to build,
+              <br />
+              secure, and complete <span className="text-[#F3661B]">your space.</span>
             </h1>
 
-            {/* 2. Trade Copy */}
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed font-normal max-w-xl">
-              Anambra Best Door is a prominent door dealer and manufacturer in Anambra State, Nigeria, a subsidiary of CFrank Enterprise. From HDF interior doors to security doors and bathroom doors, we help homeowners, builders and contractors find the right fit for their projects.
+            {/* Supporting Copy */}
+            <p className="text-sm sm:text-base text-[#9EA5AD] leading-relaxed max-w-lg mb-8">
+              We deliver quality security doors, stone-coated roof tiles, smart biometric door locks,
+              and sanitary wares; building project supply in one order.
             </p>
 
-
-            {/* 4. Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-3.5">
               <Link
                 href="/shop"
-                className="py-3.5 px-7 bg-[#003296] hover:bg-[#002266] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-all active:scale-98 cursor-pointer"
+                className="px-6 py-3.5 bg-[#F3661B] hover:bg-[#D9530F] text-white text-xs sm:text-sm font-bold rounded-md transition-colors shadow-xs"
               >
-                <span>Browse Our Doors</span>
-                <ArrowRight className="w-4 h-4" />
+                Browse shop
               </Link>
-
-
-              {/* Watch Video Button */}
-              <button
-                type="button"
-                onClick={() => setVideoModalOpen(true)}
-                className="py-3.5 px-5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-xl flex items-center justify-center space-x-2 border border-slate-200 shadow-xs transition-colors cursor-pointer"
-                title="Watch warehouse offloading video"
+              <Link
+                href="/about"
+                className="px-6 py-3.5 bg-transparent hover:bg-white/5 text-[#C5CAD0] hover:text-white text-xs sm:text-sm font-semibold rounded-md border border-[#2E353D] hover:border-[#515961] transition-colors"
               >
-                <Play className="w-3.5 h-3.5 text-[#003296] fill-current" />
-                <span>Watch Warehouse Video</span>
-              </button>
+                About us
+              </Link>
             </div>
           </div>
 
-          {/* Right Column: Clean Architectural Physical Product Slideshow */}
-          <div
-            className="lg:col-span-5 w-full max-w-md mx-auto lg:max-w-none"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-          >
-            <div className="bg-white rounded-lg border border-slate-200/90 shadow-sm p-2 sm:p-2.5">
-              {/* Product Slideshow Image Box (Subtle crisp corners, zero floating stickers) */}
-              <div className="relative aspect-[4/5] rounded-md overflow-hidden bg-slate-100 border border-slate-200">
-                <Link href={slide.href} className="block w-full h-full relative" aria-label={`View ${slide.title}`}>
-                  <Image
-                    src={slide.image}
-                    alt={slide.alt}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 40vw"
-                    className="object-cover object-center transition-opacity duration-500"
-                  />
-                </Link>
-
-                {/* Slideshow Arrow Controls */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    prevSlide();
-                  }}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center transition-colors cursor-pointer"
-                  aria-label="Previous slide"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    nextSlide();
-                  }}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center transition-colors cursor-pointer"
-                  aria-label="Next slide"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-
-                {/* Minimalist Pagination Dots */}
-                <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center space-x-1 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-xs">
-                  {heroSlides.map((s, idx) => (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => setCurrentSlide(idx)}
-                      className={`h-1.5 rounded-full transition-all cursor-pointer ${currentSlide === idx ? "w-4 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
-                        }`}
-                      aria-label={`Go to slide ${idx + 1}`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Clean Product Caption & Direct Browse Link (No Overcomplicated Labels) */}
-              <div className="pt-2.5 pb-1 px-1 flex items-center justify-between gap-3">
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
-                  {slide.title}
-                </h3>
-                <Link
-                  href={slide.href}
-                  className="text-xs font-bold text-[#003296] hover:underline inline-flex items-center space-x-1 shrink-0"
-                >
-                  <span>{slide.buttonText}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Real Video Offloading Modal */}
-      {videoModalOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm"
-          onClick={() => setVideoModalOpen(false)}
-        >
-          <div
-            className="relative w-full max-w-sm sm:max-w-md bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between p-3.5 bg-slate-900 text-white">
-              <span className="text-xs font-bold">Warehouse Offloading Video</span>
-              <button
-                type="button"
-                onClick={() => setVideoModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white cursor-pointer"
-                aria-label="Close video"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="relative aspect-[9/16] max-h-[75vh] w-full bg-black">
+          {/* Right Column: Seamless 3D Architectural Animation Showcase */}
+          <div className="lg:col-span-7 relative w-full flex items-center justify-center">
+            <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[580px] flex items-center justify-center">
+              {/* Native HTML5 Chromeless Video */}
               <video
-                controls
+                key={videoSrc}
                 autoPlay
+                loop
+                muted
                 playsInline
-                className="w-full h-full object-contain"
+                disablePictureInPicture
+                controlsList="nodownload nofullscreen noremoteplayback"
+                poster={posterSrc}
+                className="w-full h-full object-contain pointer-events-none select-none bg-[#121518]"
+                aria-label="CFrank Group architectural assembly animation"
               >
-                <source
-                  src="https://res.cloudinary.com/xsmuyjy5/video/upload/v1792953541/anambra_best_door/videos/hero_warehouse_offloading.mp4"
-                  type="video/mp4"
+                {videoSrc.endsWith(".webm") ? (
+                  <source src={videoSrc} type="video/webm" />
+                ) : (
+                  <source src={videoSrc} type="video/mp4" />
+                )}
+                {/* Fallback image inside video element */}
+                <Image
+                  src={fallbackImage}
+                  alt="CFrank Group architectural assembly completed house"
+                  fill
+                  className="object-contain"
+                  priority
                 />
-                <source
-                  src="/WhatsApp Video 2026-10-19 at 7.46.16 AM.mp4"
-                  type="video/mp4"
-                />
-                Your browser does not support the video tag.
               </video>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </section>
   );
 }

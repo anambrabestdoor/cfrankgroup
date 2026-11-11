@@ -40,7 +40,7 @@ export function getCloudinaryOptimizedUrl(publicIdOrUrl: string, options?: { wid
 /**
  * Server-side upload function for image assets
  */
-export async function uploadImageToCloudinary(fileBase64: string, folder = 'anambra_best_door') {
+export async function uploadImageToCloudinary(fileBase64: string, folder = 'cfrank_group') {
   const instance = getCloudinary();
   if (!process.env.CLOUDINARY_API_SECRET) {
     console.warn('[Cloudinary] CLOUDINARY_API_SECRET missing. Returning uploaded image data URL directly.');
@@ -89,7 +89,7 @@ export async function listCloudinaryMedia(options?: {
   try {
     const result = await instance.api.resources({
       type: 'upload',
-      prefix: 'anambra_best_door',
+      prefix: 'cfrank_group',
       max_results: maxResults,
       next_cursor: options?.next_cursor || undefined,
       resource_type: resourceType,

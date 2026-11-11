@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, HelpCircle, MessageSquare } from "lucide-react";
 import { useApp } from "@/app/context/AppContext";
+import { brand } from "@/lib/brand";
 
 export default function FAQPage() {
   const { settings } = useApp();
@@ -42,8 +43,8 @@ export default function FAQPage() {
     },
     {
       id: "faq-6",
-      question: "Is CFrank Enterprise legally registered in Nigeria?",
-      answer: `Yes. CFrank Enterprise is registered with the Corporate Affairs Commission (CAC BN: ${settings.cacNumber}) under the Companies and Allied Matters Act. You can inspect our certificate directly on this website or verify on search.cac.gov.ng.`,
+      question: `Is ${brand.name} legally registered in Nigeria?`,
+      answer: `Yes. ${brand.name} operates in Nigeria with Anambra Best Door Enterprises (CAC BN: ${settings.cacNumber || brand.cacNumber}) as its registered operating property under the Companies and Allied Matters Act. Whether you search for ${brand.name}, CFrank Enterprise, or Anambra Best Door, you are dealing with the same verified corporate entity. You can verify this status online on the official CAC portal.`,
     },
   ];
 
@@ -61,16 +62,16 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#FBF9F5]">
       {/* FAQ Schema for Google Rich Accordion */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <div className="bg-[#0A192F] text-white py-16 px-4 text-center border-b border-slate-800">
+      <div className="bg-[#121518] text-white py-16 px-4 text-center border-b border-slate-800">
         <div className="max-w-2xl mx-auto space-y-2">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-blue-400 block">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#F3661B] block">
             Contractor & Homeowner Assistance
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
@@ -96,7 +97,7 @@ export default function FAQPage() {
               <span>{faq.question}</span>
               <ChevronDown
                 className={`w-4 h-4 text-slate-500 shrink-0 ml-3 transition-transform ${
-                  openIdx === idx ? "rotate-180 text-[#003296]" : ""
+                  openIdx === idx ? "rotate-180 text-[#F3661B]" : ""
                 }`}
               />
             </button>

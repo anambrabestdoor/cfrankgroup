@@ -9,10 +9,10 @@ export default function ReturnsPage() {
   const { settings } = useApp();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      <div className="bg-[#0A192F] text-white py-14 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
+    <div className="min-h-screen bg-[#FBF9F5]">
+      <div className="bg-[#121518] text-white py-14 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-800">
         <div className="max-w-3xl mx-auto space-y-3">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-blue-400 block">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-[#F3661B] block">
             Quality Assurance & Warehouse Standards
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
@@ -27,7 +27,7 @@ export default function ReturnsPage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
         <div className="bg-white p-6 sm:p-8 border border-slate-200 rounded-xl space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
           <div className="flex items-center space-x-2 text-slate-900 font-bold text-base pb-3 border-b border-slate-100">
-            <BadgeCheck className="w-5 h-5 text-[#003296]" />
+            <BadgeCheck className="w-5 h-5 text-[#F3661B]" />
             <span>Pre-Dispatch Verification Commitment</span>
           </div>
 
@@ -42,7 +42,7 @@ export default function ReturnsPage() {
             <div>
               <h4 className="font-bold text-slate-900 mb-1">2. On-Arrival Inspection at Offloading Point</h4>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Inspect your items immediately upon offloading at the transport park or your building site. If any factory imperfection or transit defect is detected, alert our sales desk immediately before signing the carrier release receipt.
+                Inspect your items immediately upon offloading at the transport park or your building site. If any factory imperfection or transit defect is detected, alert our customer care agent immediately before signing the carrier release receipt.
               </p>
             </div>
 
@@ -65,7 +65,7 @@ export default function ReturnsPage() {
               className="py-2.5 px-4 bg-[#25D366] text-white font-bold text-xs rounded-xl flex items-center space-x-2"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Contact Sales Desk</span>
+              <span>Contact Customer Care Agent</span>
             </a>
           </div>
         </div>

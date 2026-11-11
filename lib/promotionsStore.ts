@@ -15,7 +15,7 @@ export interface Promotion {
 export const promotionsStore: Promotion[] = [
   {
     id: "promo-1",
-    title: "Estate Bulk Discount — 10% Off 10+ Doors",
+    title: "Estate Bulk Discount - 10% Off 10+ Doors",
     description: "Special builder and contractor terms for 10 or more Turkish security doors or foreign HDF room doors.",
     discountPercent: 10,
     voucherCode: "CFRANKBULK",

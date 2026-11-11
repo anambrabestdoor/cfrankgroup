@@ -5,7 +5,8 @@ import ProductCard from "@/app/components/ProductCard";
 import { DOOR_PRODUCTS, DoorProduct } from "@/app/data/doorsData";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
 import { generateGeoKeywords } from "@/lib/geoKeywords";
-import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, Warehouse } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Truck, Warehouse } from "lucide-react";
+import { brand } from "@/lib/brand";
 
 interface CollectionMeta {
   title: string;
@@ -95,25 +96,13 @@ const COLLECTIONS: Record<string, CollectionMeta> = {
   },
   "bathrooms": {
     title: "Complete Bathroom Suites & Sanitary Wares",
-    seoTitle: "Bathroom Suites, Tubs & Vanities | Anambra Best Door",
+    seoTitle: "Bathroom Suites, Tubs & Vanities | CFrank Group",
     desc: "All-in-one bathroom equipment including glass shower enclosures, bathtubs, designer vanity units, and modern sanitary installations.",
     categoryKey: "bathrooms",
   },
-  "real-estate": {
-    title: "Real Estate & Commercial Properties",
-    seoTitle: "Verified Real Estate & Land Inquiries | Anambra Best Door",
-    desc: "Commercial building listings, residential plots, and investment property connections across Anambra State and the South-East region.",
-    categoryKey: "real-estate",
-  },
-  "careers": {
-    title: "Careers & Employment Opportunities",
-    seoTitle: "Join Our Team | Careers at CFrank Enterprise & Anambra Best Door",
-    desc: "Open job vacancies in sales, fabrication, technical fitting, inventory management, and digital marketing at Anambra Best Door.",
-    categoryKey: "careers",
-  },
 };
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://anambrabestdoor.com";
+const baseUrl = brand.appUrl;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -125,15 +114,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!col) {
     return {
-      title: "Door Collection | Anambra Best Door",
-      description: "Explore genuine heavy-gauge security and interior doors from Anambra Best Door with nationwide delivery.",
+      title: `Collection | ${brand.name}`,
+      description: `Explore quality products and building materials from ${brand.name} with nationwide delivery.`,
     };
   }
 
   const keywords = generateGeoKeywords(col.title, col.categoryKey);
 
   return {
-    title: { absolute: col.seoTitle },
+    title: { absolute: `${col.title} | ${brand.name}` },
     description: col.desc,
     keywords,
     alternates: {
@@ -143,13 +132,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "website",
       locale: "en_NG",
       url: `${baseUrl}/collections/${slug}`,
-      siteName: DEFAULT_SITE_SETTINGS.companyName,
-      title: col.seoTitle,
+      siteName: brand.name,
+      title: `${col.title} | ${brand.name}`,
       description: col.desc,
     },
     twitter: {
       card: "summary_large_image",
-      title: col.seoTitle,
+      title: `${col.title} | ${brand.name}`,
       description: col.desc,
     },
   };
@@ -162,9 +151,9 @@ export const dynamic = "force-dynamic";
 export default async function CollectionPage({ params }: PageProps) {
   const { slug } = await params;
   const collection = COLLECTIONS[slug] || {
-    title: "Architectural Door & Sanitary Collection",
-    seoTitle: "Door Collection | Anambra Best Door",
-    desc: "Explore verified heavy-gauge security doors, luxury interior wooden doors, and sanitary fittings in our warehouse inventory.",
+    title: "Architectural & Building Supplies",
+    seoTitle: `Collection | ${brand.name}`,
+    desc: `Explore verified products and materials in ${brand.name} warehouse inventory.`,
     categoryKey: undefined,
   };
 

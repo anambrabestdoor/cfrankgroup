@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Delivery & Shipping Policy | Direct Site Waybill Dispatch",
+  title: `Delivery & Logistics Policy | ${brand.name}`,
   description:
-    "Information on our crated waybill delivery across all 36 Nigerian states. Warehouse pickup or direct truck dispatch to Lagos, Abuja, Port Harcourt, Asaba, and Enugu.",
+    `Information on our verified waybill delivery across all 36 Nigerian states from ${brand.name}. Warehouse pickup and dedicated project transit.`,
   alternates: {
     canonical: "/shipping",
   },

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Inspection & Replacement Policy",
+  title: `Inspection & Replacement Policy | ${brand.name}`,
   description:
-    "Inspection protocols for offloading security doors, wooden doors, and sanitary wares. Factory defect replacements and pre-dispatch verification procedures at CFrank Enterprise.",
+    `Inspection protocols, factory defect replacements, and pre-dispatch quality verification procedures at ${brand.name}.`,
   alternates: {
     canonical: "/returns",
   },

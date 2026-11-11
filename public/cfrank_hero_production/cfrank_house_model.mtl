@@ -1,0 +1,17 @@
+# CFrank Group Architectural Materials
+newmtl Mat_CharcoalBase
+Kd 0.08 0.09 0.10
+
+newmtl Mat_AmberAccent
+Kd 0.95 0.40 0.10
+
+newmtl Mat_TurkishDoorCopper
+Kd 0.65 0.36 0.20
+
+newmtl Mat_SanitaryChina
+Kd 0.97 0.97 0.97
+
+newmtl Mat_WarmGlow
+Kd 1.0 0.90 0.78
+Ke 0.8 0.72 0.62
+

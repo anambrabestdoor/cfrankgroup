@@ -1,15 +1,15 @@
 import { MetadataRoute } from "next";
-import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
+import { brand, colors } from "@/lib/brand";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: DEFAULT_SITE_SETTINGS.companyName,
-    short_name: "Anambra Best Door",
-    description: DEFAULT_SITE_SETTINGS.description,
+    name: brand.name,
+    short_name: brand.shortName,
+    description: brand.description,
     start_url: "/",
     display: "standalone",
-    background_color: "#FFFFFF",
-    theme_color: "#003296",
+    background_color: colors.surfaceWhite,
+    theme_color: colors.charcoal,
     icons: [
       {
         src: "/favicon-48x48.png",

@@ -7,6 +7,7 @@ import { DEFAULT_SITE_SETTINGS } from "@/lib/settings";
 import { db } from "@/lib/db";
 import { generateGeoKeywords, generateGeoDescription } from "@/lib/geoKeywords";
 import ProductDetailClient from "./ProductDetailClient";
+import { brand } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://anambrabestdoor.com";
+const baseUrl = brand.appUrl;
 
 async function fetchProduct(id: string): Promise<DoorProduct | undefined> {
   const cleanId = (id || "").trim();
@@ -43,7 +44,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const title = product.seoTitle || `${product.name} - Price & Specs | Anambra Best Door`;
+  const title = product.seoTitle || `${product.name} - Price & Specs | ${brand.name}`;
   const description = generateGeoDescription(
     product.name,
     product.seoDescription || product.shortDescription
@@ -65,7 +66,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "website",
       locale: "en_NG",
       url: `${baseUrl}/products/${product.slug}`,
-      siteName: DEFAULT_SITE_SETTINGS.companyName,
+      siteName: brand.name,
       title,
       description,
       images: [
@@ -127,7 +128,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
     sku: product.id,
     brand: {
       "@type": "Brand",
-      name: DEFAULT_SITE_SETTINGS.parentCompany,
+      name: brand.name,
+      alternateName: ["Anambra Best Door", "CFrank Enterprise", "CFrank Groups"],
+    },
+    manufacturer: {
+      "@type": "Organization",
+      name: "Anambra Best Door Enterprises",
+      parentOrganization: {
+        "@type": "Organization",
+        name: brand.name,
+      },
     },
     offers: {
       "@type": "Offer",
@@ -142,11 +152,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
       itemCondition: "https://schema.org/NewCondition",
       seller: {
         "@type": "LocalBusiness",
-        name: `${DEFAULT_SITE_SETTINGS.companyName} (${DEFAULT_SITE_SETTINGS.parentCompany})`,
-        telephone: DEFAULT_SITE_SETTINGS.phone,
+        name: brand.name,
+        telephone: brand.phone,
         address: {
           "@type": "PostalAddress",
-          streetAddress: DEFAULT_SITE_SETTINGS.address,
+          streetAddress: brand.address,
           addressCountry: "NG",
         },
       },

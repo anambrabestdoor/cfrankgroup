@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
+import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Door & Sanitary Catalogue | Prices & Specifications",
+  title: `Catalogue & Store | ${brand.name}`,
   description:
-    "Explore our complete inventory of heavy-gauge Turkish steel security doors, interior luxury HDF room doors, waterproof bathroom doors, and sanitary wares. Physical inspection and nationwide delivery.",
+    `Explore the unified catalogue of ${brand.name}, featuring security doors, interior room doors, sanitary wares, and building fittings with nationwide delivery.`,
   alternates: {
     canonical: "/shop",
   },
   openGraph: {
-    title: "Door & Sanitary Inventory Catalogue | Anambra Best Door",
+    title: `Products Catalogue | ${brand.name}`,
     description:
-      "Direct warehouse inventory of Turkish security doors, luxury HDF room doors, Watson panels, and sanitary fittings with nationwide delivery.",
+      `Complete commercial catalogue of security doors, luxury HDF room doors, and sanitary wares from ${brand.name}.`,
   },
 };
 
