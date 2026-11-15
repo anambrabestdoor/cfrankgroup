@@ -15,7 +15,7 @@ export default function ConditionalShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin");
+  const isAdmin = pathname?.startsWith("/locker") || pathname?.startsWith("/admin");
 
   if (isAdmin) {
     return (
