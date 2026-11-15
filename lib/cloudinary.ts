@@ -72,6 +72,7 @@ export async function uploadImageToCloudinary(fileBase64: string, folder = 'cfra
 
 /**
  * List media resources from Cloudinary for admin media library
+ * Queries all uploaded assets across folders (anambra_best_door, cfrank_group, etc.)
  */
 export async function listCloudinaryMedia(options?: {
   max_results?: number;
@@ -84,12 +85,12 @@ export async function listCloudinaryMedia(options?: {
   }
 
   const resourceType = options?.resource_type || 'image';
-  const maxResults = options?.max_results || 40;
+  const maxResults = options?.max_results || 50;
 
   try {
+    // Query without restrictive prefix so all existing and new media are available
     const result = await instance.api.resources({
       type: 'upload',
-      prefix: 'cfrank_group',
       max_results: maxResults,
       next_cursor: options?.next_cursor || undefined,
       resource_type: resourceType,
@@ -112,34 +113,7 @@ export async function listCloudinaryMedia(options?: {
     };
   } catch (err: any) {
     console.error('[Cloudinary List Error]:', err);
-    // Fallback without prefix in case assets were stored in other folders
-    try {
-      const fallbackResult = await instance.api.resources({
-        type: 'upload',
-        max_results: maxResults,
-        next_cursor: options?.next_cursor || undefined,
-        resource_type: resourceType,
-      });
-
-      const resources = (fallbackResult.resources || []).map((r: any) => ({
-        public_id: r.public_id,
-        url: r.secure_url || r.url,
-        format: r.format,
-        width: r.width,
-        height: r.height,
-        bytes: r.bytes,
-        created_at: r.created_at,
-        resource_type: r.resource_type,
-      }));
-
-      return {
-        resources,
-        next_cursor: fallbackResult.next_cursor || null,
-      };
-    } catch (fallbackErr) {
-      console.error('[Cloudinary Fallback List Error]:', fallbackErr);
-      throw err;
-    }
+    return { resources: [], next_cursor: null };
   }
 }
 
