@@ -264,6 +264,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
   const [mediaResourceType, setMediaResourceType] = useState<"image" | "video">("image");
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
   const [mediaPickerMode, setMediaPickerMode] = useState<"main_photo" | "gallery">("main_photo");
+  const [selectedGalleryUrls, setSelectedGalleryUrls] = useState<string[]>([]);
   const [deletingPublicId, setDeletingPublicId] = useState<string | null>(null);
 
   // Form Fields for Products
@@ -450,10 +451,27 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
       setFormImage(item.url);
       setImageUploadSuccess(true);
       showToast("Photo selected from media library!");
+      setMediaPickerOpen(false);
     } else {
-      setFormGallery((prev) => [...prev, item.url]);
-      showToast("Photo added to product gallery!");
+      // Toggle selection in multi-select gallery mode
+      setSelectedGalleryUrls((prev) =>
+        prev.includes(item.url) ? prev.filter((u) => u !== item.url) : [...prev, item.url]
+      );
     }
+  };
+
+  const handleConfirmGallerySelection = () => {
+    if (selectedGalleryUrls.length === 0) {
+      setMediaPickerOpen(false);
+      return;
+    }
+    setFormGallery((prev) => {
+      const existing = new Set(prev);
+      const newUrls = selectedGalleryUrls.filter((u) => !existing.has(u));
+      return [...prev, ...newUrls];
+    });
+    showToast(`${selectedGalleryUrls.length} photo(s) added to gallery!`);
+    setSelectedGalleryUrls([]);
     setMediaPickerOpen(false);
   };
 
@@ -1640,22 +1658,32 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
           <div
             className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 animate-fade-in"
             onClick={(e) => {
-              if (e.target === e.currentTarget) setMediaPickerOpen(false);
+              if (e.target === e.currentTarget) {
+                setSelectedGalleryUrls([]);
+                setMediaPickerOpen(false);
+              }
             }}
           >
             <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
               <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
                 <div>
                   <h3 className="font-bold text-sm text-slate-900">
-                    {mediaPickerMode === "main_photo" ? "Select Main Product Photo" : "Add Photos to Gallery"}
+                    {mediaPickerMode === "main_photo"
+                      ? "Select Main Product Photo"
+                      : "Add Photos to Gallery (Multi-Select)"}
                   </h3>
                   <p className="text-[11px] text-slate-500">
-                    Click any uploaded photo from your media library
+                    {mediaPickerMode === "main_photo"
+                      ? "Click any photo to set as the primary product image"
+                      : "Click photos to select multiple images, then click 'Add to Gallery' below"}
                   </p>
                 </div>
                 <button
-                  onClick={() => setMediaPickerOpen(false)}
-                  className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500"
+                  onClick={() => {
+                    setSelectedGalleryUrls([]);
+                    setMediaPickerOpen(false);
+                  }}
+                  className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1675,39 +1703,111 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                   </div>
                 ) : (
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                    {mediaItems.map((item) => (
-                      <button
-                        key={item.public_id}
-                        type="button"
-                        onClick={() => handleSelectMediaFromPicker(item)}
-                        className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 hover:border-[#F3661B] hover:ring-2 hover:ring-[#F3661B]/30 group transition-all cursor-pointer bg-slate-100"
-                      >
-                        <Image
-                          src={getAdminThumbnailUrl(item.url)}
-                          alt={item.public_id}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform"
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold">
-                          Select
-                        </div>
-                      </button>
-                    ))}
+                    {mediaItems.map((item) => {
+                      const isSelectedInPicker =
+                        mediaPickerMode === "gallery" && selectedGalleryUrls.includes(item.url);
+                      const isAlreadyInGallery =
+                        mediaPickerMode === "gallery" && formGallery.includes(item.url);
+
+                      return (
+                        <button
+                          key={item.public_id}
+                          type="button"
+                          onClick={() => handleSelectMediaFromPicker(item)}
+                          className={`relative aspect-square rounded-xl overflow-hidden border transition-all cursor-pointer bg-slate-100 ${
+                            isSelectedInPicker
+                              ? "border-[#F3661B] ring-2 ring-[#F3661B] shadow-sm"
+                              : "border-slate-200 hover:border-[#F3661B]/60"
+                          }`}
+                        >
+                          <Image
+                            src={getAdminThumbnailUrl(item.url)}
+                            alt={item.public_id}
+                            fill
+                            className="object-cover"
+                          />
+
+                          {/* Multi-select checkmark badge */}
+                          {isSelectedInPicker && (
+                            <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-[#F3661B] text-white flex items-center justify-center shadow-md z-10">
+                              <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            </div>
+                          )}
+
+                          {/* Already in gallery indicator */}
+                          {isAlreadyInGallery && !isSelectedInPicker && (
+                            <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/70 text-white text-[9px] font-semibold z-10">
+                              In Gallery
+                            </div>
+                          )}
+
+                          {/* Overlay label on hover / selection */}
+                          <div
+                            className={`absolute inset-0 flex items-center justify-center text-white text-[10px] font-bold transition-opacity ${
+                              isSelectedInPicker
+                                ? "bg-[#F3661B]/25 opacity-100"
+                                : "bg-black/40 opacity-0 hover:opacity-100"
+                            }`}
+                          >
+                            {mediaPickerMode === "gallery"
+                              ? isSelectedInPicker
+                                ? "Selected"
+                                : "Select"
+                              : "Select"}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
 
               <div className="p-3 border-t border-slate-200 bg-slate-50 flex justify-between items-center text-xs">
-                <span className="text-slate-500 text-[11px]">
-                  Showing {mediaItems.length} media files
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setMediaPickerOpen(false)}
-                  className="px-4 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-300"
-                >
-                  Cancel
-                </button>
+                <div className="flex items-center space-x-2">
+                  <span className="text-slate-500 text-[11px]">
+                    Showing {mediaItems.length} media files
+                  </span>
+                  {mediaPickerMode === "gallery" && selectedGalleryUrls.length > 0 && (
+                    <span className="text-[11px] font-bold text-[#F3661B] bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full">
+                      {selectedGalleryUrls.length} selected
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  {mediaPickerMode === "gallery" && selectedGalleryUrls.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedGalleryUrls([])}
+                      className="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-900 font-semibold cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedGalleryUrls([]);
+                      setMediaPickerOpen(false);
+                    }}
+                    className="px-4 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-300 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  {mediaPickerMode === "gallery" && (
+                    <button
+                      type="button"
+                      onClick={handleConfirmGallerySelection}
+                      disabled={selectedGalleryUrls.length === 0}
+                      className="px-5 py-2 bg-[#F3661B] hover:bg-[#D9530F] text-white font-bold rounded-xl shadow-xs disabled:opacity-40 transition-colors flex items-center space-x-1.5 cursor-pointer"
+                    >
+                      <Check className="w-4 h-4" />
+                      <span>
+                        Add {selectedGalleryUrls.length > 0 ? `(${selectedGalleryUrls.length}) ` : ""}to Gallery
+                      </span>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -2124,6 +2224,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                           type="button"
                           onClick={() => {
                             setMediaPickerMode("gallery");
+                            setSelectedGalleryUrls([]);
                             fetchCloudinaryMedia("image");
                             setMediaPickerOpen(true);
                           }}
