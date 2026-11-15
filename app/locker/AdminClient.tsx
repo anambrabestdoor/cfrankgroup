@@ -3531,8 +3531,8 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                 </div>
                 <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-1">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Keepalive Schedule</span>
-                  <span className="text-sm font-bold text-slate-900">Daily at 12:00 UTC</span>
-                  <span className="text-[11px] text-slate-500 block">via Vercel Cron</span>
+                  <span className="text-sm font-bold text-slate-900">Twice daily — 00:00 &amp; 12:00 UTC</span>
+                  <span className="text-[11px] text-emerald-600 font-semibold block">GitHub Actions active</span>
                 </div>
                 <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-1">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Bundled Catalogue</span>
@@ -3540,6 +3540,34 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                     {products.length} products
                   </span>
                   <span className="text-[11px] text-slate-500 block">local fallback always active</span>
+                </div>
+              </div>
+
+              {/* Keepalive Methods */}
+              <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs space-y-3">
+                <h3 className="text-sm font-bold text-slate-900">How it stays alive</h3>
+                <div className="space-y-2 text-[11px]">
+                  <div className="flex items-start justify-between py-2 border-b border-slate-100">
+                    <div>
+                      <span className="font-semibold text-slate-800 block">GitHub Actions</span>
+                      <span className="text-slate-500">Scheduled workflow pings keepalive URL twice daily — free, always fires</span>
+                    </div>
+                    <span className="ml-4 shrink-0 px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded-full border border-emerald-200">Active</span>
+                  </div>
+                  <div className="flex items-start justify-between py-2 border-b border-slate-100">
+                    <div>
+                      <span className="font-semibold text-slate-800 block">Vercel Cron</span>
+                      <span className="text-slate-500">Native cron in vercel.json — requires Pro plan to fire automatically</span>
+                    </div>
+                    <span className="ml-4 shrink-0 px-2 py-0.5 bg-amber-50 text-amber-700 font-bold rounded-full border border-amber-200">Hobby</span>
+                  </div>
+                  <div className="flex items-start justify-between py-2">
+                    <div>
+                      <span className="font-semibold text-slate-800 block">cron-job.org / Supabase Edge</span>
+                      <span className="text-slate-500">External cron or pg_cron extension — optional backup if needed</span>
+                    </div>
+                    <span className="ml-4 shrink-0 px-2 py-0.5 bg-slate-100 text-slate-500 font-bold rounded-full border border-slate-200">Optional</span>
+                  </div>
                 </div>
               </div>
 
