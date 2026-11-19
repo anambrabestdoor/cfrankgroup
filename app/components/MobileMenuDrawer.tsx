@@ -153,6 +153,21 @@ export default function MobileMenuDrawer() {
                 </div>
 
                 <div className="pt-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#F3661B] block mb-1">
+                    Furniture
+                  </span>
+                  <div className="space-y-1.5 pl-2 text-[#4A4A4A]">
+                    <Link
+                      href="/shop?category=furniture"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block font-medium text-[#121518] hover:text-[#F3661B]"
+                    >
+                      Home & Office Furniture
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="pt-2">
                   <Link
                     href="/shop"
                     onClick={() => setMobileMenuOpen(false)}

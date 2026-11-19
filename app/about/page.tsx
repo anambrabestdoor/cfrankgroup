@@ -26,17 +26,17 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-[#FBF9F5]">
       {/* Corporate Header Banner */}
-      <section className="bg-[#121518] text-white py-16 sm:py-24 px-4 sm:px-6 lg:px-8 border-b border-[#22262B]">
+      <section className="bg-[#121518] text-white py-16 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-[#22262B]">
         <div className="max-w-4xl mx-auto space-y-4 text-center">
           <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#F3661B] uppercase tracking-wider">
             <Building2 className="w-4 h-4" />
-            <span>Corporate Background</span>
+            <span>Who We Are</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
             About {brand.name}
           </h1>
           <p className="text-sm sm:text-base text-[#D1D1CC] max-w-2xl mx-auto leading-relaxed">
-            A diversified Nigerian commercial group delivering direct factory building materials, architectural door systems, executive sanitary wares, and property holdings from the commercial heart of South-Eastern Nigeria.
+            Direct suppliers of Turkish security doors, luxury room doors, bathroom fittings, roofing tiles, and quality furniture. Located at Building Materials Market, Ogidi, Anambra State, and delivering to building sites across Nigeria.
           </p>
         </div>
       </section>
@@ -46,16 +46,16 @@ export default function AboutPage() {
         <section className="bg-white rounded-xl border border-[#E5E3DC] p-6 sm:p-10 shadow-xs grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-7 space-y-4">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#F3661B] block">
-              Corporate Structure & Philosophy
+              About Us
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-[#121518] tracking-tight">
-              Bridging factory-direct quality and site-ready procurement
+              Real quality doors and building materials straight from the factory
             </h2>
             <p className="text-xs sm:text-sm text-[#4A4A4A] leading-relaxed">
-              Headquartered at the Building Materials International Market in Ogidi, Anambra State, {brand.name} operates its flagship door distribution and architectural building supplies warehouse through its registered property, Anambra Best Door Enterprises (CAC BN: {settings.cacNumber || brand.cacNumber}). The enterprise was established by {brand.proprietor} to address persistent quality discrepancies in the Nigerian construction supply market.
+              {brand.name} operates from the Building Materials International Market in Ogidi, Anambra State through our registered business, Anambra Best Door Enterprises (CAC BN: {settings.cacNumber || brand.cacNumber}). The business was started by {brand.proprietor} with one simple goal: to give people genuine, strong building materials that last, without the fake or low-grade items common in the open market.
             </p>
             <p className="text-xs sm:text-sm text-[#4A4A4A] leading-relaxed">
-              Rather than acting as intermediary brokers, the group maintains direct factory relationships with steel and wood fabricators across Turkey and global industrial centers. By housing inventory in physical warehouses and conducting multi-point quality checks prior to dispatch, we provide developers, architects, and private builders with certified structural products that perform reliably over decades.
+              We do not sell what we do not have. We buy directly from top steel and wood door factories in Turkey and trusted manufacturers abroad, keep full stock inside our physical warehouse in Ogidi, and inspect every single item before it leaves our premises. Whether you are building your personal home, a hotel, or a large housing estate, what you pay for is exactly what arrives at your building site.
             </p>
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <Link
@@ -96,10 +96,10 @@ export default function AboutPage() {
         <section className="space-y-6">
           <div className="border-b border-[#E5E3DC] pb-3">
             <span className="text-xs font-bold uppercase tracking-wider text-[#F3661B]">
-              Operational Principles
+              Why Buy From Us
             </span>
             <h2 className="text-xl sm:text-2xl font-bold text-[#121518] mt-1">
-              How we serve our commercial and private clients
+              What you can expect when you order from {brand.name}
             </h2>
           </div>
 
@@ -108,9 +108,9 @@ export default function AboutPage() {
               <div className="w-10 h-10 rounded-lg bg-[#FBF9F5] border border-[#E5E3DC] flex items-center justify-center text-[#F3661B]">
                 <BadgeCheck className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-bold text-[#121518]">Certified Material Gauge</h3>
+              <h3 className="text-sm font-bold text-[#121518]">Heavy-Duty Real Materials</h3>
               <p className="text-xs text-[#4A4A4A] leading-relaxed">
-                We reject downgraded sheet metals and thin-wall imitations. Our steel entrance doors meet true Turkish heavy-gauge specifications with certified internal rockwool acoustic cores.
+                We do not sell light or substandard steel. Our security doors are built with thick Turkish steel, strong multi-bolt locks, and proper insulation inside to protect your home.
               </p>
             </div>
 
@@ -118,9 +118,9 @@ export default function AboutPage() {
               <div className="w-10 h-10 rounded-lg bg-[#FBF9F5] border border-[#E5E3DC] flex items-center justify-center text-[#F3661B]">
                 <Truck className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-bold text-[#121518]">Direct Site Logistics</h3>
+              <h3 className="text-sm font-bold text-[#121518]">Safe Delivery to Your Site</h3>
               <p className="text-xs text-[#4A4A4A] leading-relaxed">
-                From single residential shipments to multi-trailer project orders, our logistics desk manages safe transit and waybill delivery directly to job sites throughout Nigeria.
+                Whether you are ordering a single door or several trailer loads for an entire project, we package your items carefully and waybill them directly to your site anywhere in Nigeria.
               </p>
             </div>
 
@@ -128,9 +128,9 @@ export default function AboutPage() {
               <div className="w-10 h-10 rounded-lg bg-[#FBF9F5] border border-[#E5E3DC] flex items-center justify-center text-[#F3661B]">
                 <Building2 className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-bold text-[#121518]">Pre-Hung Systems</h3>
+              <h3 className="text-sm font-bold text-[#121518]">Complete Sets, Ready to Fit</h3>
               <p className="text-xs text-[#4A4A4A] leading-relaxed">
-                Doors are delivered as unified sets complete with matching sub-frames, architraves, hinges, and calibrated multi-point locksets to minimize on-site carpentry adjustments.
+                Every door comes complete with its matching steel or wood frame, architraves, hinges, and full lockset. Your carpenter can install it immediately without missing parts.
               </p>
             </div>
           </div>

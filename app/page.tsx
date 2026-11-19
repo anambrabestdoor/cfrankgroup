@@ -60,18 +60,24 @@ export default function StorefrontPage() {
         .slice(0, 8);
     }
 
-    // Default "all": 4 doors + 4 sanitary/materials
+    if (activeCategoryFilter === "furniture") {
+      return active
+        .filter((p) => p.category === "furniture")
+        .slice(0, 8);
+    }
+
+    // Default "all": 4 doors + 4 other categories (sanitary, roofing, furniture)
     const doors = active
       .filter((p) =>
         ["security-doors", "hdf-doors", "interior-doors", "luxury-doors"].includes(p.category)
       )
       .slice(0, 4);
 
-    const sanitary = active
-      .filter((p) => ["sanitary-fittings", "bathrooms", "paint"].includes(p.category))
+    const others = active
+      .filter((p) => !["security-doors", "hdf-doors", "interior-doors", "luxury-doors"].includes(p.category))
       .slice(0, 4);
 
-    return [...doors, ...sanitary];
+    return [...doors, ...others];
   }, [products, activeCategoryFilter]);
 
   const toggleFaq = (idx: number) => {
@@ -151,6 +157,14 @@ export default function StorefrontPage() {
       href: "/shop?category=building-materials",
       tag: "Roofing",
     },
+    {
+      id: "furniture",
+      name: "Furniture",
+      description: "Quality furniture for homes and offices — beds, chairs, tables, wardrobes and more.",
+      image: "/products/hdf-wooden-door-with-complete-fittings.jpeg",
+      href: "/shop?category=furniture",
+      tag: "Furniture",
+    },
   ];
 
   return (
@@ -172,7 +186,7 @@ export default function StorefrontPage() {
                 Product Categories
               </span>
               <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#121518]">
-                Architectural Supply by Category
+                Our Products
               </h2>
             </div>
             <Link
@@ -184,7 +198,7 @@ export default function StorefrontPage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 sm:gap-6">
             {productCategories.map((cat) => (
               <div
                 key={cat.id}
@@ -240,7 +254,7 @@ export default function StorefrontPage() {
                 Shop & Warehouse Inventory
               </span>
               <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#121518]">
-                Warehouse Inventory & Sourcing
+                Shop
               </h2>
             </div>
 
@@ -285,6 +299,16 @@ export default function StorefrontPage() {
                 }`}
               >
                 Roofing & Finishes
+              </button>
+              <button
+                onClick={() => setActiveCategoryFilter("furniture")}
+                className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                  activeCategoryFilter === "furniture"
+                    ? "bg-[#121518] text-white"
+                    : "bg-[#FBF9F5] text-[#4A4A4A] hover:bg-[#E5E3DC]"
+                }`}
+              >
+                Furniture
               </button>
             </div>
           </div>

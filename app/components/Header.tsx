@@ -243,6 +243,18 @@ export default function Header() {
 
                     <div className="pt-2 border-t border-[#E5E3DC]">
                       <Link
+                        href="/shop?category=furniture"
+                        onClick={() => setProductsDropdownOpen(false)}
+                        className="block p-2 rounded-md hover:bg-[#FBF9F5] transition-colors group mb-2"
+                      >
+                        <span className="font-semibold text-[#121518] group-hover:text-[#F3661B] block text-xs">
+                          Furniture
+                        </span>
+                        <span className="text-[11px] text-[#73787E]">
+                          Home & office furniture
+                        </span>
+                      </Link>
+                      <Link
                         href="/shop"
                         onClick={() => setProductsDropdownOpen(false)}
                         className="w-full py-2 px-3 bg-[#FBF9F5] hover:bg-[#E5E3DC] text-[#121518] font-semibold text-xs rounded-md flex items-center justify-between transition-colors"
