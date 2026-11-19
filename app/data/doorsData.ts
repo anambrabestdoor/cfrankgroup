@@ -103,13 +103,7 @@ export const CATEGORY_GROUPS = [
   {
     id: "furniture",
     title: "Furniture",
-    subcategories: [
-      { id: "chairs-sofas", name: "Chairs & Sofas", filterCategory: "furniture" },
-      { id: "tables-desks", name: "Tables & Desks", filterCategory: "furniture" },
-      { id: "wardrobes", name: "Wardrobes & Storage", filterCategory: "furniture" },
-      { id: "beds", name: "Beds & Bedroom Sets", filterCategory: "furniture" },
-      { id: "office-furniture", name: "Office Furniture", filterCategory: "furniture" },
-    ]
+    subcategories: []
   }
 ];
 
