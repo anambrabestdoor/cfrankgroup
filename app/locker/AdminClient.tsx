@@ -117,6 +117,13 @@ export const CATEGORY_DEFAULT_SPECS: Record<string, Record<string, string>> = {
     "Profile": "Bond / Classic / Shingle / Roman",
     "Durability": "50 Years Anti-Rust Guarantee",
   },
+  "furniture": {
+    "Material": "Hardwood / Engineered Wood / MDF",
+    "Finish": "Lacquered / PU Coated / Veneer Wrapped",
+    "Dimensions": "Standard — specify custom size on request",
+    "Assembly": "Fully Assembled or Flat-Pack Available",
+    "Weight Capacity": "150kg (standard)",
+  },
 };
 
 interface CloudinaryAsset {
@@ -717,6 +724,8 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
       setFormGroup("sanitary");
     } else if (newCat === "paint" || newCat === "roof-tiles") {
       setFormGroup("materials");
+    } else if (newCat === "furniture") {
+      setFormGroup("furniture");
     } else {
       setFormGroup("doors");
     }
@@ -727,6 +736,7 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
     else if (newCat === "security-doors") setFormSubcategory("Heavy Duty Armored Security Doors");
     else if (newCat === "hdf-doors") setFormSubcategory("Foreign HDF Luxury Doors");
     else if (newCat === "bathroom-doors") setFormSubcategory("Waterproof Polymer Bathroom Doors");
+    else if (newCat === "furniture") setFormSubcategory("General Furniture");
 
     // Automatically adapt specifications if current specs are empty or default
     if (!editingId && CATEGORY_DEFAULT_SPECS[newCat]) {

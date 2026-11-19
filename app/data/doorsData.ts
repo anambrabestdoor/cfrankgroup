@@ -14,6 +14,7 @@ export interface DoorProduct {
     | "paint"
     | "roof-tiles"
     | "bathrooms"
+    | "furniture"
     | string;
   categoryLabel: string;
   price?: number;
@@ -65,6 +66,7 @@ export const CATEGORIES = [
   { id: "paint", name: "Paints & Wall Finishes" },
   { id: "roof-tiles", name: "Roof Tiles & Roofing" },
   { id: "bathrooms", name: "Bathrooms & Sanitary Wares" },
+  { id: "furniture", name: "Furniture" },
 ];
 
 export const CATEGORY_GROUPS = [
@@ -96,6 +98,17 @@ export const CATEGORY_GROUPS = [
       { id: "paints", name: "Paints & Wall Coatings", filterCategory: "paint" },
       { id: "roofing", name: "Stone-Coated Roof Tiles", filterCategory: "roof-tiles" },
       { id: "bathrooms-suite", name: "Complete Bathroom Suites", filterCategory: "bathrooms" },
+    ]
+  },
+  {
+    id: "furniture",
+    title: "Furniture",
+    subcategories: [
+      { id: "chairs-sofas", name: "Chairs & Sofas", filterCategory: "furniture" },
+      { id: "tables-desks", name: "Tables & Desks", filterCategory: "furniture" },
+      { id: "wardrobes", name: "Wardrobes & Storage", filterCategory: "furniture" },
+      { id: "beds", name: "Beds & Bedroom Sets", filterCategory: "furniture" },
+      { id: "office-furniture", name: "Office Furniture", filterCategory: "furniture" },
     ]
   }
 ];
