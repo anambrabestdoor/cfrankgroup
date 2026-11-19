@@ -28,16 +28,14 @@ export default function Hero() {
           {/* Left Column: Architectural Value Proposition & CTAs */}
           <div className="lg:col-span-5 flex flex-col justify-center text-left">
             {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.08] mb-5">
-              Everything to build,
-              <br />
-              secure, and complete <span className="text-[#F3661B]">your space.</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-5xl font-extrabold tracking-[-0.025em] text-white leading-[1.08] mb-5 drop-shadow-xs">
+              Everything to build, <br />
+              secure, and furnish <span className="text-[#F3661B]">your property.</span>
             </h1>
 
             {/* Supporting Copy */}
-            <p className="text-sm sm:text-base text-[#9EA5AD] leading-relaxed max-w-lg mb-8">
-              We deliver quality security doors, stone-coated roof tiles, smart biometric door locks,
-              and sanitary wares; building project supply in one order.
+            <p className="text-sm sm:text-base text-[#9EA5AD] leading-relaxed max-w-lg mb-8 font-normal">
+              Direct factory supply of certified Turkish security doors, luxury interior doors, sanitary wares, stone-coated roofing tiles, and furniture — in one coordinated project delivery.
             </p>
 
             {/* CTAs */}
