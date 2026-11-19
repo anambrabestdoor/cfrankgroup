@@ -52,7 +52,7 @@ export default function AboutPage() {
               Real quality doors and building materials straight from the factory
             </h2>
             <p className="text-xs sm:text-sm text-[#4A4A4A] leading-relaxed">
-              {brand.name} operates from the Building Materials International Market in Ogidi, Anambra State through our registered business, Anambra Best Door Enterprises (CAC BN: {settings.cacNumber || brand.cacNumber}). The business was started by {brand.proprietor} with one simple goal: to give people genuine, strong building materials that last, without the fake or low-grade items common in the open market.
+              CFrank Group (CFrank Enterprise) operates from the Building Materials International Market in Ogidi, Anambra State as our principal group headquarters. Our specialized door manufacturing, import, and dealership division operates through registered business Anambra Best Door Enterprises (CAC BN: {settings.cacNumber || brand.cacNumber}). The enterprise was founded by {brand.proprietor} with one simple goal: to give developers and homeowners genuine, certified building materials that last, without the counterfeit or sub-gauge items common in the open market.
             </p>
             <p className="text-xs sm:text-sm text-[#4A4A4A] leading-relaxed">
               We do not sell what we do not have. We buy directly from top steel and wood door factories in Turkey and trusted manufacturers abroad, keep full stock inside our physical warehouse in Ogidi, and inspect every single item before it leaves our premises. Whether you are building your personal home, a hotel, or a large housing estate, what you pay for is exactly what arrives at your building site.

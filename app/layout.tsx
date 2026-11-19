@@ -5,7 +5,7 @@ import JsonLd from "./components/JsonLd";
 import ConditionalShell from "./components/ConditionalShell";
 import { brand, colors, seo } from "@/lib/brand";
 
-const baseUrl = brand.appUrl;
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || brand.url || "https://cfrankgroup.com";
 
 export const viewport: Viewport = {
   themeColor: colors.charcoal,
@@ -17,21 +17,48 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: `${brand.name} | ${brand.tagline}`,
-    template: `%s | ${brand.name}`,
+    default: "CFrank Group | Official Website of CFrank Enterprise",
+    template: `%s | CFrank Group`,
   },
-  description: brand.description,
-  keywords: [...seo.keywords],
-  authors: [{ name: brand.name, url: baseUrl }],
-  creator: brand.name,
-  publisher: brand.name,
+  description:
+    "Official website of CFrank Enterprise (CFrank Group). Direct factory supply of certified Turkish security doors, luxury interior doors, sanitary wares, stone-coated roofing tiles, and furniture, with Anambra Best Door operating as our dedicated subsidiary division.",
+  keywords: [
+    "CFrank Enterprise",
+    "CFrank Group",
+    "C. Frank Enterprise",
+    "CFrank Enterprises",
+    "CFrank official website",
+    "CFrank Group Nigeria",
+    "Anambra Best Door parent company",
+    "Anambra Best Door",
+    ...seo.keywords,
+  ],
+  authors: [{ name: "CFrank Enterprise", url: baseUrl }],
+  creator: "CFrank Enterprise",
+  publisher: "CFrank Group",
   openGraph: {
     type: "website",
     locale: "en_NG",
     url: baseUrl,
-    siteName: brand.name,
-    title: `${brand.name} | ${brand.tagline}`,
-    description: brand.description,
+    siteName: "CFrank Group (CFrank Enterprise)",
+    title: "CFrank Group | Official Website of CFrank Enterprise",
+    description:
+      "Official parent website of CFrank Enterprise (CFrank Group). Certified Turkish security doors, luxury interior doors, sanitary wares, roofing tiles, and furniture. Anambra Best Door operates as our subsidiary division.",
+    images: [
+      {
+        url: `${baseUrl}/cfrank_hero_completed_house.png`,
+        width: 1200,
+        height: 630,
+        alt: "CFrank Group architectural supply and luxury building projects",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CFrank Group | Official Website of CFrank Enterprise",
+    description:
+      "Official website of CFrank Enterprise (CFrank Group). Turkish security doors, sanitary wares, roofing tiles, and furniture. Anambra Best Door is our subsidiary division.",
+    images: [`${baseUrl}/cfrank_hero_completed_house.png`],
   },
   icons: {
     icon: [
