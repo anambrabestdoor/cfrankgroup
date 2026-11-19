@@ -9,7 +9,7 @@ import { brand } from "@/lib/brand";
 export default function Hero() {
   const { settings } = useApp();
   const videoSrc = settings.heroVideoUrl || "/cfrank_hero_assembly.mp4?v=4.5";
-  const posterSrc = settings.heroPosterUrl || "/cfrank_hero_poster.webp?v=4.5";
+  const posterSrc = settings.heroPosterUrl || "/cfrank_hero_completed_house.png";
   const fallbackImage = settings.heroImageUrl || "/cfrank_hero_completed_house.png";
   return (
     <section className="relative w-full bg-[#121518] text-[#FBF9F5] border-b border-[#22262B] overflow-hidden">
@@ -39,25 +39,31 @@ export default function Hero() {
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5">
+            <div className="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:items-center sm:gap-3.5">
               <Link
                 href="/shop"
-                className="px-6 py-3.5 bg-[#F3661B] hover:bg-[#D9530F] text-white text-xs sm:text-sm font-bold rounded-md transition-colors shadow-xs text-center justify-center flex items-center"
+                className="py-3.5 px-4 sm:px-6 bg-[#F3661B] hover:bg-[#D9530F] text-white text-xs sm:text-sm font-bold rounded-md transition-colors shadow-xs text-center justify-center flex items-center w-full sm:w-auto"
               >
-                Browse shop
+                Browse Shop
               </Link>
               <Link
                 href="/about"
-                className="px-6 py-3.5 bg-transparent hover:bg-white/5 text-[#C5CAD0] hover:text-white text-xs sm:text-sm font-semibold rounded-md border border-[#2E353D] hover:border-[#515961] transition-colors text-center justify-center flex items-center"
+                className="py-3.5 px-4 sm:px-6 bg-transparent hover:bg-white/5 text-[#C5CAD0] hover:text-white text-xs sm:text-sm font-semibold rounded-md border border-[#2E353D] hover:border-[#515961] transition-colors text-center justify-center flex items-center w-full sm:w-auto"
               >
-                About us
+                About Us
               </Link>
             </div>
           </div>
 
           {/* Right Column: Seamless 3D Architectural Animation Showcase */}
           <div className="lg:col-span-7 relative w-full flex items-center justify-center">
-            <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[580px] flex items-center justify-center">
+            <div
+              className="relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[580px] flex items-center justify-center overflow-hidden"
+              style={{
+                maskImage: "radial-gradient(ellipse at center, black 65%, transparent 98%)",
+                WebkitMaskImage: "radial-gradient(ellipse at center, black 65%, transparent 98%)",
+              }}
+            >
               {/* Native HTML5 Chromeless Video */}
               <video
                 key={videoSrc}
@@ -68,7 +74,7 @@ export default function Hero() {
                 disablePictureInPicture
                 controlsList="nodownload nofullscreen noremoteplayback"
                 poster={posterSrc}
-                className="w-full h-full object-contain pointer-events-none select-none bg-[#121518]"
+                className="w-full h-full object-contain pointer-events-none select-none bg-transparent"
                 aria-label="CFrank Group architectural assembly animation"
               >
                 {videoSrc.endsWith(".webm") ? (

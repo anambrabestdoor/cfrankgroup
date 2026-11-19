@@ -33,22 +33,21 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-40 bg-[#FBF9F5] border-b border-[#E5E3DC] transition-[padding,box-shadow] duration-200 ${
-        isScrolled ? "py-3 shadow-xs" : "py-4"
-      }`}
+      className={`sticky top-0 z-40 bg-[#121518] border-b border-[#22262B] transition-[padding,box-shadow] duration-200 ${isScrolled ? "py-2.5 shadow-md bg-[#121518]/95 backdrop-blur-md" : "py-3.5"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
         {/* 1. Brand Logo */}
         <Link href="/" className="flex items-center space-x-2.5 shrink-0">
-          <div className="relative h-9 w-40 sm:h-11 sm:w-52">
+          <div className="relative h-8 w-36 sm:h-10 sm:w-48">
             <Image
-              src={settings.logoUrl?.trim() ? settings.logoUrl.trim() : "/cfranklogo.png"}
+              src="/cfranklogo-light.png"
               alt={`${brand.name} Logo`}
               fill
               className="object-contain object-left"
               priority
               onError={(e) => {
-                // If custom logoUrl fails or 404s, seamlessly fallback to local asset
+                // If custom light logo fails or 404s, seamlessly fallback to local asset
                 const target = e.target as HTMLImageElement;
                 if (target && !target.src.includes("/cfranklogo.png")) {
                   target.src = "/cfranklogo.png";
@@ -59,7 +58,7 @@ export default function Header() {
         </Link>
 
         {/* 2. Desktop Navigation — Clean Architectural Text Links */}
-        <nav className="hidden lg:flex items-center space-x-7 text-xs font-semibold text-[#121518]">
+        <nav className="hidden lg:flex items-center space-x-7 text-xs font-semibold text-[#D1D5DB]">
           <Link
             href="/"
             className="hover:text-[#F3661B] transition-colors py-1"
@@ -77,9 +76,8 @@ export default function Header() {
             >
               <span>Shop</span>
               <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-150 ${
-                  productsDropdownOpen ? "rotate-180" : ""
-                }`}
+                className={`w-3.5 h-3.5 transition-transform duration-150 ${productsDropdownOpen ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
@@ -291,13 +289,13 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* 3. Header Action Items — Crisp Architectural Rectangular Controls */}
+        {/* 3. Header Action Items — Crisp Architectural Rectangular Controls (Dark Luxury Theme) */}
         <div className="flex items-center space-x-2 sm:space-x-2.5">
           {/* Search Trigger */}
           <button
             onClick={() => setSearchOpen(true)}
             aria-label="Search catalogue"
-            className="w-9 h-9 rounded-md bg-white border border-[#E5E3DC] hover:border-[#121518] hover:bg-[#FBF9F5] text-[#121518] flex items-center justify-center transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-md bg-[#181C21] border border-[#2E353D] hover:border-[#F3661B] text-[#D1D5DB] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
           >
             <Search className="w-4 h-4" />
           </button>
@@ -306,7 +304,7 @@ export default function Header() {
           <button
             onClick={() => setCartOpen(true)}
             aria-label={`View Cart, ${cartCount} items`}
-            className="relative w-9 h-9 rounded-md bg-white border border-[#E5E3DC] hover:border-[#121518] hover:bg-[#FBF9F5] text-[#121518] flex items-center justify-center transition-colors cursor-pointer"
+            className="relative w-9 h-9 rounded-md bg-[#181C21] border border-[#2E353D] hover:border-[#F3661B] text-[#D1D5DB] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
           >
             <ShoppingCart className="w-4 h-4" />
             {cartCount > 0 && (
@@ -323,7 +321,7 @@ export default function Header() {
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-2 py-2 px-3.5 bg-[#121518] hover:bg-[#252A2F] text-white font-medium text-xs rounded-md transition-colors"
+            className="hidden sm:inline-flex items-center gap-2 py-2 px-3.5 bg-[#1F242A] hover:bg-[#2A3138] border border-[#2E353D] text-white font-medium text-xs rounded-md transition-colors"
           >
             <MessageSquare className="w-3.5 h-3.5 text-[#F3661B]" />
             <span>Contact Us</span>
@@ -333,10 +331,10 @@ export default function Header() {
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open navigation menu"
-            className="lg:hidden w-9 h-9 rounded-md bg-white border border-[#E5E3DC] hover:border-[#121518] hover:bg-[#FBF9F5] text-[#121518] flex flex-col items-center justify-center space-y-1 transition-colors cursor-pointer"
+            className="lg:hidden w-9 h-9 rounded-md bg-[#181C21] border border-[#2E353D] hover:border-[#F3661B] text-white flex flex-col items-center justify-center space-y-1 transition-colors cursor-pointer"
           >
-            <span className="w-4 h-[1.5px] bg-[#121518] block"></span>
-            <span className="w-4 h-[1.5px] bg-[#121518] block"></span>
+            <span className="w-4 h-[1.5px] bg-white block"></span>
+            <span className="w-4 h-[1.5px] bg-white block"></span>
           </button>
         </div>
       </div>
