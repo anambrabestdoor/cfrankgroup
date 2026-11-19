@@ -35,7 +35,7 @@ export default function Hero() {
 
             {/* Supporting Copy */}
             <p className="text-sm sm:text-base text-[#9EA5AD] leading-relaxed max-w-lg mb-8 font-normal">
-              Direct factory supply of certified Turkish security doors, luxury interior doors, sanitary wares, stone-coated roofing tiles, and furniture — in one coordinated project delivery.
+              Direct factory supply of certified Turkish security doors, luxury interior doors, sanitary wares, stone-coated roofing tiles, and furniture, all delivered in one coordinated project consignment.
             </p>
 
             {/* CTAs */}

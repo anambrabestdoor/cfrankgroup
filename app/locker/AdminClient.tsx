@@ -120,7 +120,7 @@ export const CATEGORY_DEFAULT_SPECS: Record<string, Record<string, string>> = {
   "furniture": {
     "Material": "Hardwood / Engineered Wood / MDF",
     "Finish": "Lacquered / PU Coated / Veneer Wrapped",
-    "Dimensions": "Standard — specify custom size on request",
+    "Dimensions": "Standard (specify custom size on request)",
     "Assembly": "Fully Assembled or Flat-Pack Available",
     "Weight Capacity": "150kg (standard)",
   },
