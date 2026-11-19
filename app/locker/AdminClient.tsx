@@ -2379,6 +2379,9 @@ export default function AdminClient({ initialSession }: AdminClientProps) {
                         <option value="sanitary-fittings">Sanitary Wares & Water Closets</option>
                         <option value="bathrooms">Bathroom Vanities & Sinks</option>
                       </optgroup>
+                      <optgroup label="Furniture">
+                        <option value="furniture">Furniture</option>
+                      </optgroup>
                       <optgroup label="Finishes">
                         <option value="paint">Paint & Screeding</option>
                         <option value="roof-tiles">Roof Tiles</option>
