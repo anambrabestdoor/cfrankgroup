@@ -23,7 +23,7 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-10 pb-10 sm:pb-14 lg:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           {/* Left Column: Architectural Value Proposition & CTAs */}
           <div className="lg:col-span-5 flex flex-col justify-center text-left">
